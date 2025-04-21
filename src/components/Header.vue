@@ -55,16 +55,35 @@ onBeforeUnmount(() => {
         <img src="/images/main-logo.png" alt="메인 로고" />
       </router-link>
       <nav :class="{ open: isMenuOpen }">
-        <router-link to="/IntroBing" :class="{ active: route.path === '/IntroBing' }"> 빙프리란? </router-link>
-        <router-link to="/Check" :class="{ active: route.path === '/Check' }"> 요금안내 </router-link>
-        <router-link to="/Review" :class="{ active: route.path === '/Review' }"> 고객리뷰 </router-link>
-        <router-link to="/Reservation" :class="{ active: route.path === '/Reservation' }"> 예약하기 </router-link>
+        <router-link
+          to="/IntroBing"
+          :class="{ active: route.path === '/IntroBing' }"
+        >
+          빙프리란?
+        </router-link>
+        <router-link to="/Check" :class="{ active: route.path === '/Check' }">
+          요금안내
+        </router-link>
+        <router-link to="/Review" :class="{ active: route.path === '/Review' }">
+          고객리뷰
+        </router-link>
+        <router-link
+          to="/Reservation"
+          :class="{ active: route.path === '/Reservation' }"
+        >
+          예약하기
+        </router-link>
       </nav>
 
       <div class="hamburger" @click="toggleMenu">
         <img
-          :src="isMenuOpen ? '/images/closing_icon.png?v=1.2' : '/images/hambergar_menu_icon.png?v=1.2'"
-          alt="menu toggle" />
+          :src="
+            isMenuOpen
+              ? '/images/closing_icon.png?v=1.2'
+              : '/images/hambergar_menu_icon.png?v=1.2'
+          "
+          alt="menu toggle"
+        />
       </div>
     </div>
   </header>
@@ -83,22 +102,42 @@ onBeforeUnmount(() => {
       </li>
     </ul>
     <div class="mo-logo">
-      <p>청소가 필요한 순간<br />검증된 기술과 경험<br />제빙기 케어, 여기가 정답</p>
+      <p>
+        청소가 필요한 순간<br />검증된 기술과 경험<br />제빙기 케어, 여기가 정답
+      </p>
       <img src="/images/main-logo.png" alt="" />
     </div>
     <ul class="menu-list">
       <li class="first">
-        <a @click.prevent="navigateTo('/IntroBing')" :class="{ active: route.path === '/IntroBing' }"> ABOUT </a>
+        <a
+          @click.prevent="navigateTo('/IntroBing')"
+          :class="{ active: route.path === '/IntroBing' }"
+        >
+          빙프리란?
+        </a>
       </li>
       <li>
-        <a @click.prevent="navigateTo('/Check')" :class="{ inactive: route.path !== '/Check' }"> PRICING </a>
+        <a
+          @click.prevent="navigateTo('/Check')"
+          :class="{ inactive: route.path !== '/Check' }"
+        >
+          요금 안내
+        </a>
       </li>
       <li>
-        <a @click.prevent="navigateTo('/Review')" :class="{ inactive: route.path !== '/Review' }"> REVIEWS </a>
+        <a
+          @click.prevent="navigateTo('/Review')"
+          :class="{ inactive: route.path !== '/Review' }"
+        >
+          고객리뷰
+        </a>
       </li>
       <li>
-        <a @click.prevent="navigateTo('/Reservation')" :class="{ inactive: route.path !== '/Reservation' }">
-          RESERVATION
+        <a
+          @click.prevent="navigateTo('/Reservation')"
+          :class="{ inactive: route.path !== '/Reservation' }"
+        >
+          예약하기
         </a>
       </li>
     </ul>
