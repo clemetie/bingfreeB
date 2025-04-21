@@ -14,6 +14,18 @@ const showFAQ = ref(false);
 const normalizePhone = (phone) => phone.replace(/-/g, "").trim();
 const matchedReservation = ref(null);
 const imageUrl = ref(null);
+const reservationFormData = ref({
+  name: "",
+  phone: "",
+  type: "business",
+  roadAddress: "",
+  detailAddress: "",
+  selectedDate: null,
+  dateRestricted: null,
+  desiredTime: "",
+  gender: "anything",
+  notes: "",
+});
 
 // 쿠키에 저장된 정보 가져오기
 onMounted(() => {
@@ -341,7 +353,20 @@ const faqs = reactive([
 // 오른쪽 사이드 고탑기능
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
-  console.log("✅ 현재 섹션:", currentSection.value);
+};
+
+// '예약 다시하기' 버튼 클릭 시 실행될 함수
+const handleReSubmit = () => {
+  const savedData = Cookies.get("reservationData");
+  if (savedData) {
+    const parsed = JSON.parse(savedData);
+
+    // 배열이면 첫 번째 요소만 formData에 넣기
+    formData.value = Array.isArray(parsed) ? parsed[0] : parsed;
+
+    reservTab.value = "reserv";
+    isReservationMatched.value = false;
+  }
 };
 </script>
 
@@ -941,15 +966,19 @@ const scrollToTop = () => {
               </li>
             </ul>
           </div>
-          <button type="button" class="retryreservationBtn">
+          <button
+            v-on:click="handleReSubmit"
+            type="button"
+            class="retryreservationBtn"
+          >
             예약수정하기
           </button>
         </fieldset>
         <!-- 자주 묻는 질문 -->
         <fieldset class="faq-box" v-if="isReservationMatched">
-          <p class="main-h3" style="color: #424242;">
+          <p class="main-h3" style="color: #424242">
             자주 묻는 질문
-            <span style="color: #424242;" v-on:click="showFAQ = !showFAQ">{{
+            <span style="color: #424242" v-on:click="showFAQ = !showFAQ">{{
               showFAQ ? "접기 ▲" : "펼치기 ▼"
             }}</span>
           </p>
@@ -1019,7 +1048,9 @@ const scrollToTop = () => {
             </ul>
           </div>
           <div class="reservBtn_box">
-            <button class="pastBtn">다시 예약하기</button>
+            <button v-on:click="handleReSubmit" class="pastBtn">
+              다시 예약하기
+            </button>
             <router-link to="/review"
               ><button class="pastBtn">리뷰 쓰기</button></router-link
             >

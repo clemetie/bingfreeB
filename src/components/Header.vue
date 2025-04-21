@@ -63,7 +63,7 @@ onBeforeUnmount(() => {
 
       <div class="hamburger" @click="toggleMenu">
         <img
-          :src="isMenuOpen ? '/public/images/closing_icon.png' : '/public/images/hambergar_menu_icon.png'"
+          :src="isMenuOpen ? '/images/closing_icon.png?v=1.2' : '/images/hambergar_menu_icon.png?v=1.2'"
           alt="menu toggle" />
       </div>
     </div>
