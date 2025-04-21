@@ -1,0 +1,641 @@
+@use "./variables" as *;
+@use "./fonts" as *;
+@use "./main_introbing" as *;
+@use "./main_check" as *;
+@use "./main_review" as *;
+@use "./main_reservation" as *;
+
+@keyframes viewmore {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body,
+html {
+  height: auto;
+  font-family: "Pretendard", sans-serif;
+}
+
+// a태그
+a {
+  text-decoration: none;
+  &:hover {
+    color: $bingfree-main;
+  }
+}
+
+.inner {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+// 팝업
+.popupoverlay {
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  z-index: 9999999;
+}
+.popup_wrap {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: fixed;
+  top: 15%;
+  left: 50%;
+  transform: translateX(-50%);
+  .popup_top {
+    z-index: 99;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: auto;
+    max-width: 370px;
+    min-height: 200px;
+    background-color: #ffffff;
+    border-radius: 40px 40px 0 0;
+    text-align: center;
+    p {
+      width: 40%;
+      padding: 1px 2px;
+      margin: auto;
+      text-align: center;
+      font-size: 9px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: $bingfree-main;
+      font-size: 30px;
+      position: absolute;
+      top: 5%;
+      right: 4%;
+    }
+    img {
+      width: 80%;
+      margin: auto;
+    }
+  }
+  .popup_bt {
+    position: relative;
+    width: 100%;
+    min-width: 450px;
+    min-height: 560px;
+    margin-top: -80px;
+    background: url("/images/popupimg.png") no-repeat center;
+    background-size: contain;
+    a {
+      width: 170px;
+      line-height: 35px;
+      background: white;
+      border-radius: 20px;
+      text-align: center;
+      font-weight: bold;
+      text-decoration: none;
+      position: absolute;
+      bottom: 8%;
+      color: #212121;
+      &:hover {
+        color: $bingfree-main;
+      }
+    }
+    a:first-child {
+      left: 10%;
+    }
+
+    a:last-child {
+      right: 10%;
+      background-color: $bingfree-point;
+    }
+  }
+}
+.side {
+  position: fixed;
+  bottom: 2%;
+  right: 3%;
+  z-index: 99999;
+  div {
+    margin-bottom: 30px;
+    img {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  // 오른쪽 사이드
+  .sideBtn {
+    width: 180px;
+    height: 80px;
+    border: 2px solid $bingfree-main;
+    background-color: #fff;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 22px;
+    color: $bingfree-main;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    transition: all 0.5s ease;
+    img {
+      width: 30px;
+      height: 30px;
+      transition: filter 0.3s ease;
+    }
+    .text {
+      display: inline;
+      transition: opacity 0.3s ease;
+    }
+    &.compact {
+      width: 80px;
+      height: 80px;
+      &:first-child {
+        background-color: $bingfree-main;
+        color: #fff;
+        box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5),
+          inset -3px -1px 10px rgba(0, 0, 0, 0.2);
+        img {
+          filter: brightness(0) invert(1);
+        }
+      }
+      &:nth-child(2) {
+        background: none;
+        border: none;
+        img {
+          width: 75px;
+          height: 75px;
+        }
+      }
+      .text {
+        display: none;
+        width: 0;
+        overflow: hidden;
+      }
+    }
+  }
+  .goTop {
+    cursor: pointer;
+    width: 80px;
+    line-height: 80px;
+    background-color: $bingfree-main;
+    color: #fff;
+    text-align: center;
+    border-radius: 50%;
+    float: right;
+    font-size: 30px;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5),
+      inset -3px -1px 10px rgba(0, 0, 0, 0.2);
+  }
+}
+// 왼쪽 사이드 (섹션이동, 더보기)
+.sidesection {
+  position: fixed;
+  top: 50%;
+  left: 8%;
+  transform: translateY(-50%);
+  li {
+    cursor: pointer;
+    font-size: 18px;
+    list-style: none;
+    color: $bingfree-main;
+    margin: 9px 0;
+    font-weight: 500;
+  }
+  .viewmore {
+    animation: viewmore 1.8s ease infinite;
+    position: relative;
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    padding: 0;
+    margin-top: 8px;
+    cursor: pointer;
+    color: $bingfree-main;
+    font-size: 20px;
+    border: none;
+    &:after {
+      content: "";
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: block;
+      background-color: #e9ff54;
+      position: absolute;
+      top: 0%;
+      right: 8px;
+      z-index: -1;
+    }
+    &:hover {
+      filter: brightness(2);
+    }
+  }
+}
+// 메인 비주얼 슬라이드
+
+.visual.web {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background-color: #fff;
+  transition: background 1s ease;
+  &.scroll {
+    background-color: transparent;
+    .slide {
+      &::after {
+        opacity: 1;
+        z-index: 99999;
+      }
+    }
+    .slide img {
+      width: 100%;
+      border-radius: 0;
+      top: 0;
+      transform: translateZ(1.2);
+    }
+  }
+  .slide {
+    width: 100%;
+    height: 100vh;
+    background-size: contain;
+    background-position: center;
+    position: relative;
+    &::after {
+      content: "";
+      width: 100%;
+      height: 500px;
+      position: absolute;
+      left: 0;
+      bottom: -20px;
+      background: -moz-linear-gradient(
+        top,
+        rgba(255, 255, 255, 0) 0%,
+        rgb(255, 255, 255) 90%
+      );
+      background: -webkit-linear-gradient(
+        top,
+        rgba(255, 255, 255, 0) 0%,
+        rgb(255, 255, 255) 90%
+      );
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+        rgb(255, 255, 255) 90%
+      );
+      filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#37197d',GradientType=0 );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 999999;
+    }
+    img {
+      width: 90%;
+      height: 1000px;
+      max-height: 100%;
+      border-radius: 555px;
+      position: absolute;
+      top: 10%;
+      left: 50%;
+      overflow: hidden;
+      transform: translateX(-50%);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: width 1s ease, height 1s ease, top 1s ease, left 1s ease,
+        border-radius 0.5s ease, background 1s cubic-bezier(0.7, 0, 0.7, 1);
+    }
+  }
+  .txtbox {
+    position: absolute;
+    top: 30%;
+    left: 17.5%;
+    z-index: 99;
+    p {
+      margin: 10px 0;
+    }
+  }
+
+  .app {
+    position: relative;
+    &:after {
+      content: "";
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      display: block;
+      background-color: $bingfree-point;
+      position: absolute;
+      top: -50%;
+      right: 0;
+      z-index: -1;
+    }
+  }
+  .phone {
+    position: absolute;
+    top: 280px;
+    left: 680px;
+  }
+}
+.visual.tab {
+  display: none;
+}
+section {
+  width: 100%;
+  height: 100vh;
+}
+
+@mixin mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 768px) and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@include mobile {
+  /*브라우저 사이즈767px이하일때*/
+  .popup_wrap {
+    .popup_top {
+      max-width: 280px;
+      min-height: 180px;
+      p {
+        width: 50%;
+        font-size: 10px;
+      }
+      button {
+        font-size: 24px;
+        right: 6%;
+      }
+    }
+    .popup_bt {
+      min-width: 340px;
+      margin-top: -120px;
+      a {
+        width: 130px;
+        bottom: 18%;
+        &:first-child {
+          left: 8%;
+        }
+        &:last-child {
+          right: 8%;
+        }
+      }
+    }
+  }
+  section {
+    height: auto;
+  }
+  .sidesection {
+    display: none;
+  }
+  .visual.web {
+    display: none;
+  }
+  .visual.tab {
+    margin-top: 80px;
+    display: block !important;
+    img {
+      width: 100%;
+    }
+    .txtbox {
+      position: absolute;
+      top: 10%;
+      left: 8%;
+      z-index: 99;
+      p {
+        margin: 10px 0;
+      }
+    }
+
+    .app {
+      position: relative;
+      &:after {
+        content: "";
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: block;
+        background-color: $bingfree-point;
+        position: absolute;
+        top: -30%;
+        right: 0;
+        z-index: -1;
+      }
+    }
+    .phone {
+      display: none;
+    }
+  }
+  .sideBtn {
+    width: 120px !important;
+    height: 45px !important;
+    border: 2px solid $bingfree-main;
+    background-color: #fff;
+    border-radius: 50px;
+    text-align: center;
+    font-size: 16px !important;
+    font-weight: 300;
+    color: $bingfree-main;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    transition: all 0.5s ease;
+    img {
+      width: 20px !important;
+      height: 20px !important;
+      transition: filter 0.3s ease;
+    }
+    .text {
+      display: inline;
+      transition: opacity 0.3s ease;
+    }
+    &.compact {
+      width: 45px !important;
+      height: 45px !important;
+      &:first-child {
+        background-color: $bingfree-main;
+        color: #fff;
+        img {
+          filter: brightness(0) invert(1);
+        }
+      }
+      &:nth-child(2) {
+        background: none;
+        border: none;
+        img {
+          width: 40px !important;
+          height: 40px !important;
+        }
+      }
+      .text {
+        display: none;
+        width: 0;
+        overflow: hidden;
+      }
+    }
+  }
+  .side {
+    div {
+      margin-bottom: 20px;
+    }
+  }
+  .goTop {
+    cursor: pointer;
+    width: 45px !important;
+    line-height: 45px !important;
+    background-color: $bingfree-main;
+    color: #fff;
+    text-align: center;
+    border-radius: 50%;
+    float: right;
+    font-size: 24px !important;
+  }
+}
+
+@include tablet {
+  /*브라우저 사이즈768px이상, 1023px 이하일때*/
+  .inner {
+    margin: auto;
+    max-width: 700px;
+    // background-color: rgba($color: #ff0000, $alpha: 0.5);
+  }
+  section {
+    height: auto;
+  }
+  .visual.web {
+    display: none;
+  }
+  .visual.tab {
+    // margin-top: 120px;
+    display: block !important;
+    img {
+      width: 100%;
+    }
+    .txtbox {
+      position: absolute;
+      top: 25%;
+      left: 8%;
+      z-index: 99;
+      p {
+        margin: 10px 0;
+      }
+    }
+
+    .app {
+      display: block;
+      margin-top: 3%;
+      position: relative;
+      &:after {
+        content: "";
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: block;
+        background-color: #e9ff54;
+        position: absolute;
+        top: -38%;
+        left: 109px;
+        z-index: -1;
+      }
+    }
+    .phone {
+      display: none;
+    }
+  }
+  .sidesection {
+    display: none;
+  }
+  .side {
+    position: fixed;
+    bottom: 7%;
+    right: 3%;
+    z-index: 99999;
+    div {
+      margin-bottom: 20px;
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+    .sideBtn {
+      width: 150px;
+      height: 50px;
+      border: 2px solid $bingfree-main;
+      background-color: #fff;
+      border-radius: 50px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 300;
+      color: $bingfree-main;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      transition: all 0.5s ease;
+      img {
+        width: 25px;
+        height: 25px;
+        transition: filter 0.3s ease;
+      }
+      .text {
+        display: inline;
+        transition: opacity 0.3s ease;
+      }
+      &.compact {
+        width: 60px;
+        height: 60px;
+        &:first-child {
+          background-color: $bingfree-main;
+          color: #fff;
+          img {
+            filter: brightness(0) invert(1);
+          }
+        }
+        &:nth-child(2) {
+          background: none;
+          border: none;
+          img {
+            width: 55px;
+            height: 55px;
+          }
+        }
+        .text {
+          display: none;
+          width: 0;
+          overflow: hidden;
+        }
+      }
+    }
+
+    .goTop {
+      cursor: pointer;
+      width: 60px;
+      line-height: 60px;
+      background-color: $bingfree-main;
+      color: #fff;
+      text-align: center;
+      border-radius: 50%;
+      float: right;
+      font-size: 30px;
+    }
+  }
+}

@@ -1,0 +1,652 @@
+@use "./variables" as *;
+@use "./fonts" as *;
+
+@keyframes ani_move {
+  0% {
+    transform: translateY(30px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+@keyframes ani_opacity {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 반응형
+
+@media (min-width: 370px) and (max-width: 767px) {
+  /*브라우저 사이즈 767px이하일때*/
+  .introBing {
+    width: 100%;
+    height: auto;
+    padding: 10% 0 10% 0 !important;
+  }
+  .main-h1 {
+    font-size: 21px;
+  }
+  .main-h4 p {
+    margin: auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .only-mobile {
+    display: inline !important;
+  }
+  .introBing .mySwiper {
+    width: 50% !important;
+    padding: 2% 0 4% 0;
+  }
+  .introBing .image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  .image-section img {
+    height: 33vw;
+    object-fit: cover;
+    background-color: pink;
+  }
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none !important;
+  }
+  .introBing .caption {
+    font-size: 9px !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  /*브라우저 사이즈 768px이상, 1023px 이하일때*/
+  .introBing {
+    width: 100%;
+    height: auto;
+    padding: 10% 0 10% 0 !important;
+  }
+  .main-h1 {
+    font-size: 33px;
+  }
+  .main-h4 p {
+    margin: auto;
+    font-size: 18px;
+    line-height: 1.4;
+  }
+  .only-mobile {
+    display: inline;
+  }
+  .introBing .mySwiper {
+    width: 90% !important;
+    height: 100%;
+    padding: 2% 0 4% 0;
+  }
+}
+// main-introbing
+.introBing {
+  width: 100%;
+  max-height: 100vh;
+  padding-top: 5%;
+  // background-color: pink;
+  .only-mobile {
+    display: none;
+
+    @media (min-width: 768px) and (max-width: 1023px) {
+      display: inline;
+    }
+
+    @media (min-width: 390px) and (max-width: 767px) {
+      display: inline;
+    }
+  }
+  .inner {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .main-introBing-txt {
+    width: 100%;
+    color: #212121;
+    // background-color: pink;
+  }
+
+  #main-introBing-txt-sub {
+    margin: 5%;
+    font-family: "Pretendard";
+    src: url("/src/assets/fonts/Pretendard-Regular.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    color: #9e9e9e;
+
+    p {
+      margin-top: 1%;
+    }
+  }
+
+  // before, after swiper 영역
+  .mySwiper {
+    width: 60%;
+    height: 100%;
+  }
+
+  .image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; // 이미지 사이 간격
+    flex-wrap: wrap;
+  }
+
+  .image-section {
+    flex: 1;
+    text-align: center;
+
+    img {
+      max-width: 100%;
+      // height: auto;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+  }
+
+  .caption {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #212121;
+    font-weight: 500;
+    background-color: #e5e5e5;
+    margin-top: -10px;
+    padding: 10px 0;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  // swiper button 영역
+  .swiper-button-prev,
+  .swiper-button-next {
+    position: absolute;
+    top: var(--swiper-navigation-top-offset, 50%);
+    width: 40px; // 원하는 크기로 조정
+    height: 40px;
+    margin-top: calc(0px - (40px / 2)); // 사이즈 맞춰 조정
+    z-index: 10;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent; // 기본 아이콘 숨기기
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    user-select: none;
+    outline: none;
+    caret-color: transparent; // 깜빡이는 커서 없애기
+
+    &:after {
+      display: none;
+    }
+
+    &:focus {
+      outline: none;
+      caret-color: transparent;
+    }
+  }
+
+  // 왼쪽 화살표
+  .swiper-button-prev {
+    background-image: url("/public/introbing/intromain/6.png");
+    left: 10px;
+  }
+
+  // 오른쪽 화살표
+  .swiper-button-next {
+    background-image: url("/public/introbing/intromain/7.png");
+    right: 10px;
+  }
+
+  .swiper-button-disabled {
+    opacity: 1 !important; // 투명도 유지
+    pointer-events: auto !important; // 클릭 가능하게
+    cursor: pointer !important; // 마우스 포인터 유지
+  }
+
+  // 푸터 텍스트
+  #introBing-footer-text {
+    margin-top: 5%;
+    color: #212121;
+  }
+}
+// --------------------------------
+// intro 상세페이지
+// --------------------------------
+
+.intro-wrap {
+  caret-color: transparent;
+  width: 100%;
+  color: #212121;
+  // background-color: pink;
+  margin-bottom: 10%;
+}
+// 배너
+.intro-banner {
+  width: 100%;
+  position: relative;
+  background-color: red;
+  overflow: hidden;
+}
+.intro-banner img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+.intro-banner-txtbox {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
+.intro-banner-txt1 {
+  line-height: 1.2;
+  margin-bottom: 3%;
+}
+.intro-banner-txt2 {
+  letter-spacing: 0.5px;
+}
+// 예약 배너
+.intro-top2 {
+  width: 100%;
+  height: 160px;
+  background-color: #1456fd;
+  display: flex;
+  gap: 9%;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.intro-top2-bt button {
+  background-color: $bingfree-point;
+  border-style: none;
+  width: 200px;
+  height: 65px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 24px;
+  font-family: "Pretendard", sans-serif;
+  color: $bingfree-main;
+  cursor: pointer;
+  transition: transform 0.2s ease-out, background-color 0.2s;
+}
+.intro-wrap {
+  font-family: "Pretendard", sans-serif;
+  // 탭
+  .introbing_tab {
+    width: 40%;
+    line-height: 200px;
+    margin: auto;
+    list-style: none;
+    display: flex;
+    flex: 1;
+    justify-content: space-evenly;
+    position: relative;
+
+    li {
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+      color: #9e9e9e; // 기본 색상
+
+      &.active {
+        color: #212121; // 클릭했을 때 색상
+      }
+    }
+
+    .divider {
+      cursor: default;
+      color: #9e9e9e;
+    }
+  }
+
+  // 빙프리-제빙기 케어 서비스 영역
+  .care-service-box {
+    margin: auto;
+    position: relative;
+    border: none;
+    border-radius: 16px;
+    width: 1200px;
+    height: 300px;
+    // padding: 40px;
+    background: url("/public/introbing/introsub/introbingfree/6.png") no-repeat right center;
+    background-size: contain; /* or cover */
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    h2 {
+      margin-bottom: 3%;
+    }
+    p {
+      margin-bottom: 0.5%;
+    }
+  }
+  // 1.제빙기 케어는 왜 필요할까요?
+  .intro-section1-title {
+    display: flex;
+    align-items: center;
+    margin-top: 10%;
+  }
+  .intro-section1-p2 {
+    padding-left: 0.7%;
+  }
+  .intro-section1-p3 {
+    padding-left: 4%;
+  }
+  // img
+  .intro-section1-desc {
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+  }
+  .intro-section1-desc1,
+  .intro-section1-desc2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 3%;
+    p {
+      margin-top: 5%;
+    }
+  }
+
+  .desc2-img,
+  .desc1-img {
+    width: 600px;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 25px;
+
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+  }
+  .desc3-img {
+    width: 600px;
+    height: 530px;
+    overflow: hidden;
+    border-radius: 25px;
+
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+  }
+  .intro-section1-desc3 {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    margin-top: 10%;
+  }
+  // img
+  .care-section {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+    flex-wrap: wrap; /* 반응형 */
+  }
+  .care-item {
+    margin-top: 3%;
+    text-align: center;
+    width: 380px;
+    // height: 220px;
+    overflow: hidden;
+  }
+
+  .care-item img {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px;
+    display: block;
+    height: 220px;
+    object-fit: cover; /* 비율 유지하면서 꽉 채우기 */
+  }
+  .care-item p {
+    margin-top: 5%;
+    font-size: 15px;
+    color: #757575;
+    font-weight: 750;
+  }
+  // img
+  .care-section2 {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap; /* 반응형 */
+  }
+  .care-item2 {
+    margin-top: 3%;
+    text-align: center;
+    width: 380px;
+  }
+
+  .care-item2 img {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 20px;
+    display: block;
+    height: 220px;
+    object-fit: cover; /* 비율 유지하면서 꽉 채우기 */
+  }
+  .care-item2 p {
+    padding-top: 5%;
+    font-size: 15px;
+    color: #757575;
+    font-weight: 750;
+    // background-color: pink;
+  }
+  .intro-section1-p4 {
+    margin-top: 3%;
+    line-height: 1.8;
+    padding-left: 4%;
+  }
+  .care-section3 {
+    margin: auto;
+    display: flex;
+    margin-top: 5%;
+    .care-section3-img {
+      display: flex;
+      align-items: flex-end;
+      width: 40%;
+      margin-left: 5%;
+      img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+    }
+    .care-section3-txt {
+      display: flex;
+      justify-content: flex-end;
+      flex-direction: column;
+      margin-left: 4%;
+      h2 {
+        margin-bottom: 7.5%;
+      }
+      p {
+        line-height: 1.4;
+      }
+    }
+  }
+  // -------빙프리란? 영역---------
+  // certificate section
+  .bingfree-certificate-section {
+    h2 {
+      line-height: 1.6;
+      margin-bottom: 3%;
+    }
+    p {
+      line-height: 1.5;
+    }
+  }
+  .small-title1 {
+    margin-top: 4%;
+    margin-bottom: 2%;
+  }
+  .small-title2 {
+    margin-top: 10%;
+    margin-bottom: 2%;
+  }
+  .certicate-section-img {
+    display: flex;
+    width: 26%;
+    margin: 5% 0 5% 0;
+    gap: 20px;
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+  }
+  // now,bingfree
+  .nowbingfree-section1 {
+    margin-top: 8%;
+    display: flex;
+    justify-content: space-between;
+  }
+  // 01.완벽한 클린케어
+  .nowbingfree-section1-img {
+    width: 50%;
+    display: flex;
+    gap: 2%;
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+    .section1-caption {
+      text-align: center;
+      font-size: 13px;
+      font-weight: 300;
+      background-color: #eeee;
+      padding: 3% 0 3% 0;
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+    }
+  }
+  // 2.손끝으로 간편 예약
+  .nowbingfree-section2 {
+    margin-top: 8%;
+    display: flex;
+  }
+  .nowbingfree-section2-img {
+    width: 60%;
+    display: flex;
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+      height: auto;
+    }
+  }
+  // 03.시간의 제약 없는 24시간 케어
+  .nowbingfree-section3 {
+    margin-top: 11%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .nowbingfree-section3-img {
+    width: 55%;
+    display: flex;
+    gap: 2%;
+  }
+  .section3-img1 {
+    width: 50%;
+    height: 230px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+      height: auto;
+    }
+  }
+  .section3-img2 {
+    width: 50%;
+    overflow: hidden;
+    height: 230px;
+    img {
+      height: 100%;
+      width: 100%; // 비율 유지할 거면
+      object-fit: cover; // 꽉 차게 하고 싶으면 추가
+    }
+  }
+  // 4.똑똑한 구독 서비스
+  .nowbingfree-section4 {
+    margin-top: 11%;
+    display: flex;
+    justify-content: flex-start;
+  }
+  .nowbingfree-section4-img {
+    width: 55%;
+    display: flex;
+    gap: 2%;
+  }
+  .section4-img1 {
+    width: 50%;
+    height: 330px;
+    overflow: hidden;
+    img {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+  }
+  .section4-img2 {
+    width: 50%;
+    height: 330px;
+    overflow: hidden;
+    img {
+      width: 100%; // 비율 유지할 거면
+      object-fit: cover; // 꽉 차게 하고 싶으면 추가
+    }
+  }
+  .nowbingfree-section4-txt {
+    margin-left: 8%;
+  }
+}
+// 스크롤 애니메이션
+.observe-me {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.observe-me.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+/* focus-p 클래스의 초기 상태 */
+.focus-p {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+/* active 클래스를 추가하면 애니메이션 효과 실행 */
+.focus-p.active {
+  opacity: 1;
+  transform: translateY(0);
+}

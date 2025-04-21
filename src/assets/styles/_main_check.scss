@@ -1,0 +1,1711 @@
+@use "./variables" as *;
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+// scss 반응형
+@mixin mobile {
+  @media (max-width: 767px) {
+    @content;
+  }
+}
+@include mobile {
+  .check {
+    overflow: hidden;
+    width: 100% !important;
+  }
+  .price_wrap {
+    max-width: 370px !important;
+    margin: auto !important;
+    overflow: hidden !important;
+  }
+
+  .text_content {
+    transform: translate(-4%, 84%);
+    margin: auto;
+    .description {
+      margin-top: 1px !important;
+      transform: translateX(-4%);
+      white-space: nowrap !important;
+      font-size: 20px !important;
+      font-weight: 400 !important;
+    }
+    .heading {
+      font-size: 36px !important;
+      font-weight: 600 !important;
+    }
+  }
+  .receipt_content.card1 {
+    transform: translateX(17%);
+    .front {
+      background: url("/check/price_mobile_ordinary.png") no-repeat center / contain !important;
+      background-size: 60% !important;
+    }
+    .back {
+      width: 100%;
+      background: url("/check/price_mobile_binfprime.png") no-repeat center / contain !important;
+      background-size: 60% !important;
+    }
+  }
+
+  .receipt_content.card2 {
+    right: -35%;
+    .front {
+      background: url("/check/price_mobile_binfprime.png") no-repeat center / contain !important;
+      background-size: 55% !important;
+    }
+    .back {
+      background: url("/check/price_mobile_binfprime.png") no-repeat center / contain !important;
+      background-size: 55% !important;
+    }
+  }
+  .icon_content {
+    span {
+      width: 22% !important;
+      &:first-child {
+        left: -20% !important;
+        top: 70px !important;
+      }
+      &:nth-child(2) {
+        right: -11% !important;
+        top: 58px !important;
+      }
+      &:nth-child(3) {
+        right: -24% !important;
+      }
+      &:nth-child(4) {
+        left: -12% !important;
+      }
+      &:nth-child(5) {
+        right: -19% !important;
+        top: 351px !important;
+      }
+      &:nth-child(6) {
+        width: 30% !important;
+        left: 30px !important;
+        top: 317px !important;
+      }
+      &:nth-child(7) {
+        right: 5% !important;
+        width: 33% !important;
+      }
+      &:nth-child(8) {
+        width: 35% !important;
+        right: -11% !important;
+      }
+      &:last-child {
+        width: 36% !important;
+        left: 17% !important;
+        top: 249px !important;
+      }
+    }
+  }
+  .price_content {
+    transform: translateY(-40%) !important;
+    span {
+      &:first-child {
+        font-size: 30px !important;
+        white-space: nowrap !important;
+      }
+      &:last-child {
+        font-size: 70px !important;
+        font-weight: 700;
+        color: #e9ff54;
+      }
+    }
+  }
+}
+
+//개인 반응형 미디어 쿼러
+@mixin submobile {
+  @media (min-width: 360px) and (max-width: 600px) {
+    @content;
+  }
+}
+@include submobile {
+  .check {
+    height: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+  .price_wrap {
+    max-width: 370px !important;
+    margin: auto !important;
+    overflow: hidden !important;
+  }
+  .check-top2 {
+    display: none !important;
+  }
+
+  .text_content {
+    margin: auto;
+    transform: translate(-8%, 210%) !important;
+    .description {
+      transform: translateX(-5%);
+      white-space: nowrap !important;
+      font-size: 15px !important;
+      font-weight: 400 !important;
+    }
+    .heading {
+      font-size: 21px !important;
+      font-weight: 600 !important;
+      margin-top: 2% !important;
+    }
+  }
+  .receipt_section {
+    transform: translateX(-1%);
+  }
+
+  .receipt_content.card1 {
+    transform: translateX(20%);
+    .front {
+      background: url("/check/price_mobile_ordinary.png") no-repeat center / contain !important;
+      background-size: 47% !important;
+    }
+    .back {
+      width: 100%;
+      background: url("/check/price_mobile_binfprime.png") no-repeat center / contain !important;
+      background-size: 47% !important;
+    }
+  }
+
+  .receipt_content.card2 {
+    right: -24%;
+    .front {
+      background: url("/check/price_mobile_binfprime.png") no-repeat center / contain !important;
+      background-size: 43% !important;
+    }
+    .back {
+      background: url("/check/price_mobile_binfprime.png") no-repeat center / contain !important;
+      background-size: 43% !important;
+    }
+  }
+  .icon_content {
+    span {
+      width: 13% !important;
+      &:first-child {
+        left: -1% !important;
+        top: 129px !important;
+      }
+      &:nth-child(2) {
+        right: 10% !important;
+        top: 138px !important;
+      }
+      &:nth-child(3) {
+        right: 7% !important;
+        top: 287px !important;
+      }
+      &:nth-child(4) {
+        left: -1% !important;
+        top: 300px !important;
+      }
+      &:nth-child(5) {
+        right: 13% !important;
+        top: 330px !important;
+      }
+      &:nth-child(6) {
+        width: 21% !important;
+        left: 60px !important;
+        top: 291px !important;
+      }
+      &:nth-child(7) {
+        top: 291px !important;
+        right: 18% !important;
+        width: 21% !important;
+      }
+      &:nth-child(8) {
+        top: 241px !important;
+        width: 27% !important;
+        right: 6% !important;
+      }
+      &:last-child {
+        width: 24% !important;
+        left: 27% !important;
+        top: 249px !important;
+      }
+    }
+  }
+  .price_content {
+    transform: translate(-16%, -86%) !important;
+
+    span {
+      &:first-child {
+        font-size: 30px !important;
+        white-space: nowrap !important;
+      }
+      &:last-child {
+        font-size: 70px !important;
+        font-weight: 700;
+        color: #e9ff54;
+      }
+    }
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 768px) and (max-width: 1023px) {
+    @content;
+  }
+}
+
+@include tablet {
+  .check{
+    height: auto !important;
+  }
+  inner {
+    max-width: 700px !important;
+  }
+  .pric_wrap {
+    left: 10% !important;
+  }
+  .text_content {
+    transform: translateY(20%) !important;
+    .description {
+      padding-left: 0 !important;
+      font-size: 22px !important;
+      font-weight: 400 !important;
+      transform: translateX(2%) !important;
+    }
+    .heading {
+      font-weight: 600 !important;
+    }
+  }
+  .receipt_content.card1 {
+    transform: translateX(10%);
+    .front {
+      background: url("/check/price_tablet_ordinary.png") no-repeat center / contain !important;
+      background-size: 80% !important;
+    }
+    .back {
+      width: 100%;
+      background: url("/check/price_tablet_binfprime.png") no-repeat center / contain !important;
+      background-size: 80% !important;
+    }
+  }
+
+  .receipt_content.card2 {
+    right: -42%;
+    .front {
+      background: url("/check/price_tablet_binfprime.png") no-repeat center / contain !important;
+      background-size: 70% !important;
+    }
+    .back {
+      background: url("/check/price_tablet_binfprime.png") no-repeat center / contain !important;
+      background-size: 70% !important;
+    }
+  }
+  .icon_content {
+    span {
+      width: 22% !important;
+      &:first-child {
+        left: -33% !important;
+        top: 20px !important;
+      }
+      &:nth-child(2) {
+        right: -22% !important;
+        top: 58px !important;
+      }
+      &:nth-child(3) {
+        right: -37%;
+      }
+      &:nth-child(4) {
+        left: -29%;
+      }
+      &:nth-child(5) {
+        right: -19%;
+      }
+      &:nth-child(6) {
+        width: 30% !important;
+        left: 30px !important;
+      }
+      &:nth-child(7) {
+        right: -11% !important;
+        width: 45% !important;
+      }
+      &:nth-child(8) {
+        width: 38% !important;
+        right: -24% !important;
+      }
+      &:last-child {
+        width: 36% !important;
+        left: 11% !important;
+      }
+    }
+  }
+  .price_content {
+    align-items: center;
+    span {
+      &:first-child {
+        font-size: 38px !important;
+      }
+      &:last-child {
+        font-size: 70px !important;
+        font-weight: 700 !important;
+        color: #e9ff54;
+      }
+    }
+  }
+}
+
+.numbering_box {
+  position: relative;
+  top: 315px;
+  padding: 12px;
+  margin: 0 auto;
+  width: 600px;
+  transform: translateY(-20%);
+  border-radius: 12px;
+  background-color: #fff;
+
+  // 숫자박스
+  .number_ul {
+    width: 100%;
+    display: flex;
+
+    flex-direction: row;
+
+    li {
+      position: relative;
+      width: 50%;
+      padding: 20px 10px 40px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      border-radius: 10px;
+
+      .lt {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px 10px 40px 20px;
+        border-radius: 10px;
+        background-color: #539ef2;
+
+        width: 100%;
+        height: 228px;
+
+        em {
+          color: #fff;
+          font-size: 28px;
+          display: block;
+          text-align: left;
+          font-style: normal;
+        }
+      }
+    }
+    .lt_second_Sec {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      .numbering {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-top: 20px;
+
+        .n_wrap {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+
+          span {
+            width: 100%;
+            font-size: 50px;
+            font-weight: bold;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            display: block;
+          }
+
+          .n_list_sub {
+            position: relative;
+            display: inline-block;
+            color: #fff;
+            position: relative;
+            align-self: center;
+            white-space: nowrap;
+
+            width: 45px;
+            height: 78px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 1s ease-in forwards;
+            // 회 애니메이션 제거
+          }
+
+          i {
+            transform: translate(12px, -2px) !important;
+            color: #fff;
+            display: block;
+
+            font-size: 46px;
+            font-style: normal;
+          }
+        }
+      }
+      .ar_wrap {
+        width: 32px;
+        margin-top: 20px;
+        img {
+          max-width: 100%;
+          border: 0;
+          vertical-align: top;
+          font-size: 0;
+          line-height: 0;
+        }
+      }
+    }
+
+    .fixp {
+      font-size: 30px;
+      color: #fff;
+    }
+  }
+  .rt {
+    background-color: rgb(35, 99, 247);
+    position: relative;
+    width: 100%;
+    height: 228px;
+    padding: 20px 10px 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border-radius: 10px;
+    em {
+      color: #fff;
+      font-size: 28px;
+      display: block;
+      text-align: left;
+      font-style: normal;
+    }
+    .b_txt {
+      color: #fff;
+      font-size: 46px;
+      margin-top: 20px;
+
+      b {
+        font-size: 50px;
+        color: #f5ff86;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+    }
+
+    .numbering {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      width: 100%;
+      margin-top: 0;
+      .n_wrap {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        margin-left: 8px;
+        margin-top: 5%;
+
+        animation-delay: 0.5s;
+
+        .n_list_sub {
+          display: inline-block;
+          color: #fff;
+          position: relative;
+          overflow: hidden;
+          width: 90px;
+          height: 40px;
+          opacity: 0;
+          align-self: center;
+          transform: translateY(20px);
+          animation: fadeInUp 1s ease-in forwards;
+
+          font-size: 40px;
+          font-weight: 500;
+          color: #f5ff85;
+          span {
+            font-size: 31px;
+            font-weight: 400;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            display: block;
+          }
+        }
+        i {
+          font-size: 40px;
+
+          transform: translateX(-35px) !important;
+          color: #fff;
+          display: block;
+
+          font-style: normal;
+        }
+      }
+    }
+  }
+  // tabelt 상세 반응형
+  .banner_section {
+    margin-top: 120px;
+    width: 100%;
+    height: 400px;
+    img {
+      display: block;
+      width: 100%;
+    }
+  }
+  .check-top2 {
+    display: none;
+  }
+  .introbing_tab {
+    // background-color: antiquewhite;
+    margin-top: 121px !important;
+  }
+  // 반응형에서만 보이는 버튼
+  .reserve-btn {
+    transform: translate(263%, -227%);
+    display: block;
+    background-color: #e9ff54;
+    border-style: none;
+    width: 229px;
+    height: 49px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 21px;
+    font-family: "Pretendard", sans-serif;
+    color: #1456fd;
+    cursor: pointer;
+    transition: transform 0.2s ease-out, background-color 0.2s;
+  }
+  // 일반요금제 제목
+  .ordinary_h1 {
+    font-size: 31px;
+  }
+  //슬라이더안 요소
+  .or_price_title {
+    margin-top: 8%;
+    font-size: 21px;
+  }
+  .or_price_weight {
+    text-align: right;
+    margin-right: 5%;
+    font-size: 16px;
+  }
+  .ordinary span:last-child {
+    margin-left: 13%;
+    text-align: left;
+  }
+
+  .ordinary {
+    margin-top: 5%;
+    font-size: 14px;
+    // word-break: break-all;
+    overflow-wrap: break-word;
+  }
+}
+
+.check {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 1) 32%,
+    rgba(153, 153, 153, 0.8) 98%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  background-attachment: fixed;
+  position: relative;
+  overflow: hidden; // 빈 공간 제거 핵심
+  z-index: -1;
+}
+
+.price_wrap {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto !important;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.text_content {
+  align-items: center;
+  .heading {
+    width: 100%;
+    // margin-left: 1rem;
+    text-transform: uppercase;
+    line-height: 1;
+    // padding-bottom: 0.3em;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    color: #212121;
+    text-align: center;
+
+    &:after {
+      display: block;
+      content: "";
+      position: absolute;
+      width: 60px;
+      height: 4px;
+      // background: linear-gradient(135deg, adjust-hue(blue, -20deg), blue);
+      bottom: 0;
+    }
+  }
+  .description {
+    margin-top: 6rem;
+    padding-left: 1.5rem;
+    @include text-style(24px, 500);
+  }
+}
+.receipt_section {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.receipt_content {
+  width: 380px;
+  height: 500px;
+  position: relative;
+  perspective: 1000px;
+
+  &.flip,
+  &:hover {
+    .front {
+      transform: rotateY(-180deg);
+    }
+    .back {
+      transform: rotateY(0deg);
+    }
+  }
+}
+
+// 바인딩 카드1
+
+.card1 {
+  pointer-events: none; // 혹시 hover 이벤트 막고 싶으면 사용
+  .front,
+  .back {
+    transform: none !important;
+    position: absolute;
+    left: -45%;
+    top: 0;
+  }
+}
+.card2 {
+  position: absolute;
+  top: 0;
+  right: -50%;
+  transform: rotateY(-8deg); // 또는 rotateX(5deg), rotateZ(2deg) 등 시도해봐
+  transition: transform 0.5s ease;
+  width: 440px;
+}
+.card2 .front,
+.card2 .back {
+  transition: transform 0.8s ease;
+  backface-visibility: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+}
+
+.front,
+.back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 16px;
+  transition: transform 0.8s ease;
+  background-size: cover;
+  background-position: center;
+}
+
+.front {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+.receipt_content:hover .front {
+  transform: rotateY(-180deg);
+}
+
+.receipt_content:hover .back {
+  transform: rotateY(0deg);
+}
+//카드 위 3d 아이콘
+.icon_content {
+  width: 100%;
+  position: absolute;
+  top: 0; /* 원하는 위치로 조정 */
+  left: 0; /* 필요한 경우 조정 */
+  width: 100%; /* receipt_section만큼 채우고 싶을 경우 */
+  z-index: 10; /* receipt_section보다 위로 올라가게 */
+  pointer-events: none; /* 클릭 방지 (선택 사항) */
+  opacity: 0; // 초기에 안 보이게
+  transform: translateY(-50px); // 위에서 준비된 위치
+
+  &.show {
+    animation: drop-down 0.8s ease forwards;
+  }
+
+  span {
+    position: absolute;
+    width: 30%;
+    float: left;
+    // display: inline-block;
+    img {
+      width: 100%;
+    }
+  }
+}
+// 각 아이콘 별 위치 이동
+.icon1 {
+  // left: -235px;
+  // top: -70px;
+  left: -60%;
+  top: -35%;
+}
+.icon2 {
+  width: 50% !important;
+  right: -55%;
+  top: 0;
+}
+.icon3 {
+  right: -64%;
+  top: 200px;
+}
+.icon4 {
+  left: -60%;
+  top: 360px;
+}
+.icon5 {
+  right: -57%;
+  top: 400px;
+}
+.icon6 {
+  width: 150px !important;
+  left: 0;
+  top: 332px;
+}
+.icon7 {
+  width: 200px !important;
+  right: -25%;
+  top: 328px;
+}
+.icon8 {
+  width: 150px !important;
+  right: -37%;
+  top: 260px;
+}
+.icon9 {
+  width: 150px !important;
+  left: 11%;
+  top: 263px;
+}
+
+// 아이콘 콘텐츠 동적효과
+// 1. 애니메이션 정의
+@keyframes drop-down {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+///전체 섹션
+.wrap {
+  font-family: "Pretendard", sans-serif;
+}
+// 가격 강조 contents
+.price_content {
+  width: 40%;
+  margin: auto;
+  margin-bottom: 15px;
+  position: relative;
+
+  span {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    &:first-child {
+      @include text-style(50px, 700);
+      color: #212121;
+      // margin-top: 5%;
+    }
+    &:last-child {
+      font-size: 100px;
+      font-weight: 700;
+      color: $bingfree-point;
+    }
+  }
+}
+
+// check 상세 페이지
+.banner_section {
+  width: 100%;
+  margin-top: 80px;
+  position: relative;
+  max-height: 350px;
+
+  img {
+    display: block;
+    width: 100%;
+  }
+
+  // router-link가 button을 감쌀 때
+  a {
+    display: block;
+    width: 250px;
+    height: 65px;
+    color: $bingfree-main;
+    @include text-style(24px, 700);
+    font-family: "Pretendard", sans-serif;
+    background-color: $bingfree-point;
+    border-style: none;
+    border-radius: 14px;
+    margin-top: 60px;
+    cursor: pointer;
+    transition: transform 0.2s ease-out, background-color 0.2s;
+    position: absolute;
+    bottom: 27%;
+    left: 13%;
+    text-align: center;
+    // 버튼 내부 텍스트 스타일링
+    button {
+      all: unset; // 버튼 고유 스타일 제거
+      display: block;
+      width: 100%;
+      height: 100%;
+      font-family: "Pretendard";
+      cursor: pointer;
+    }
+  }
+}
+// 반응형 버튼
+.reserve-btn {
+  display: none;
+}
+//상세 배너 아래 이벤트 배너
+.check-top2 {
+  width: 100%;
+  height: 160px;
+  background-color: #1456fd;
+  display: flex;
+  gap: 9%;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.check-top2-bt button {
+  background-color: #e9ff54;
+  border-style: none;
+  width: 200px;
+  height: 65px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 24px;
+  font-family: "Pretendard", sans-serif;
+  color: #1456fd;
+  cursor: pointer;
+  transition: transform 0.2s ease-out, background-color 0.2s;
+}
+// 탭
+
+.introbing_tab {
+  width: 40%;
+  line-height: 200px;
+  margin: auto;
+  list-style: none;
+  display: flex;
+  flex: 1;
+  justify-content: space-evenly;
+  position: relative;
+  // background-color: pink;
+
+  li {
+    cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    color: #9e9e9e; // 기본 색상
+
+    &.active {
+      color: #212121; // 클릭했을 때 색상
+    }
+  }
+
+  .divider {
+    cursor: default;
+    color: #9e9e9e;
+  }
+}
+//일반 구독제 설명 -- 공통통
+.ordinary_text_content {
+  display: flex;
+  justify-content: space-around;
+
+  .text_box {
+    text-align: left;
+    max-width: 700px;
+    p {
+      color: $sub-black;
+      &:first-child {
+        @include text-style(30px, 600);
+      }
+      &:not(:first-child) {
+        @include text-style(18px, 400);
+      }
+      &:nth-child(2) {
+        margin-top: 25px;
+      }
+      &:nth-child(3) {
+        margin-top: 8px;
+      }
+      &:nth-child(4) {
+        font-size: 20px;
+        font-weight: 700;
+        margin-top: 15px;
+        color: $bingfree-main;
+        span {
+          display: inline-block;
+          margin-top: 8px;
+          color: $sub-black;
+          text-decoration: underline;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+// 오른쪽 요금안내 박스
+.ordinary_right {
+  margin-top: 60px;
+  margin-left: 33%;
+}
+.ordinary_left {
+  margin-top: 60px;
+  margin-right: 17%;
+  margin-bottom: 120px;
+}
+
+// 왼쪽 욕금 안내 박스
+
+// 일반 구독제 카드
+.ordinary_h1 {
+  @include text-style(36px, 600);
+  text-align: center;
+  margin-top: 6%;
+  span {
+    color: $bingfree-main;
+    font-weight: 800;
+  }
+}
+.ordinary_swiper {
+  width: 80%;
+  .ordinary_content {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    .ordinary_list {
+      width: 500px;
+      height: 100%;
+      border: 3px solid #bdbdbd;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      margin-top: 40px;
+
+      //카드 호버시
+      &:hover {
+        border: 3px solid $bingfree-main;
+      }
+
+      p {
+        color: $sub-black;
+        margin-left: 7%;
+        margin-bottom: 2%;
+      }
+      .or_price_title {
+        margin-top: 5%;
+        @include text-style(24px, 700);
+      }
+      .or_price_weight {
+        text-align: right;
+        margin-right: 8%;
+        @include text-style(18px, 400);
+
+        span:first-child {
+          color: #212121;
+          font-weight: 600;
+        }
+      }
+      .ordinary {
+        margin-top: 5%;
+        @include text-style(16px, 400);
+        position: relative;
+        span {
+          text-align: center;
+          line-height: 25px;
+          &:last-child {
+            margin-left: 7%;
+          }
+
+          img {
+            position: absolute;
+          }
+        }
+      }
+      .ordinary_entire_price {
+        text-align: right;
+        margin-right: 8%;
+        margin-top: 5%;
+        @include text-style(24px, 700);
+        span {
+          color: $bingfree-main;
+        }
+      }
+
+      //버튼
+      .buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        button {
+          display: inline-block;
+          width: 110px;
+          height: 40px;
+          @include text-style(16px, 600);
+          border-radius: 8px;
+          border: 1px solid #4e4e4e;
+          margin-top: 10px;
+          margin-bottom: 25px;
+          &:first-child {
+            color: $sub-black;
+            background-color: #fff;
+          }
+          &:last-child {
+            border: 2px solid $bingfree-main;
+            &:hover {
+              border: none;
+              background-color: $bingfree-main;
+              color: #fff;
+              @include text-style(16px, 800);
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+/// swiper 일반 요금제
+///
+.ordinary_swiper {
+  position: relative;
+  padding: 10x 0;
+
+  .swiper-button-prev,
+  .swiper-button-next {
+    color: #4e4e4e;
+    top: 50%;
+    transform: translateY(50%);
+  }
+
+  .swiper-button-prev {
+    left: 0;
+    color: $bingfree-main;
+  }
+
+  .swiper-button-next {
+    right: 0;
+    color: $bingfree-main;
+  }
+
+  @media (max-width: 768px) {
+    .swiper-button-prev,
+    .swiper-button-next {
+      display: none;
+    }
+  }
+}
+:root {
+  --swiper-navigation-size: 35px !important;
+}
+
+// top3 요금제 영역
+.top3_p {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.2 !important;
+  white-space: pre-line;
+  text-align: center;
+  margin-top: 15%;
+  span {
+    color: $bingfree-main;
+    font-weight: 800;
+  }
+  .top3_card_content {
+    width: 100%;
+  }
+}
+.top3_card_content {
+  display: flex;
+  gap: 72px;
+
+  .top3_card_list {
+    width: calc((100% - 144px) / 3);
+    border: 3px solid #bdbdbd;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 40px;
+    //카드 호버시
+    &:hover {
+      border: 3px solid $bingfree-main;
+    }
+
+    p {
+      color: $sub-black;
+      margin-left: 16px;
+      margin-bottom: 8px;
+    }
+    // 요금제 제목
+    .price_title {
+      @include text-style(26px, 700);
+      margin-top: 20px;
+    }
+
+    //요금제 상세
+    .price_weight {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 8px;
+      margin-left: -7%;
+      @include text-style(18px, 400);
+      color: #757575;
+    }
+    .description {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-top: 30px;
+      p {
+        color: #4e4e4e;
+        line-height: 25px;
+        display: flex; // flex로 변환하여 내부 요소 중앙 정렬
+        align-items: center; // 세로 중앙 정렬을 위한 핵심
+        gap: 6px; // 아이콘과 텍스트 사이 간격
+
+        img,
+        span {
+          display: inline-block;
+          line-height: 1; // line-height 상속에 영향 받지 않도록 리셋
+        }
+        img {
+          margin-right: 5px;
+        }
+      }
+    }
+    //총가격
+    .entire_price {
+      text-align: right;
+      margin-right: 40px;
+      margin-top: 10px;
+
+      .before-price {
+        @include text-style(16px, 400);
+        text-decoration: line-through;
+        color: #4e4e4e;
+        margin-right: 5px;
+      }
+      .total-price {
+        margin-left: 5px;
+        @include text-style(22px, 600);
+        color: $bingfree-main;
+      }
+    }
+    //버튼
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      button {
+        display: inline-block;
+        width: 110px;
+        height: 40px;
+        @include text-style(16px, 600);
+        border-radius: 8px;
+        border: 1px solid #4e4e4e;
+        margin-top: 10px;
+        margin-bottom: 25px;
+        &:first-child {
+          color: $sub-black;
+          background-color: #fff;
+        }
+        &:last-child {
+          border: 2px solid $bingfree-main;
+          &:hover {
+            border: none;
+            background-color: $bingfree-main;
+            color: #fff;
+            @include text-style(16px, 800);
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+}
+
+//구독 요금제 섹션
+.bingfrime_wrap_section {
+  width: 100%;
+  margin-bottom: 120px;
+  // 이너
+  .inner {
+    width: 100%;
+    //
+    p {
+      @include text-style(38px, 600);
+
+      display: flex;
+      justify-content: center;
+      margin-top: 15%;
+      span:first-child {
+        font-weight: 800;
+        color: $bingfree-main;
+      }
+      span:last-child {
+        font-weight: 800;
+        color: $bingfree-main;
+      }
+    }
+    //카테고리 탭
+    .pricelist_tap {
+      width: 100%;
+      margin-top: 8%;
+
+      .tab_list {
+        display: flex;
+        justify-content: space-evenly;
+        border-bottom: 2px solid #ddd;
+        padding: 0;
+
+        .tab_item {
+          list-style: none;
+
+          .btn_tab {
+            display: inline-block;
+            padding: 16px 0;
+            font-size: 20px;
+            font-weight: 500;
+            color: #999;
+            text-decoration: none;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s;
+
+            &:hover {
+              color: $bingfree-main;
+            }
+          }
+
+          &.on {
+            .btn_tab {
+              color: $bingfree-main;
+              border-bottom: 4px solid $bingfree-main;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+    //요금제 설명 전체 카드 섹션
+    .price_list {
+      margin-top: 3%;
+      align-content: flex-start;
+      display: flex;
+      gap: 25px;
+      //각각 카테고리 설명 카드
+      .price_list_left {
+        //왼쪽 레이아웃 정리
+        transform: translateY(3%);
+        display: flex;
+        flex-direction: column;
+        flex: 2;
+        //카테고리 버튼
+        .selected_plan_title {
+          // margin-top: 7%;
+          // margin-bottom: 7%;
+
+          width: 100%;
+          height: 68px;
+          background-color: #fff;
+          border: 3px solid $bingfree-sub;
+          border-radius: 10px;
+          font-size: 24px;
+          font-weight: 400;
+
+          color: #212121;
+          .selctedTab_bt {
+            font-weight: 600;
+
+            color: $bingfree-main;
+          }
+        }
+
+        .individual_list {
+          display: flex;
+          flex-direction: column;
+          gap: 30px; // 카드 간의 간격
+
+          // 각각 카테고리 섹션
+          .individual_card {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            @include text-style(24px, 700);
+            padding: 20px; // 내부 여백만 유지
+            border-bottom: 1px solid #d0d0d0;
+            &:first-child {
+              margin-top: 30px;
+            }
+
+            &.last-card {
+              border-bottom: none;
+            }
+          }
+
+          // 회차
+          .card_in_times {
+            text-align: left;
+            flex: 1;
+            font-weight: bold;
+            color: $sub-black;
+          }
+
+          .perprice_bt {
+            flex: 0.5;
+            width: 85px;
+            height: 42px;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: transparent;
+            border: 2px solid $bingfree-main;
+          }
+
+          // 가격 전체
+          .card_in_price {
+            text-align: left;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .card_in_perprice {
+              font-weight: bold;
+              color: $bingfree-main;
+            }
+
+            .card_in_total {
+              font-size: 18px;
+              font-weight: 600;
+              display: inline-block;
+              position: relative;
+              color: #888888;
+
+              &:after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: 0.1em;
+                width: 100%;
+                height: 1px;
+                background-color: #888888;
+              }
+            }
+          }
+
+          // 버튼 랩
+          .buttons {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+
+            button {
+              display: inline-block;
+              width: 110px;
+              height: 40px;
+              @include text-style(16px, 600);
+              border-radius: 8px;
+              border: 1px solid #4e4e4e;
+              // 구독하기
+
+              &:first-child {
+                color: $sub-black;
+                background-color: #fff;
+
+                &:hover {
+                  border: none;
+                  background-color: $bingfree-main;
+                  color: #fff;
+                  @include text-style(16px, 800);
+                  cursor: pointer;
+                }
+              }
+
+              &:last-child {
+                border: 2px solid $bingfree-main;
+
+                &:hover {
+                  border: none;
+                  background-color: $bingfree-main;
+                  color: #fff;
+                  @include text-style(16px, 800);
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+        }
+      }
+      // 구독회원 텍스트 박스
+
+      //  2년 연장 구독 혜택 카드
+      .plus_sale_list {
+        border: 0.5px solid #ccc;
+        border-radius: 20px;
+        transform: translateY(3%);
+        flex: 1.5;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        //혜택 제목
+        h1 {
+          // margin-top: 66px;
+
+          margin-top: 6%;
+          font-size: 24px;
+          font-weight: 500;
+          color: $sub-black;
+          text-align: center;
+        }
+        // 혜택 전 ( 택 관련 박스)
+        .first_box_section {
+          transform: translateY(7%);
+        }
+        .first_box_before {
+          margin-top: 5%;
+          width: 445px;
+          height: 100px;
+          background-color: #f5f5f5;
+          border-radius: 10px;
+          padding: 0 19px;
+          display: flex;
+          justify-content: space-around;
+          p {
+            font-size: 20px;
+            margin-top: 7%;
+            font-weight: 500;
+            text-align: center;
+            color: $sub-black;
+
+            span {
+              color: #9e9e9e;
+              @include text-style(16px, 800);
+            }
+          }
+        }
+        // 혜택 전 ( 여금제 관련박스)
+        .second_box {
+          margin-top: 5%;
+          width: 445px;
+          height: 150px;
+          background-color: #f5f5f5;
+
+          border-radius: 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center; // <== 핵심!
+          align-items: center;
+          gap: 12px;
+
+          p {
+            width: 70%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; // <== 텍스트 수직 정렬
+            font-size: 17px;
+            font-weight: 400;
+            margin-top: 2% !important;
+
+            span {
+              display: inline-block;
+              color: #9e9e9e;
+              font-weight: 500;
+
+              &:first-child {
+                font-weight: bold;
+                text-align: left;
+              }
+              &:last-child {
+                text-align: right;
+              }
+            }
+          }
+        }
+
+        //혜택 배너
+        .years2_banner {
+          font-size: 17px;
+          color: $sub-black;
+          font-weight: 500;
+          margin-top: 6%;
+          padding: 2%;
+          width: 93%;
+          line-height: 19px;
+          background: #fff;
+          border-radius: 8px;
+        }
+        //혜택 전 버튼
+
+        .years2_bt {
+          display: flex;
+          height: 55px;
+          background: $bingfree-sub;
+          border: none;
+          border-radius: 10px;
+          color: #fff;
+          font-size: 24px;
+          line-height: 22px;
+          font-weight: 400;
+          justify-content: center;
+          align-items: center;
+          width: 445px;
+          margin: 4% 0;
+        }
+        //혜택 후
+        .first_box_after {
+          background-color: #f5f5f5;
+          width: 100%;
+          margin: auto;
+          margin-top: 5%;
+          border-radius: 10px;
+          padding: 0 19px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+
+          p {
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 400;
+            color: #212121;
+            margin: 4% 0;
+
+            span {
+              display: inline-block;
+              color: #212121;
+              &:nth-child(2) {
+                white-space: nowrap;
+                margin-left: 3%;
+              }
+              img {
+                width: 100%;
+              }
+              strong {
+                color: $bingfree-main;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+.calculation_banner {
+  width: 100%;
+  img {
+    width: 100%;
+  }
+}
+// 숫자 표현 섹션
+.Top_number_section {
+  background-image: url("/check/event_banner_back.png");
+
+  height: 628px;
+  // 텍스트 박스
+  .Top_number_text_content {
+    transform: translateY(50%);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    text-align: center;
+
+    .num_first {
+      @include text-style(30px, 600);
+      color: #212121;
+    }
+    .num_second {
+      @include text-style(38px, 600);
+      color: #223e91;
+    }
+    .num_third {
+      @include text-style(50px, 700);
+      color: #4186eb;
+    }
+  }
+
+  .numbering_box {
+    position: relative;
+    top: 180px;
+    width: 546px;
+    background-color: #fff;
+    padding: 12px;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+}
+
+// 공통 애니메이션 정의
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
