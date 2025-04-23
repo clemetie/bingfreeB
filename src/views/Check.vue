@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, nextTick, onBeforeUnmount } from "vue";
 import { onUnmounted } from "vue";
 import Topbar from "@/components/Topbar.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -19,7 +20,6 @@ function selectTopTab(tab) {
 // 오른쪽 사이드 고탑기능
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
-  console.log("✅ 현재 섹션:", currentSection.value);
 };
 // ㅅ와이퍼 버튼
 const currentSection = ref("visual");
@@ -60,7 +60,14 @@ const descriptions = ref([
 ]);
 // 요금제 섹션
 
-const tabs = ["스탠다드", "스탠다드+", "디럭스", "프리미엄", "호시자키", "호시자키+"];
+const tabs = [
+  "스탠다드",
+  "스탠다드+",
+  "디럭스",
+  "프리미엄",
+  "호시자키",
+  "호시자키+",
+];
 const selectedTab = ref("스탠다드");
 const showBenefits = ref(false);
 //TOP3 요금제 더미
@@ -145,8 +152,17 @@ const selectTab = (tab) => {
   showBenefits.value = false; // 탭 바꿀 때 혜택 UI 초기화
 };
 
-const toggleBenefits = () => {
-  showBenefits.value = !showBenefits.value;
+// const toggleBenefits = () => {
+//   showBenefits.value = !showBenefits.value;
+// };
+const toggleBenefits = (plan) => {
+  selectedPlan.value = plan;
+  showBenefits.value = true;
+  // 혜택하기 볼때 자연스럽게 스크롤 이동할수있게 해주는 script
+  nextTick(() => {
+    const benefitSection = document.querySelector(".plus_sale_list");
+    benefitSection?.scrollIntoView({ behavior: "smooth" });
+  });
 };
 //애니메이션
 const endValues = [6, 8, 12];
@@ -180,7 +196,9 @@ const imgSrc = ref("//check/check_banner_top.png");
 const updateImageSrc = () => {
   if (window.matchMedia("(min-width: 390px) and (max-width: 767px)").matches) {
     imgSrc.value = "/check/check_banner_mobile.png";
-  } else if (window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches) {
+  } else if (
+    window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches
+  ) {
     imgSrc.value = "/check/check_banner_tablet.dc.png";
   } else {
     imgSrc.value = "/check/check_banner_top.png";
@@ -195,29 +213,64 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("resize", updateImageSrc);
 });
+
+// 회차 보기
+const selectedPlan = ref(null);
+const handleBottomButtonClick = () => {
+  if (showBenefits.value) {
+    // 예약 페이지 이동
+    router.push("/reservation");
+  } else {
+    // 선택 요금제가 없다면 무시
+    if (!selectedPlan.value) return;
+    showBenefits.value = true;
+    nextTick(() => {
+      const section = document.querySelector(".plus_sale_list");
+      section?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+};
+
+// 모바일 미디어쿼리 변경시 swiper 자동 재생
+const isAutoplayActive = ref(false);
+
+const checkMediaQuery = () => {
+  // 390px ~ 767px 구간에만 true
+  const mq = window.matchMedia("(min-width: 390px) and (max-width: 767px)");
+  isAutoplayActive.value = mq.matches;
+  swiperKey.value++; // Swiper 강제 리렌더링
+};
+
+onMounted(() => {
+  checkMediaQuery();
+  window.addEventListener("resize", checkMediaQuery);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("resize", checkMediaQuery);
+});
+// 스와이퍼가 반응이 안돼서 강제 렌더링 해야함
+const swiperKey = ref(0);
 </script>
 <template>
   <div class="wrap">
     <!-- header -->
-    <Topbar />
-    <header />
+    <!-- <Topbar />
+    <header /> -->
     <!-- 오른쪽 사이드 (예약, 챗봇 등) -->
     <div class="side">
       <div>
-        <router-link
-          to="/reservation"
-          class="sideBtn reservBtn main-icon-drop"
-          :class="{ compact: currentSection !== 'visual' }">
+        <router-link to="/reservation" class="sideBtn reservBtn main-icon-drop compact">
           <img src="/images/calendar_blue.png" alt="캘린더" />
           <span class="text">예약하기</span>
         </router-link>
       </div>
-      <div class="sideBtn main-icon-drop" :class="{ compact: currentSection !== 'visual' }">
-        <img src="/images/chabot.png" alt="챗봇이미지" :class="{ compact: currentSection !== 'visual' }" />
+      <div class="sideBtn main-icon-drop compact">
+        <img src="/images/chabot.png" alt="챗봇이미지" />
         <span class="text">챗봇&nbsp;&nbsp;</span>
       </div>
 
-      <div class="goTop main-icon-drop" @click="scrollToTop">↑</div>
+      <div class="goTop main-icon-drop compact" @click="scrollToTop">↑</div>
     </div>
 
     <!-- 요금제 상세 배너 -->
@@ -236,7 +289,10 @@ onUnmounted(() => {
     </div>
     <!-- 배너아래 바로가기 -->
     <div class="check-top2">
-      <p class="check-top2-txt" style="font-size: 30px; color: #fff; font-weight: 600">
+      <p
+        class="check-top2-txt"
+        style="font-size: 30px; color: #fff; font-weight: 600"
+      >
         청소 요금 한눈에! 빙프리와 함께 바로 예약해보세요!
       </p>
       <div class="check-top2-bt">
@@ -247,9 +303,19 @@ onUnmounted(() => {
     <!-- 구독 탭 나누기 -->
     <nav>
       <ul class="introbing_tab">
-        <li @click="selectTopTab('ordinary')" :class="{ active: intropiceTab === 'ordinary' }">일반요금제</li>
+        <li
+          @click="selectTopTab('ordinary')"
+          :class="{ active: intropiceTab === 'ordinary' }"
+        >
+          일반요금제
+        </li>
         <li class="divider">|</li>
-        <li @click="selectTopTab('bingprime')" :class="{ active: intropiceTab === 'bingprime' }">구독요금제</li>
+        <li
+          @click="selectTopTab('bingprime')"
+          :class="{ active: intropiceTab === 'bingprime' }"
+        >
+          구독요금제
+        </li>
       </ul>
     </nav>
     <div class="Tap1_ordinary" v-if="intropiceTab === 'ordinary'">
@@ -257,13 +323,18 @@ onUnmounted(() => {
 
       <!-- 스와이퍼 -->
       <div class="inner">
-        <h1 class="ordinary_h1">KG따라 선택하는 <span>빙프리&nbsp;</span>최적의 기본요금제</h1>
+        <h1 class="ordinary_h1">
+          KG따라 선택하는 <span>빙프리&nbsp;</span>최적의 기본요금제
+        </h1>
 
         <Swiper
-          :modules="[Navigation, Pagination]"
+          v-if="swiperKey"
+          :key="swiperKey"
+          :modules="[Navigation, Pagination, Autoplay]"
           navigation
           class="ordinary_swiper"
           :slides-per-view="1"
+          :autoplay="isAutoplayActive ? { delay: 3000, disableOnInteraction: false } : false"
           :space-between="16"
           :breakpoints="{
             768: {
@@ -274,8 +345,13 @@ onUnmounted(() => {
               slidesPerView: 2,
               spaceBetween: 32,
             },
-          }">
-          <SwiperSlide v-for="(ordinary, index) in ordinarys" :key="index" class="ordinary_content">
+          }"
+        >
+          <SwiperSlide
+            v-for="(ordinary, index) in ordinarys"
+            :key="index"
+            class="ordinary_content"
+          >
             <div class="ordinary_list">
               <p class="or_price_title">{{ ordinary.title }}</p>
               <p class="or_price_weight">
@@ -284,12 +360,21 @@ onUnmounted(() => {
               </p>
               <div class="ordinary">
                 <p>
-                  <span><img src="/public/check/price_description_tag.png" alt="" /></span>
-                  <span>추가금 없이, 청소 서비스가 모두 포함된 요금입니다.</span>
+                  <span
+                    ><img src="/public/check/price_description_tag.png" alt=""
+                  /></span>
+                  <span
+                    >추가금 없이, 청소 서비스가 모두 포함된 요금입니다.</span
+                  >
                 </p>
                 <p>
-                  <span><img src="/public/check/price_description_tag.png" alt="" /></span>
-                  <span>요청 시 제빙기 관련 제품/서비스 추가 제공이 가능합니다.</span>
+                  <span
+                    ><img src="/public/check/price_description_tag.png" alt=""
+                  /></span>
+                  <span
+                    >요청 시 제빙기 관련 제품/서비스 추가 제공이
+                    가능합니다.</span
+                  >
                 </p>
               </div>
               <p class="ordinary_entire_price">
@@ -306,11 +391,18 @@ onUnmounted(() => {
         </Swiper>
       </div>
       <!-- 일반 요금제 설명 -->
-      <div class="ordinary_text_content ordinary_right" data-aos="fade-left" data-aos-duration="1500">
+      <div
+        class="ordinary_text_content ordinary_right"
+        data-aos="fade-left"
+        data-aos-duration="1500"
+      >
         <div class="text_box">
           <p>요금안내</p>
           <p>운영환경에 딱 맞게! 빙프리 일반요금제로 시작하세요</p>
-          <p>매장규모와 제빙기 용량에 따라, 최적의 요금제를 직접 선택할 수 있습니다</p>
+          <p>
+            매장규모와 제빙기 용량에 따라, 최적의 요금제를 직접 선택할 수
+            있습니다
+          </p>
           <p>
             자사몰 인기상품 추가 구매가능 + 제빙기 점검서비스까지 선택 가능!<br />
             <span>요금안내참조</span>
@@ -318,20 +410,27 @@ onUnmounted(() => {
         </div>
       </div>
       <!--  호시 자키에 대한 설명 -->
-      <div class="ordinary_text_content ordinary_left" data-aos="fade-right" data-aos-duration="1500">
+      <div
+        class="ordinary_text_content ordinary_left"
+        data-aos="fade-right"
+        data-aos-duration="1500"
+      >
         <div class="text_box">
           <p>호시자키 모델도 문제없이!</p>
           <p>
             분해 난이도가 높은 호시자키 제빙기,<br />
-            <strong>빙프리에서는 추가요금 없이</strong> 일반 요금제로 이용할 수 있습니다.
+            <strong>빙프리에서는 추가요금 없이</strong> 일반 요금제로 이용할 수
+            있습니다.
           </p>
           <p>
             복잡한 구조 때문에 타사에서는 추가 비용이 발생하는 경우가 많지만,<br />
-            빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소 서비스를 제공합니다.
+            빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소
+            서비스를 제공합니다.
           </p>
           <p>
             1회 청소만으로도 만족하셨다면,<br />
-            <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong>로 편하게 이어가 보세요.
+            <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong>로
+            편하게 이어가 보세요.
             <span>구독요금 안내참조</span>
           </p>
         </div>
@@ -352,37 +451,51 @@ onUnmounted(() => {
         <!-- 숫자 박스 -->
         <div class="numbering_box">
           <ul class="number_ul">
-            <li v-for="(pair, index) in numberPairs" :key="index" v-show="currentIndex === index">
+            <li
+              v-for="(pair, index) in numberPairs"
+              :key="index"
+              v-show="currentIndex === index"
+            >
               <div class="lt">
                 <em>구독권</em>
                 <div class="lt_second_Sec">
                   <div class="numbering">
                     <div class="n_wrap">
                       <transition-group name="numbering" tag="div">
-                        <span class="n_list_sub" :key="pair[0]" :class="{ animate: animate }">{{
-                          pair[0] + "회"
-                        }}</span>
+                        <span
+                          class="n_list_sub"
+                          :key="pair[0]"
+                          :class="{ animate: animate }"
+                          >{{ pair[0] + "회" }}</span
+                        >
                       </transition-group>
                     </div>
                   </div>
                   <div class="ar_wrap">
                     <img
                       src="https://mall.cowaystatic.com/static/front/resources/web/images/event/package/2503/numbering_arrow.png"
-                      class="load_img" />
+                      class="load_img"
+                    />
                   </div>
                 </div>
 
                 <p class="fixp">구독시</p>
               </div>
             </li>
-            <li v-for="(pair, index) in numberPairs" :key="index" v-show="currentIndex === index">
+            <li
+              v-for="(pair, index) in numberPairs"
+              :key="index"
+              v-show="currentIndex === index"
+            >
               <div class="rt">
                 <em>혜택</em>
-                <div class="b_txt"><b>최대20</b>%</div>
+                <div class="b_txt"><b>최대20%</b></div>
                 <div class="numbering">
                   <div class="n_wrap">
                     <transition-group name="numbering" tag="div">
-                      <span class="n_list_sub" :class="{ animate: animate }">{{ pair[1] + `%` }}</span>
+                      <span class="n_list_sub" :class="{ animate: animate }">{{
+                        pair[1] + `%`
+                      }}</span>
                     </transition-group>
                   </div>
                 </div>
@@ -397,7 +510,11 @@ onUnmounted(() => {
       <div class="inner">
         <p class="top3_p">빙프라임+ 구독요금제&nbsp; <span>TOP3</span></p>
         <div class="top3_card_content">
-          <div class="top3_card_list" v-for="(description, index) in descriptions" :key="index">
+          <div
+            class="top3_card_list"
+            v-for="(description, index) in descriptions"
+            :key="index"
+          >
             <!-- 요금제 제목 -->
             <p class="price_title">{{ description.title }}</p>
 
@@ -419,26 +536,38 @@ onUnmounted(() => {
               </p>
               <!-- 서비스 내용 -->
               <p>
-                <span><img src="/public/check/price_description_tag.png" alt="" /></span
+                <span
+                  ><img
+                    src="/public/check/price_description_tag.png"
+                    alt="" /></span
                 ><span>무료진단 서비스 1회 , 자사몰 클리너 증정</span>
               </p>
               <!-- 맞춤 질문 -->
               <p>
-                <span><img src="/public/check/price_description_tag.png" alt="" /></span
+                <span
+                  ><img
+                    src="/public/check/price_description_tag.png"
+                    alt="" /></span
                 ><span>{{ description.detail.label }}</span>
               </p>
             </div>
 
             <!-- 가격 내용 -->
             <p class="entire_price">
-              <span class="before-price">회당&nbsp;{{ description.detail.beforeprice }}원</span>
-              <span class="total-price">{{ description.detail.totalprice }}원</span>
+              <span class="before-price"
+                >회당&nbsp;{{ description.detail.beforeprice }}원</span
+              >
+              <span class="total-price"
+                >{{ description.detail.totalprice }}원</span
+              >
             </p>
 
             <!-- 버튼 -->
             <div class="buttons">
               <button>상세보기</button>
-              <router-link to="/reservation"><button>가입하기</button></router-link>
+              <router-link to="/reservation"
+                ><button>가입하기</button></router-link
+              >
             </div>
           </div>
         </div>
@@ -452,11 +581,15 @@ onUnmounted(() => {
           class="ordinary_text_content ordinary_right"
           data-aos="fade-left"
           data-aos-duration="1500"
-          style="margin-left: 41%">
+          style="margin-left: 41%"
+        >
           <div class="text_box">
             <p>요금안내</p>
             <p>깨끗한 얼음, 완벽한 시작! 빙프리와 함께하세요!</p>
-            <p>프랜차이즈 카페·식당 사장님을 위한 스마트한 선택, 제빙기 구독 관리 서비스!</p>
+            <p>
+              프랜차이즈 카페·식당 사장님을 위한 스마트한 선택, 제빙기 구독 관리
+              서비스!
+            </p>
             <p>
               구독 시 제빙기 검사 무료 + 전용 세제 무상 제공 + 세균 시트지까지!
               <br />
@@ -471,20 +604,25 @@ onUnmounted(() => {
           class="ordinary_text_content ordinary_left"
           style="margin-right: 32%"
           data-aos="fade-right"
-          data-aos-duration="1500">
+          data-aos-duration="1500"
+        >
           <div class="text_box">
             <p>호시자키 모델도 문제없이!</p>
             <p>
               분해 난이도가 높은 호시자키 제빙기,<br />
-              <strong>빙프리에서는 추가요금 없이</strong> 구독 요금제로 이용할 수 있습니다.
+              <strong>빙프리에서는 추가요금 없이</strong> 구독 요금제로 이용할
+              수 있습니다.
             </p>
             <p>
-              복잡한 구조 때문에 타사에서는 추가 비용이 발생하는 경우가 많지만,<br />
-              빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소 서비스를 제공합니다.
+              복잡한 구조 때문에 타사에서는 추가 비용이 발생하는 경우가
+              많지만,<br />
+              빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소
+              서비스를 제공합니다.
             </p>
             <p>
               1회 청소만으로도 만족하셨다면,<br />
-              <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong>로 편하게 이어가 보세요.
+              <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong
+              >로 편하게 이어가 보세요.
               <span>구독요금 안내참조</span>
             </p>
           </div>
@@ -492,10 +630,18 @@ onUnmounted(() => {
         <!-- 빙프리 프라임 구독 요금제 -->
         <div class="bingfrime_wrap_section">
           <div class="inner">
-            <p>필요한 만큼 선택하는<span>&nbsp#빙프라임+ 맞춤케어</span><span>&nbsp;구독</span>&nbsp;요금제</p>
+            <p class="bing_h1">
+              필요한 만큼 선택하는<span>&nbsp#빙프라임+ 맞춤케어</span
+              ><span>&nbsp;구독&nbsp;요금제</span>
+            </p>
             <div class="pricelist_tap">
               <ul class="tab_list">
-                <li v-for="tab in tabs" :key="index" class="tab_item" :class="{ on: selectedTab === tab }">
+                <li
+                  v-for="(tab, index) in tabs"
+                  :key="index"
+                  class="tab_item"
+                  :class="{ on: selectedTab === tab }"
+                >
                   <a href="#" class="btn_tab" @click.prevent="selectTab(tab)">
                     {{ tab }}
                   </a>
@@ -518,7 +664,8 @@ onUnmounted(() => {
                     :key="idx"
                     :class="{
                       'last-card': idx === pricePlans[selectedTab].length - 1,
-                    }">
+                    }"
+                  >
                     <div class="card_in_times">
                       회차: <span>{{ plan.times }}회</span>
                     </div>
@@ -534,7 +681,7 @@ onUnmounted(() => {
 
                     <div class="buttons">
                       <button>구독하기</button>
-                      <button @click="toggleBenefits">혜택보기</button>
+                      <button @click="toggleBenefits(plan)">혜택보기</button>
                     </div>
                   </div>
                 </div>
@@ -542,13 +689,16 @@ onUnmounted(() => {
 
               <!-- 혜택 정보 섹션 그대로 유지 -->
               <div class="plus_sale_list">
-                <h1>2년 연장회원 특별할인 혜택 계산하기</h1>
+                <h1 class="twoyear_h1">2년 연장회원 특별할인 혜택 계산하기</h1>
 
                 <!-- 혜택 전 -->
                 <div class="first_box_section" v-if="!showBenefits">
                   <div class="first_box_before">
                     <p>
-                      <span>혜택하기를 누르고<br />자세한 정보를 확인해보세요.</span>
+                      <span
+                        >혜택하기를 누르고<br />자세한 정보를
+                        확인해보세요.</span
+                      >
                     </p>
                   </div>
                   <div class="second_box">
@@ -564,36 +714,72 @@ onUnmounted(() => {
                 </div>
 
                 <!-- 혜택 후 -->
+                <!-- 혜택 후 -->
                 <div v-else>
                   <div class="first_box_after">
                     <p>
-                      <span><img class="check_icon" src="/public/check/price_check_icon.png" alt="checkicon" /></span>
-                      <span>3년 구독 혜택으로<strong>&nbsp;5% 추가</strong>할인까지!</span>
+                      <span
+                        ><img
+                          class="check_icon"
+                          src="/public/check/price_check_icon.png"
+                          alt="checkicon"
+                      /></span>
+                      <span
+                        >3년 구독 혜택으로<strong>&nbsp;5% 추가</strong
+                        >할인까지!</span
+                      >
                     </p>
                     <p>
-                      <span><img class="check_icon" src="/public/check/price_check_icon.png" alt="checkicon" /></span>
-                      <span>1년 4회의 청소, <strong>3년까지</strong>사용할 수 있는<br />특별 구독 혜택 </span>
+                      <span
+                        ><img
+                          class="check_icon"
+                          src="/public/check/price_check_icon.png"
+                          alt="checkicon"
+                      /></span>
+                      <span
+                        >1년 4회의 청소, <strong>3년까지</strong>사용할 수
+                        있는<br />특별 구독 혜택
+                      </span>
                     </p>
                     <p>
-                      <span><img class="check_icon" src="/public/check/price_check_icon.png" alt="checkicon" /></span>
-                      <span>동절기엔 청소를 미뤄도 괜찮아요,<br /><strong>AI 알림</strong>&nbsp;으로 언제든 체크!</span>
+                      <span
+                        ><img
+                          class="check_icon"
+                          src="/public/check/price_check_icon.png"
+                          alt="checkicon"
+                      /></span>
+                      <span
+                        >동절기엔 청소를 미뤄도 괜찮아요,<br /><strong
+                          >AI 알림</strong
+                        >&nbsp;으로 언제든 체크!</span
+                      >
                     </p>
                   </div>
 
-                  <div class="second_box" v-if="pricePlans[selectedTab].length">
+                  <div class="second_box" v-if="selectedPlan">
                     <p>
-                      <span>기본 {{ pricePlans[selectedTab][0].times }}회권</span>
-                      <span>회당 {{ pricePlans[selectedTab][0].pricePerUse.toLocaleString() }}원</span>
+                      <span>기본 {{ selectedPlan.times }}회권</span>
+                      <span
+                        >회당
+                        {{ selectedPlan.pricePerUse.toLocaleString() }}원</span
+                      >
                     </p>
                     <p>
-                      <span>2년 연장 혜택 {{ pricePlans[selectedTab][1].times }}회권</span>
-                      <span>회당 {{ pricePlans[selectedTab][1].pricePerUse.toLocaleString() }}원</span>
+                      <span>2년 연장 혜택 {{ selectedPlan.times }}회권</span>
+                      <span
+                        >회당
+                        {{
+                          (selectedPlan.pricePerUse * 0.9).toLocaleString()
+                        }}원</span
+                      >
                     </p>
                   </div>
                 </div>
 
-                <p class="years2_banner">2년 연장 구독하고 최대 25% 혜택을 누려보세요.</p>
-                <button class="years2_bt">
+                <p class="years2_banner">
+                  2년 연장 구독하고 최대 25% 혜택을 누려보세요.
+                </p>
+                <button class="years2_bt" @click="handleBottomButtonClick">
                   {{ showBenefits ? "구독하기" : "혜택보기" }}
                 </button>
               </div>
@@ -610,32 +796,19 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 /* 반응형 여기에 하겠습니다 */
 
-/* 테블릿 */
-@mixin tablet {
-  @media (min-width: 768px) and (max-width: 1023px) {
-    @content;
-  }
-}
-
-/* 모바일 */
-@mixin mobile {
-  @media (min-width: 390px) and (max-width: 767px) {
-    @content;
-  }
-}
-
 /* 테블릿용 스타일 */
-@include tablet {
+@media (min-width: 768px) and (max-width: 1023px) {
   .banner_section {
-    margin-top: 120px;
-    width: 100%;
-    height: 400px;
+    margin-top: 120px !important;
+    width: 100% !important;
+    height: 400px !important;
+
     img {
-      display: block;
-      width: 100%;
+      display: block !important;
+      width: 100% !important;
     }
   }
 
@@ -648,26 +821,27 @@ onUnmounted(() => {
   }
 
   .reserve-btn {
-    position: absolute;
-    right: 42px;
-    bottom: 47px;
-    display: block;
-    background-color: #e9ff54;
-    border-style: none;
-    width: 179px;
-    height: 42px;
-    border-radius: 14px;
-    font-weight: 700;
-    font-size: 21px;
-    font-family: "Pretendard", sans-serif;
-    color: #1456fd;
-    cursor: pointer;
-    transition: transform 0.2s ease-out, background-color 0.2s;
+    position: absolute !important;
+    left: 125px !important;
+    bottom: 92px !important;
+    display: block !important;
+    background-color: #e9ff54 !important;
+    border-style: none !important;
+    width: 179px !important;
+    height: 42px !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    font-size: 21px !important;
+    font-family: "Pretendard", sans-serif !important;
+    color: #1456fd !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease-out, background-color 0.2s !important;
   }
 
   .ordinary_h1 {
-    font-size: 31px;
+    font-size: 31px !important;
   }
+
   .ordinary_list {
     p {
       margin-left: 5% !important;
@@ -680,31 +854,32 @@ onUnmounted(() => {
   }
 
   .or_price_weight {
-    text-align: right;
-    margin-right: 5%;
+    text-align: right !important;
+    margin-right: 5% !important;
     font-size: 15px !important;
   }
 
   .ordinary span:last-child {
-    font-size: 14px;
-    display: inline-block;
+    font-size: 14px !important;
+    display: inline-block !important;
     margin-left: 13% !important;
     text-align: left !important;
   }
 
   .ordinary {
-    margin-top: 5%;
-    font-size: 14px;
-    overflow-wrap: break-word;
+    margin-top: 5% !important;
+    font-size: 14px !important;
+    overflow-wrap: break-word !important;
   }
 
   .total-price {
-    margin-top: 8%;
+    margin-top: 8% !important;
     font-size: 24px !important;
   }
 
   .text_box {
     max-width: 500px !important;
+
     p {
       &:first-child {
         font-size: 26px !important;
@@ -717,32 +892,175 @@ onUnmounted(() => {
       }
     }
   }
-}
-// @mixin submobile {
-//   @media (min-width: 360px) and (max-width: 600px) {
-//     @content;
-//   }
-// }
 
-// ////////////////////모바일
+  .Top_number_section {
+    .Top_number_text_content {
+      transform: translateY(60%);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+
+      .num_first {
+        font-size: 21px;
+      }
+
+      .num_second,
+      .num_third {
+        font-size: 26px;
+      }
+    }
+
+    .numbering_box {
+      max-width: 480px;
+
+      .number_ul {
+        .lt {
+          gap: 20px;
+
+          em {
+            font-size: 22px;
+          }
+
+          .lt_second_Sec {
+            .numbering {
+              .n_wrap {
+                .n_list_sub {
+                  font-size: 38px;
+                  height: 50px;
+                }
+              }
+            }
+          }
+
+          .fixp {
+            font-size: 22px;
+            margin-top: 20px;
+          }
+        }
+
+        .rt {
+          gap: 20px;
+
+          em {
+            font-size: 22px;
+          }
+
+          .b_txt {
+            b {
+              font-size: 38px;
+            }
+          }
+
+          .numbering {
+            margin-top: -38px;
+            .n_wrap {
+              margin-top: 19%;
+
+              .n_list_sub {
+                font-size: 38px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .top3_p {
+    font-size: 31px;
+  }
+
+  .top3_card_content {
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+
+    .top3_card_list {
+      width: 500px;
+
+      p {
+        margin-left: 40px;
+      }
+
+      .price_title {
+        font-size: 25px;
+        margin-top: 38px;
+      }
+
+      .price_weight {
+        font-size: 19px;
+        margin-top: 5px;
+        margin-left: 32%;
+      }
+
+      .description {
+        font-size: 17px;
+        gap: 8px;
+        margin-top: 15px;
+
+        p {
+          gap: 10px;
+        }
+      }
+
+      .entire_price {
+        .before-price {
+          font-size: 19px;
+        }
+
+        .total-price {
+          font-size: 21px;
+        }
+      }
+    }
+  }
+
+  .buttons {
+    margin-top: 10px;
+  }
+
+  .bingfrime_wrap_section .inner p {
+    font-size: 16px;
+  }
+
+  .bing_h1 {
+    font-size: 31px !important;
+  }
+
+  .price_list {
+    flex-direction: column;
+    gap: 50px;
+  }
+
+  .first_box_after {
+    p {
+      span {
+        &:nth-child(2) {
+          margin-left: 5%;
+        }
+      }
+    }
+  }
+}
+
 /* 모바일용 스타일 */
-@include mobile {
+@media (min-width: 390px) and (max-width: 767px) {
   .reserve-btn {
-    position: absolute;
-    right: 21px;
-    bottom: 128px;
-    display: block;
-    background-color: #e9ff54;
-    border-style: none;
-    width: 150px;
-    height: 36px;
-    border-radius: 14px;
-    font-weight: 700;
-    font-size: 19px;
-    font-family: "Pretendard", sans-serif;
-    color: #1456fd;
-    cursor: pointer;
-    transition: transform 0.2s ease-out, background-color 0.2s;
+    position: absolute !important;
+    left: 50px !important;
+    top: 128px !important;
+    display: block !important;
+    background-color: #e9ff54 !important;
+    border-style: none !important;
+    width: 140px !important;
+    height: 33px !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    font-size: 18px !important;
+    font-family: "Pretendard", sans-serif !important;
+    color: #1456fd !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease-out, background-color 0.2s !important;
   }
 
   .check-top2 {
@@ -750,50 +1068,58 @@ onUnmounted(() => {
   }
 
   .banner_section {
-    margin-top: 80px;
-    width: 100%;
+    margin-top: 80px !important;
+    width: 100% !important;
     height: 360px !important;
     background-color: antiquewhite !important;
+
     img {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: fit;
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
     }
   }
+
   .introbing_tab li {
-    font-size: 17px !important;
+    font-size: 16px !important;
   }
+
   .ordinary_h1 {
     font-size: 20px !important;
   }
+
   .ordinary_list {
     width: 550px !important;
+
     p {
       margin-left: 5% !important;
     }
   }
+
   .or_price_title {
     margin-top: 8% !important;
     font-size: 20px !important;
   }
+
   .or_price_weight {
     margin-right: 9% !important;
     font-size: 15px !important;
   }
+
   .ordinary {
-    span {
-      &:last-child {
-        font-size: 14px !important;
-        display: inline-block !important;
-        margin-left: 12% !important;
-        text-align: left !important;
-      }
+    span:last-child {
+      font-size: 14px !important;
+      display: inline-block !important;
+      margin-left: 12% !important;
+      text-align: left !important;
     }
   }
+
   .ordinary_entire_price {
     font-size: 20px !important;
   }
+
   .text_box {
     max-width: 250px !important;
 
@@ -809,87 +1135,247 @@ onUnmounted(() => {
       }
     }
   }
+
+  .Top_number_section {
+    max-height: 700px;
+    height: 675px;
+
+    .Top_number_text_content {
+      transform: translateY(40%);
+
+      .num_first {
+        font-size: 16px;
+      }
+
+      .num_second {
+        font-size: 21px;
+      }
+      .num_third {
+        font-size: 21px;
+      }
+    }
+
+    .numbering_box {
+      max-width: 300px;
+      top: 150px;
+
+      .number_ul {
+        max-width: 270px;
+        flex-direction: column;
+        align-items: center;
+
+        li {
+          width: 100%;
+          padding: 10px 5px 20px 5px;
+        }
+      }
+    }
+  }
+
+  .number_ul {
+    .lt {
+      gap: 3px;
+      max-height: 200px;
+
+      em {
+        font-size: 19px;
+      }
+
+      .lt_second_Sec {
+        .numbering {
+          .n_wrap {
+            .n_list_sub {
+              font-size: 33px;
+              height: 30px;
+            }
+          }
+        }
+      }
+
+      .fixp {
+        font-size: 28px;
+        margin-top: 35px;
+      }
+    }
+
+    .rt {
+      max-height: 200px;
+
+      em {
+        font-size: 19px;
+      }
+
+      .b_txt {
+        b {
+          font-size: 33px;
+          margin-top: 0;
+        }
+      }
+
+      .numbering {
+        margin-top: -22px;
+
+        .n_wrap {
+          margin-top: 19%;
+
+          .n_list_sub {
+            font-size: 33px;
+          }
+        }
+      }
+    }
+  }
+  .top3_p {
+    font-size: 24px;
+  }
+  .top3_card_content {
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+    .top3_card_list {
+      width: 80%;
+      .price_title {
+        margin-top: 25px;
+        font-size: 21px;
+      }
+      .price_weight {
+        margin-left: 24%;
+        font-size: 14px;
+        margin-top: 14px;
+      }
+      .description {
+        gap: 8px;
+        margin-top: 13%;
+        p {
+          font-size: 14px;
+        }
+      }
+      .entire_price {
+        .before-price {
+          font-size: 14px;
+        }
+        .total-price {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+  .bingfrime_wrap_section {
+    .bing_h1 {
+      font-size: 23px;
+      // white-space: wrap;
+      flex-direction: column;
+      margin: auto;
+    }
+    .tab_list {
+      flex-wrap: wrap;
+      gap: 20px;
+      .btn_tab {
+        font-size: 16px !important;
+      }
+    }
+    .price_list {
+      flex-direction: column;
+      width: 100%;
+      .price_list_left {
+        .selected_plan_title {
+          font-size: 17px;
+          height: 56px;
+        }
+        .individual_list {
+          .individual_card {
+            justify-content: space-evenly;
+            .perprice_bt {
+              flex: 0.5;
+              font-size: 10px;
+              border-radius: 8px;
+            }
+            //버튼
+            .buttons {
+              flex: 1;
+              gap: 5px;
+              width: 130px;
+              height: 20px;
+              align-items: center;
+
+              button {
+                font-size: 10px;
+                &:hover {
+                  font-size: 10px;
+                }
+              }
+            }
+            .card_in_times {
+              flex: 0.5;
+              font-size: 10px;
+            }
+            .card_in_price {
+              flex: 1;
+              .card_in_perprice {
+                font-size: 10px;
+              }
+              .card_in_total {
+                font-size: 10px;
+              }
+            }
+          }
+        }
+      }
+
+      .plus_sale_list {
+        .twoyear_h1 {
+          font-size: 17px;
+        }
+        //혜택 전
+        .first_box_section {
+          .first_box_before {
+            width: 280px;
+            p {
+              margin-top: 14%;
+            }
+
+            span {
+              font-size: 14px;
+            }
+          }
+
+          .second_box {
+            width: 280px;
+            span {
+              font-size: 14px;
+            }
+          }
+        }
+        //혜택 후
+        .first_box_after {
+          width: 280px;
+          p {
+            font-size: 12px;
+            span {
+              img {
+                width: 70%;
+              }
+            }
+          }
+        }
+        .second_box {
+          width: 280px;
+          span {
+            font-size: 12px;
+          }
+        }
+
+        .years2_banner {
+          margin-top: 10%;
+          font-size: 14px;
+        }
+        .years2_bt {
+          width: 300px !important;
+          height: 48px;
+          font-size: 17px;
+        }
+      }
+    }
+  }
 }
-////////////////////////////////
-// @include submobile {
-//   .reserve-btn {
-//     position: absolute;
-//     right: 21px;
-//     bottom: 128px;
-//     display: block;
-//     background-color: #e9ff54;
-//     border-style: none;
-//     width: 150px;
-//     height: 36px;
-//     border-radius: 14px;
-//     font-weight: 700;
-//     font-size: 19px;
-//     font-family: "Pretendard", sans-serif;
-//     color: #1456fd;
-//     cursor: pointer;
-//     transition: transform 0.2s ease-out, background-color 0.2s;
-//   }
-
-//   .check-top2 {
-//     display: none !important;
-//   }
-
-//   .banner_section {
-//     margin-top: 80px;
-//     width: 100%;
-//     height: 360px !important;
-//     background-color: antiquewhite !important;
-//     img {
-//       display: block;
-//       width: 100%;
-//       height: 100%;
-//       object-fit: fit;
-//     }
-//   }
-//   .introbing_tab li {
-//     font-size: 17px !important;
-//   }
-//   .ordinary_h1 {
-//     font-size: 20px !important;
-//   }
-//   .ordinary_list {
-//     width: 550px !important;
-//     p {
-//       margin-left: 5% !important;
-//     }
-//   }
-//   .or_price_title {
-//     margin-top: 8% !important;
-//     font-size: 20px !important;
-//   }
-//   .or_price_weight {
-//     margin-right: 9% !important;
-//     font-size: 15px !important;
-//   }
-//   .ordinary {
-//     span {
-//       &:last-child {
-//         font-size: 14px !important;
-//         display: inline-block !important;
-//         margin-left: 12% !important;
-//         text-align: left !important;
-//       }
-//     }
-//   }
-//   .ordinary_entire_price {
-//     font-size: 20px !important;
-//   }
-//   .text_box {
-//     max-width: 250px !important;
-//     &:first-child {
-//       font-size: 21px !important;
-//     }
-//     &:not(:first-child) {
-//       font-size: 14px !important;
-//     }
-//     &:nth-child(4) {
-//       font-size: 16px !important;
-//     }
-//   }
-// }
 </style>

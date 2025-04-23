@@ -23,11 +23,15 @@
 // 반응형
 
 @media (min-width: 370px) and (max-width: 767px) {
+  .inner {
+    max-width: 350px;
+    // background-color: pink;
+  }
   /*브라우저 사이즈 767px이하일때*/
   .introBing {
     width: 100%;
     height: auto;
-    padding: 10% 0 10% 0 !important;
+    padding: 70px 0 10% 0 !important;
   }
   .main-h1 {
     font-size: 21px;
@@ -55,7 +59,7 @@
   .image-section img {
     height: 33vw;
     object-fit: cover;
-    background-color: pink;
+    // background-color: pink;
   }
   .swiper-button-prev,
   .swiper-button-next {
@@ -67,6 +71,10 @@
 }
 @media (min-width: 768px) and (max-width: 1023px) {
   /*브라우저 사이즈 768px이상, 1023px 이하일때*/
+  // main-----------------------------------------
+  .inner {
+    max-width: 700px;
+  }
   .introBing {
     width: 100%;
     height: auto;
@@ -87,6 +95,10 @@
     width: 90% !important;
     height: 100%;
     padding: 2% 0 4% 0;
+  }
+  // 상세---------------------
+  .intro-banner {
+    margin-top: 120px;
   }
 }
 // main-introbing
@@ -118,7 +130,7 @@
     color: #212121;
     // background-color: pink;
   }
-
+ 
   #main-introBing-txt-sub {
     margin: 5%;
     font-family: "Pretendard";
@@ -238,6 +250,7 @@
 }
 // 배너
 .intro-banner {
+  margin-top: 80px;
   width: 100%;
   position: relative;
   background-color: red;
@@ -355,15 +368,18 @@
     display: flex;
     justify-content: center;
     gap: 2%;
+    .observe-me {
+      margin-left: 2%;
+    }
   }
   .intro-section1-desc1,
   .intro-section1-desc2 {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    // align-items: center;
     margin-top: 3%;
     p {
-      margin-top: 5%;
+      margin-top: 3%;
     }
   }
 
@@ -465,16 +481,17 @@
   .care-section3 {
     margin: auto;
     display: flex;
+    justify-content: space-around;
     margin-top: 5%;
     .care-section3-img {
       display: flex;
       align-items: flex-end;
       width: 40%;
+      height: auto;
       margin-left: 5%;
       img {
         width: 100%;
         max-width: 100%;
-        height: auto;
         display: block;
       }
     }
@@ -508,7 +525,7 @@
   }
   .small-title2 {
     margin-top: 10%;
-    margin-bottom: 2%;
+    margin-bottom: -1%;
   }
   .certicate-section-img {
     display: flex;
@@ -629,8 +646,13 @@
     margin-left: 8%;
   }
 }
+.bingfree-certificate {
+  margin-top: 10%;
+}
 // 스크롤 애니메이션
 .observe-me {
+  margin-top: 2%;
+  // margin-left: 5%;
   opacity: 0;
   transform: translateY(40px);
   transition: opacity 0.8s ease, transform 0.8s ease;

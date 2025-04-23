@@ -5,14 +5,13 @@ const route = useRoute();
 const highlightPaths = ["/", "/IntroBing", "/Check", "/Reservation", "/Review"];
 </script>
 <template>
-  <div class="topbar">
+  <div class="topbar" style="color: #fff">
     <router-link
       to="/"
       :style="{
         backgroundColor: highlightPaths.includes(route.path)
           ? '#1456fd'
           : 'black',
-        color: highlightPaths.includes(route.path) ? '#fff' : '#9e9e9e',
       }"
       >빙프리 홈페이지
     </router-link>
@@ -20,7 +19,6 @@ const highlightPaths = ["/", "/IntroBing", "/Check", "/Reservation", "/Review"];
       to="/BingPrime"
       :style="{
         backgroundColor: route.path === '/BingPrime' ? '#1456fd' : 'black',
-        color: route.path === '/BingPrime' ? '#fff' : '#9e9e9e',
       }"
       >빙프라임</router-link
     >
@@ -28,7 +26,6 @@ const highlightPaths = ["/", "/IntroBing", "/Check", "/Reservation", "/Review"];
       to="/"
       :style="{
         backgroundColor: route.path === '/FreeMall' ? '#1456fd' : 'black',
-        color: route.path === '/FreeMall' ? '#fff' : '#9e9e9e',
       }"
       >프리몰</router-link
     >

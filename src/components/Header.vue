@@ -246,7 +246,7 @@ header {
   }
   // 모달 창
   .mo-menu {
-    height: calc(var(--vh, 1vh) * 100); // ✅ 동적 높이 적용
+    height: calc(var(--vh, 1vh) * 100) !important; // ✅ 동적 높이 적용
     margin-top: 120px;
     width: 100%;
 
@@ -325,22 +325,19 @@ header {
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 25px 10%;
+    height: 80px;
     z-index: 9999;
     display: flex;
     align-items: center;
     justify-content: space-between;
     background-color: transparent;
     transition: background-color 0.3s ease;
-
     &.scrolled {
       background-color: #fff; // 변경될 배경색
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); // 선택 사항: 그림자 추가
     }
-
     .inner {
       width: 100%;
-
       justify-content: space-between;
       img {
         flex: 20%;

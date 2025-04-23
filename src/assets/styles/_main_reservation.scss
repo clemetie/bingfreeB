@@ -12,6 +12,17 @@
     transform: translateY(0);
   }
 }
+@keyframes ani_loop {
+  0% {
+    transform: translateY(-5px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  100% {
+    transform: translateY(-5px);
+  }
+}
 
 @mixin tablet {
   @media (min-width: 768px) and (max-width: 1023px) {
@@ -54,13 +65,33 @@
             -webkit-text-fill-color: transparent;
             padding: max(
               0em,
-              calc(calc(1.3em - var(--framer-blockquote-line-height, var(--framer-line-height, 1.3em))) / 2)
+              calc(
+                calc(
+                    1.3em -
+                      var(
+                        --framer-blockquote-line-height,
+                        var(--framer-line-height, 1.3em)
+                      )
+                  ) / 2
+              )
             );
             margin: min(
               0em,
-              calc(calc(1.3em - var(--framer-blockquote-line-height, var(--framer-line-height, 1.3em))) / -2)
+              calc(
+                calc(
+                    1.3em -
+                      var(
+                        --framer-blockquote-line-height,
+                        var(--framer-line-height, 1.3em)
+                      )
+                  ) / -2
+              )
             );
-            background-image: linear-gradient(90deg, rgb(0, 212, 190) 17%, rgb(55, 64, 214) 100%);
+            background-image: linear-gradient(
+              90deg,
+              rgb(0, 212, 190) 17%,
+              rgb(55, 64, 214) 100%
+            );
           }
           p {
             margin: 20px 0;
@@ -116,14 +147,45 @@
   }
   .banner {
     margin-top: 120px;
+    background: url("/reservation/reservsub/reservation_banner_tab.png")
+      no-repeat;
     img {
       display: none;
     }
     .reserv_txtbox {
       width: 100%;
       position: relative !important;
-      text-align: center;
-      left: 0 !important;
+      text-align: left;
+      left: 15% !important;
+
+      a {
+        button {
+          width: 20% !important;
+        }
+      }
+    }
+  }
+  input.name,
+  input.phone {
+    background: none !important;
+    background-color: #f5f5f5 !important;
+  }
+  .infoicon {
+    display: none !important;
+  }
+  .coupon_ment {
+    position: absolute;
+    top: 58% !important;
+    right: 12% !important;
+  }
+  .retryreservationBtn {
+    width: 100% !important;
+  }
+  .reservBtn_box {
+    flex-direction: column;
+    gap: 10px;
+    .pastBtn {
+      width: 100% !important;
     }
   }
 }
@@ -136,7 +198,7 @@
     .inner.tablet {
       display: block !important;
       .tablet_top {
-        padding: 50px 0 0 0;
+        padding: 70px 0 0 0;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -157,13 +219,33 @@
             -webkit-text-fill-color: transparent;
             padding: max(
               0em,
-              calc(calc(1.3em - var(--framer-blockquote-line-height, var(--framer-line-height, 1.3em))) / 2)
+              calc(
+                calc(
+                    1.3em -
+                      var(
+                        --framer-blockquote-line-height,
+                        var(--framer-line-height, 1.3em)
+                      )
+                  ) / 2
+              )
             );
             margin: min(
               0em,
-              calc(calc(1.3em - var(--framer-blockquote-line-height, var(--framer-line-height, 1.3em))) / -2)
+              calc(
+                calc(
+                    1.3em -
+                      var(
+                        --framer-blockquote-line-height,
+                        var(--framer-line-height, 1.3em)
+                      )
+                  ) / -2
+              )
             );
-            background-image: linear-gradient(90deg, rgb(0, 212, 190) 17%, rgb(55, 64, 214) 100%);
+            background-image: linear-gradient(
+              90deg,
+              rgb(0, 212, 190) 17%,
+              rgb(55, 64, 214) 100%
+            );
           }
           p {
             margin: 20px 0;
@@ -224,18 +306,110 @@
       }
     }
   }
+  .reserv-wrap {
+    .reserv_top {
+      .reserv_tab {
+        width: 100% !important;
+        line-height: 100px !important;
+        li {
+          font-size: 16px !important;
+        }
+      }
+    }
+    .reserv {
+      form {
+        fieldset {
+          display: flex;
+          flex-direction: column;
+        }
+      }
+    }
+  }
+  input.name,
+  input.phone,
+  .radio-group {
+    width: 100% !important;
+    padding: 1.25% 3%;
+    margin: 5% auto;
+  }
   .reserv_card_wrap {
     grid-template-columns: repeat(1, 1fr) !important;
   }
   .banner {
+    width: 100%;
+    height: 200px !important;
+    background: url("/reservation/reservsub/reservation_banner_tab.png")
+      no-repeat;
+    background-size: contain;
     img {
       display: none;
     }
     .reserv_txtbox {
       width: 100%;
       position: relative !important;
-      text-align: center;
-      left: 0 !important;
+      text-align: left;
+      left: 9% !important;
+      .onlymb {
+        display: block;
+      }
+      a {
+        button {
+          width: 20% !important;
+          height: 40px !important;
+        }
+      }
+    }
+  }
+  .address {
+    width: 60% !important;
+  }
+  .coupon {
+    img {
+      width: 80% !important;
+    }
+    .infoicon {
+      display: none !important;
+    }
+    .coupon_ment {
+      position: absolute;
+      top: 57% !important;
+      right: 15% !important;
+    }
+  }
+  .date_box {
+    flex-direction: column !important;
+    .selectedDate {
+      .label {
+        flex-direction: column !important;
+      }
+    }
+  }
+  .service-options {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+  input.name,
+  input.phone,
+  input.confirmname,
+  input.confirmphone {
+    background: none !important;
+    background-color: #f5f5f5 !important;
+  }
+
+  .confirm_info {
+    width: 90% !important;
+    padding: 0 5% !important;
+  }
+  .retryreservationBtn {
+    width: 100% !important;
+    height: 50px !important;
+  }
+  .reservBtn_box {
+    flex-direction: column;
+    gap: 10px;
+    .pastBtn {
+      width: 100% !important;
+      height: 50px !important;
+      margin: auto !important;
     }
   }
 }
@@ -302,7 +476,8 @@
         border-radius: 20px;
         border: none;
         padding: 20px 0;
-        box-shadow: inset -8px -5px 10px rgba($color: #000000, $alpha: 0.25), 0 4px 24px rgba(0, 0, 0, 0.25);
+        box-shadow: inset -8px -5px 10px rgba($color: #000000, $alpha: 0.25),
+          0 4px 24px rgba(0, 0, 0, 0.25);
         @include text-style(30px, 600);
         color: $bingfree-main;
         text-align: center;
@@ -408,14 +583,14 @@
 }
 .reserv-wrap {
   font-family: "Pretendard", sans-serif;
+  padding-bottom: 70px;
 
   .reservBtn {
     cursor: pointer;
     width: 48%;
-    height: 65px;
+    height: 3.5rem;
     border-radius: 14px;
     border: 2px solid #1456fd;
-    font-size: 24px;
     font-weight: bold;
     color: #1456fd;
     margin: 20px auto;
@@ -456,31 +631,31 @@
     height: 360px;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(
-      90deg,
-      #89d2ff 0%,
-      /* 0% 지점: 주황빛 */ #fffac6 50%,
-      /* 50% 지점: 밝은 주황 */ #89d2ff 100% /* 100% 지점: 파란빛 */
-    );
-    img {
-      width: 60%;
+    .reserv_visual {
+      width: 100%;
+    }
+    .bannercoupon {
+      width: 15%;
       position: absolute;
-      top: -5%;
-      left: 20%;
+      right: 25%;
+      animation: ani_loop 2.5s ease infinite;
     }
     .reserv_txtbox {
       position: absolute;
-      top: 18%;
+      top: 10%;
       left: 23%;
+
+      .onlymb {
+        display: none;
+      }
       p {
-        margin: 10px 0;
+        margin: 3% 0;
       }
       a {
         button {
-          width: 50%;
+          width: 170px;
           height: 65px;
           color: $bingfree-main;
-          @include text-style(24px, 700);
           font-family: "Pretendard", sans-serif;
           background-color: $bingfree-point;
           border-style: none;
@@ -504,7 +679,7 @@
     form {
       fieldset {
         width: 100%;
-        box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+        box-shadow: 1px 3px 10px rgba(0, 0, 0, 0.08);
         border-radius: 10px;
         background-color: #fff;
         padding: 2.5%;
@@ -522,15 +697,14 @@
         transform: translateY(10px);
       }
       input {
-        background-color: #f5f5f5;
-        border: 1px solid #eee;
-        border-radius: 5px;
+        // background-color: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
         margin: 1% 0;
-        font-size: 20px;
+        font-size: 16px;
         &::placeholder {
-          font-size: 20px;
-          font-weight: bold;
-          transform: translateY(3px);
+          transform: translateY(1px);
+          color: #999;
         }
       }
 
@@ -538,18 +712,46 @@
         input.name,
         input.phone {
           width: 30%;
-          padding: 1.25% 3%;
+          padding: 1.25% 4%;
           margin-right: 2%;
         }
+        input.name {
+          background-image: url("/reservation/reservsub/user-alt.png");
+          background-repeat: no-repeat;
+          background-position: 18px 16px; /* 왼쪽 정렬 */
+          background-size: 18px 18px;
+        }
+        input.phone {
+          background-image: url("/reservation/reservsub/phone-alt.png");
+          background-repeat: no-repeat;
+          background-position: 18px 16px; /* 왼쪽 정렬 */
+          background-size: 18px 18px;
+        }
         .address_box {
+          width: 100%;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          margin: 1% 0;
+          font-size: 20px;
           display: flex;
           align-items: center;
+          justify-content: space-between;
+          color: #757575;
           gap: 1%;
           .address {
-            width: 95%;
-            padding: 1.25% 3%;
+            width: 80%;
+            padding: 0.35% 4%;
+            background: none;
+            border: none;
+          }
+          input.address {
+            background-image: url("/reservation/reservsub/home.png");
+            background-repeat: no-repeat;
+            background-position: 18px 3px; /* 왼쪽 정렬 */
+            background-size: 20px 20px;
           }
           button {
+            padding-right: 3%;
             border: none;
             background: none;
             cursor: pointer;
@@ -561,9 +763,14 @@
         }
         #detailAddress {
           width: 100%;
-          padding: 1.25% 3%;
+          padding: 1.25% 4%;
         }
-
+        input#detailAddress {
+          background-image: url("/reservation/reservsub/home.png");
+          background-repeat: no-repeat;
+          background-position: 18px 14px; /* 왼쪽 정렬 */
+          background-size: 20px 20px;
+        }
         .radio-group {
           width: 30%;
           display: inline-flex;
@@ -616,8 +823,8 @@
         .reserv_card {
           width: 100%;
           height: 200px;
-          background-color: #f5f5f5;
-          border-radius: 5px;
+          background-color: #e0e0e0;
+          border-radius: 10px;
           padding: 17px;
           .card_title {
             font-weight: bold;
@@ -639,18 +846,15 @@
             .card_count {
               display: flex;
               width: 120px;
-              height: 40px;
-              border-radius: 30px;
+              height: 30px;
               background-color: #fff;
               align-items: center;
               justify-content: space-between;
-              padding: 5px 6px;
               button {
                 width: 30px;
                 line-height: 30px;
-                border-radius: 50%;
                 border: none;
-                background-color: #d9d9d9;
+                background-color: #e0e0e0;
                 font-size: 24px;
                 font-weight: bold;
                 text-align: center;
@@ -690,8 +894,14 @@
           width: 100%;
           height: 46px;
           border-radius: 5px;
-          border: 1px solid #eee;
-          padding: 0 20px;
+          border: 1px solid #e0e0e0;
+          padding: 0 20%;
+        }
+        input.date {
+          background-image: url("/reservation/reservsub/calender-plus.png");
+          background-repeat: no-repeat;
+          background-position: 18px 13px; /* 왼쪽 정렬 */
+          background-size: 18px 18px;
         }
         .date_box {
           display: flex;
@@ -825,9 +1035,8 @@
           margin: 10px 0;
         }
         .service-options {
-          display: flex;
-          flex: 1;
-          justify-content: space-around;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr); /* 기본: 4개 한 줄 */
           gap: 2%;
           padding: 20px 2%;
           label {
@@ -948,9 +1157,8 @@
       margin: 30px auto;
       border: none;
       input {
-        background-color: #f5f5f5;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
         margin: 10px 10px;
         font-size: 20px;
         &::placeholder {
@@ -961,15 +1169,28 @@
         &.confirmname,
         &.confirmphone {
           width: 100%;
-          padding: 3% 5%;
-          border: 1px solid #eee;
+          padding: 3% 10%;
+          border: 1px solid #e0e0e0;
         }
+      }
+      input.confirmname {
+        background-image: url("/reservation/reservsub/user-alt.png");
+        background-repeat: no-repeat;
+        background-position: 18px 19px; /* 왼쪽 정렬 */
+        background-size: 18px 18px;
+      }
+      input.confirmphone {
+        background-image: url("/reservation/reservsub/phone-alt.png");
+        background-repeat: no-repeat;
+        background-position: 18px 19px; /* 왼쪽 정렬 */
+        background-size: 18px 18px;
       }
     }
     .coupon {
       width: 100%;
       text-align: center;
       position: relative;
+      margin-bottom: 70px;
       .infoicon {
         position: absolute;
         top: 114px;
@@ -1022,7 +1243,7 @@
     }
     .retryreservationBtn {
       cursor: pointer;
-      width: 1000px;
+      width: 100%;
       height: 65px;
       border-radius: 14px;
       background-color: #e0e0e0;
@@ -1030,10 +1251,10 @@
       color: #fff;
       font-size: 24px;
       font-weight: bold;
-      margin: 10px 20px;
+      margin: 10px auto;
       text-align: center;
       &:hover {
-        background-color: #bdbdbd;
+        background-color: #e0e0e0;
       }
     }
     .faq-box {
@@ -1065,7 +1286,7 @@
         width: 500px;
         height: 65px;
         border-radius: 14px;
-        background-color: #bdbdbd;
+        background-color: #e0e0e0;
         border: none;
         color: #fff;
         font-size: 24px;

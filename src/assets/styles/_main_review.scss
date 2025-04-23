@@ -426,9 +426,12 @@
       font-size: 14px;
       margin-bottom: 50px;
     }
+    .review-title-box{
+      padding-top: 100px;
+    }
     .review-box-total {
       .review-box {
-        max-width: 100%;
+        max-width: 90%;
         flex: 1 1 100%;
         margin: auto;
       }
@@ -474,5 +477,16 @@
         }
       }
     }
+  }
+  // 상세페이지
+  .banner_bg{
+  margin-top: 120px;
+  .banner_left{
+    position: absolute;
+    top: 0;
+  }
+  }
+  .review_txt_wrap .txt_box{
+    display: none;
   }
 }
