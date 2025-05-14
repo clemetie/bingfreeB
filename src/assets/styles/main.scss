@@ -133,6 +133,9 @@ a {
   bottom: 2%;
   right: 3%;
   z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   div {
     margin-bottom: 30px;
     img {
@@ -213,7 +216,7 @@ a {
   transform: translateY(-50%);
   li {
     cursor: pointer;
-    font-size: 18px;
+    font-size: 20px;
     list-style: none;
     color: $bingfree-main;
     margin: 9px 0;
@@ -267,9 +270,10 @@ a {
       .slide-img {
         width: 100%;
         height: 1000px;
-        max-height: 100%;
-        border-radius: 0;
-        transform: translateZ(1.2);
+        overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
       }
     }
   }
@@ -305,20 +309,14 @@ a {
       z-index: 999999;
     }
     .slide-img {
-      width: 93%;
+      width: 100%;
       height: 1000px;
-      max-height: 100%;
-      border-radius: 555px;
-      position: absolute;
-      top: 10%;
-      left: 50%;
       overflow: hidden;
-      transform: translateX(-50%);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: width 1s ease, height 1s ease, top 1s ease, left 1s ease,
-        border-radius 0.5s ease, background 1s cubic-bezier(0.7, 0, 0.7, 1);
+      // transition: width 1s ease, height 1s ease, top 1s ease, left 1s ease,
+      //   border-radius 0.5s ease, background 1s cubic-bezier(0.7, 0, 0.7, 1);
     }
   }
   .txtbox {

@@ -109,7 +109,7 @@ onBeforeUnmount(() => {
     </div>
     <ul class="menu-list">
       <li class="first">
-        <a
+        <a 
           @click.prevent="navigateTo('/IntroBing')"
           :class="{ active: route.path === '/IntroBing' }"
         >

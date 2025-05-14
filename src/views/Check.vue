@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, nextTick, onBeforeUnmount } from "vue";
 import { onUnmounted } from "vue";
+import { useRouter } from "vue-router"; // ✅ 라우터 임포트 추가
 import Topbar from "@/components/Topbar.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
@@ -9,19 +10,20 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-// 상단 탭
-// 현재 선택된 탭 상태를 저장
-const intropiceTab = ref("ordinary"); // 초기값은 'ordinary' (일반요금제)
+const router = useRouter(); // ✅ 라우터 인스턴스 초기화
 
-// 탭 선택 함수
+// 상단 탭
+const intropiceTab = ref("ordinary");
 function selectTopTab(tab) {
   intropiceTab.value = tab;
 }
+
 // 오른쪽 사이드 고탑기능
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
-// ㅅ와이퍼 버튼
+
+// 스와이퍼 버튼
 const currentSection = ref("visual");
 const descriptions = ref([
   {
@@ -58,19 +60,11 @@ const descriptions = ref([
     },
   },
 ]);
-// 요금제 섹션
 
-const tabs = [
-  "스탠다드",
-  "스탠다드+",
-  "디럭스",
-  "프리미엄",
-  "호시자키",
-  "호시자키+",
-];
+const tabs = ["스탠다드", "스탠다드+", "디럭스", "프리미엄", "호시자키", "호시자키+"];
 const selectedTab = ref("스탠다드");
 const showBenefits = ref(false);
-//TOP3 요금제 더미
+
 const pricePlans = {
   스탠다드: [
     { times: 6, pricePerUse: 89100, total: 534600 },
@@ -103,68 +97,31 @@ const pricePlans = {
     { times: 12, pricePerUse: 336000, total: 2016000 },
   ],
 };
-//일반 요금제 더미
+
 const ordinarys = ref([
-  // 스탠다드
-  {
-    title: "스탠다드",
-    subtitle: "스탠다드",
-    weight: "50kg 미만",
-    totalprice: "99,000",
-  },
-  {
-    title: "스탠다드",
-    subtitle: "스탠다드+",
-    weight: "50~100kg",
-    totalprice: "120,000",
-  },
-  // 디럭스
-  {
-    title: "디럭스",
-    subtitle: "",
-    weight: "100~200kg",
-    totalprice: "150,000",
-  },
-  // 프리미엄
-  {
-    title: "프리미엄",
-    subtitle: "",
-    weight: "200kg 이상",
-    totalprice: "170,000",
-  },
-  // 호시자키
-  {
-    title: "호시자키",
-    subtitle: "호시자키",
-    weight: "250kg 미만",
-    totalprice: "170,000",
-  },
-  {
-    title: "호시자키",
-    subtitle: "호시자키+",
-    weight: "250kg 이상",
-    totalprice: "210,000",
-  },
+  { title: "스탠다드", subtitle: "스탠다드", weight: "50kg 미만", totalprice: "99,000" },
+  { title: "스탠다드", subtitle: "스탠다드+", weight: "50~100kg", totalprice: "120,000" },
+  { title: "디럭스", subtitle: "", weight: "100~200kg", totalprice: "150,000" },
+  { title: "프리미엄", subtitle: "", weight: "200kg 이상", totalprice: "170,000" },
+  { title: "호시자키", subtitle: "호시자키", weight: "250kg 미만", totalprice: "170,000" },
+  { title: "호시자키", subtitle: "호시자키+", weight: "250kg 이상", totalprice: "210,000" },
 ]);
-//구독 요금제 탭
+
 const selectTab = (tab) => {
   selectedTab.value = tab;
-  showBenefits.value = false; // 탭 바꿀 때 혜택 UI 초기화
+  showBenefits.value = false;
 };
 
-// const toggleBenefits = () => {
-//   showBenefits.value = !showBenefits.value;
-// };
+const selectedPlan = ref(null);
 const toggleBenefits = (plan) => {
   selectedPlan.value = plan;
   showBenefits.value = true;
-  // 혜택하기 볼때 자연스럽게 스크롤 이동할수있게 해주는 script
   nextTick(() => {
     const benefitSection = document.querySelector(".plus_sale_list");
     benefitSection?.scrollIntoView({ behavior: "smooth" });
   });
 };
-//애니메이션
+
 const endValues = [6, 8, 12];
 const benefitEndValues = [10, 15, 20];
 const numberPairs = endValues.map((n, i) => [n, benefitEndValues[i]]);
@@ -174,31 +131,24 @@ const currentIndex = ref(0);
 const animate = ref(false);
 
 onMounted(() => {
-  currentIndex.value = 0; // ✅ 인덱스 초기화
-
+  currentIndex.value = 0;
   const interval = setInterval(() => {
     animate.value = false;
     setTimeout(() => {
       animate.value = true;
-    }, 50); // 애니메이션 리셋
-
+    }, 50);
     currentIndex.value++;
-
     if (currentIndex.value >= numberPairs.length) {
-      currentIndex.value = 0; // 마지막 인덱스 넘으면 처음부터 다시
+      currentIndex.value = 0;
     }
-  }, 3000); // 3초마다 전환
+  }, 3000);
 });
 
-//배너 반응형 이밍지 변경하기
 const imgSrc = ref("//check/check_banner_top.png");
-
 const updateImageSrc = () => {
   if (window.matchMedia("(min-width: 390px) and (max-width: 767px)").matches) {
     imgSrc.value = "/check/check_banner_mobile.png";
-  } else if (
-    window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches
-  ) {
+  } else if (window.matchMedia("(min-width: 768px) and (max-width: 1023px)").matches) {
     imgSrc.value = "/check/check_banner_tablet.dc.png";
   } else {
     imgSrc.value = "/check/check_banner_top.png";
@@ -214,14 +164,10 @@ onUnmounted(() => {
   window.removeEventListener("resize", updateImageSrc);
 });
 
-// 회차 보기
-const selectedPlan = ref(null);
 const handleBottomButtonClick = () => {
   if (showBenefits.value) {
-    // 예약 페이지 이동
-    router.push("/reservation");
+    router.push("/reservation"); // ✅ 버튼 클릭 시 라우터 이동
   } else {
-    // 선택 요금제가 없다면 무시
     if (!selectedPlan.value) return;
     showBenefits.value = true;
     nextTick(() => {
@@ -231,14 +177,13 @@ const handleBottomButtonClick = () => {
   }
 };
 
-// 모바일 미디어쿼리 변경시 swiper 자동 재생
 const isAutoplayActive = ref(false);
+const swiperKey = ref(0);
 
 const checkMediaQuery = () => {
-  // 390px ~ 767px 구간에만 true
   const mq = window.matchMedia("(min-width: 390px) and (max-width: 767px)");
   isAutoplayActive.value = mq.matches;
-  swiperKey.value++; // Swiper 강제 리렌더링
+  swiperKey.value++;
 };
 
 onMounted(() => {
@@ -249,8 +194,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("resize", checkMediaQuery);
 });
-// 스와이퍼가 반응이 안돼서 강제 렌더링 해야함
-const swiperKey = ref(0);
 </script>
 <template>
   <div class="wrap">
@@ -289,10 +232,7 @@ const swiperKey = ref(0);
     </div>
     <!-- 배너아래 바로가기 -->
     <div class="check-top2">
-      <p
-        class="check-top2-txt"
-        style="font-size: 30px; color: #fff; font-weight: 600"
-      >
+      <p class="check-top2-txt" style="font-size: 30px; color: #fff; font-weight: 600">
         청소 요금 한눈에! 빙프리와 함께 바로 예약해보세요!
       </p>
       <div class="check-top2-bt">
@@ -303,19 +243,9 @@ const swiperKey = ref(0);
     <!-- 구독 탭 나누기 -->
     <nav>
       <ul class="introbing_tab">
-        <li
-          @click="selectTopTab('ordinary')"
-          :class="{ active: intropiceTab === 'ordinary' }"
-        >
-          일반요금제
-        </li>
+        <li @click="selectTopTab('ordinary')" :class="{ active: intropiceTab === 'ordinary' }">일반요금제</li>
         <li class="divider">|</li>
-        <li
-          @click="selectTopTab('bingprime')"
-          :class="{ active: intropiceTab === 'bingprime' }"
-        >
-          구독요금제
-        </li>
+        <li @click="selectTopTab('bingprime')" :class="{ active: intropiceTab === 'bingprime' }">구독요금제</li>
       </ul>
     </nav>
     <div class="Tap1_ordinary" v-if="intropiceTab === 'ordinary'">
@@ -323,9 +253,7 @@ const swiperKey = ref(0);
 
       <!-- 스와이퍼 -->
       <div class="inner">
-        <h1 class="ordinary_h1">
-          KG따라 선택하는 <span>빙프리&nbsp;</span>최적의 기본요금제
-        </h1>
+        <h1 class="ordinary_h1">KG따라 선택하는 <span>빙프리&nbsp;</span>최적의 기본요금제</h1>
 
         <Swiper
           v-if="swiperKey"
@@ -345,13 +273,8 @@ const swiperKey = ref(0);
               slidesPerView: 2,
               spaceBetween: 32,
             },
-          }"
-        >
-          <SwiperSlide
-            v-for="(ordinary, index) in ordinarys"
-            :key="index"
-            class="ordinary_content"
-          >
+          }">
+          <SwiperSlide v-for="(ordinary, index) in ordinarys" :key="index" class="ordinary_content">
             <div class="ordinary_list">
               <p class="or_price_title">{{ ordinary.title }}</p>
               <p class="or_price_weight">
@@ -360,21 +283,12 @@ const swiperKey = ref(0);
               </p>
               <div class="ordinary">
                 <p>
-                  <span
-                    ><img src="/public/check/price_description_tag.png" alt=""
-                  /></span>
-                  <span
-                    >추가금 없이, 청소 서비스가 모두 포함된 요금입니다.</span
-                  >
+                  <span><img src="/public/check/price_description_tag.png" alt="아이콘" /></span>
+                  <span>추가금 없이, 청소 서비스가 모두 포함된 요금입니다.</span>
                 </p>
                 <p>
-                  <span
-                    ><img src="/public/check/price_description_tag.png" alt=""
-                  /></span>
-                  <span
-                    >요청 시 제빙기 관련 제품/서비스 추가 제공이
-                    가능합니다.</span
-                  >
+                  <span><img src="/public/check/price_description_tag.png" alt="아이콘" /></span>
+                  <span>요청 시 제빙기 관련 제품/서비스 추가 제공이 가능합니다.</span>
                 </p>
               </div>
               <p class="ordinary_entire_price">
@@ -391,18 +305,11 @@ const swiperKey = ref(0);
         </Swiper>
       </div>
       <!-- 일반 요금제 설명 -->
-      <div
-        class="ordinary_text_content ordinary_right"
-        data-aos="fade-left"
-        data-aos-duration="1500"
-      >
+      <div class="ordinary_text_content ordinary_right" data-aos="fade-left" data-aos-duration="1500">
         <div class="text_box">
           <p>요금안내</p>
           <p>운영환경에 딱 맞게! 빙프리 일반요금제로 시작하세요</p>
-          <p>
-            매장규모와 제빙기 용량에 따라, 최적의 요금제를 직접 선택할 수
-            있습니다
-          </p>
+          <p>매장규모와 제빙기 용량에 따라, 최적의 요금제를 직접 선택할 수 있습니다</p>
           <p>
             자사몰 인기상품 추가 구매가능 + 제빙기 점검서비스까지 선택 가능!<br />
             <span>요금안내참조</span>
@@ -410,27 +317,20 @@ const swiperKey = ref(0);
         </div>
       </div>
       <!--  호시 자키에 대한 설명 -->
-      <div
-        class="ordinary_text_content ordinary_left"
-        data-aos="fade-right"
-        data-aos-duration="1500"
-      >
+      <div class="ordinary_text_content ordinary_left" data-aos="fade-right" data-aos-duration="1500">
         <div class="text_box">
           <p>호시자키 모델도 문제없이!</p>
           <p>
             분해 난이도가 높은 호시자키 제빙기,<br />
-            <strong>빙프리에서는 추가요금 없이</strong> 일반 요금제로 이용할 수
-            있습니다.
+            <strong>빙프리에서는 추가요금 없이</strong> 일반 요금제로 이용할 수 있습니다.
           </p>
           <p>
             복잡한 구조 때문에 타사에서는 추가 비용이 발생하는 경우가 많지만,<br />
-            빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소
-            서비스를 제공합니다.
+            빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소 서비스를 제공합니다.
           </p>
           <p>
             1회 청소만으로도 만족하셨다면,<br />
-            <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong>로
-            편하게 이어가 보세요.
+            <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong>로 편하게 이어가 보세요.
             <span>구독요금 안내참조</span>
           </p>
         </div>
@@ -451,51 +351,37 @@ const swiperKey = ref(0);
         <!-- 숫자 박스 -->
         <div class="numbering_box">
           <ul class="number_ul">
-            <li
-              v-for="(pair, index) in numberPairs"
-              :key="index"
-              v-show="currentIndex === index"
-            >
+            <li v-for="(pair, index) in numberPairs" :key="index" v-show="currentIndex === index">
               <div class="lt">
                 <em>구독권</em>
                 <div class="lt_second_Sec">
                   <div class="numbering">
                     <div class="n_wrap">
                       <transition-group name="numbering" tag="div">
-                        <span
-                          class="n_list_sub"
-                          :key="pair[0]"
-                          :class="{ animate: animate }"
-                          >{{ pair[0] + "회" }}</span
-                        >
+                        <span class="n_list_sub" :key="pair[0]" :class="{ animate: animate }">{{
+                          pair[0] + "회"
+                        }}</span>
                       </transition-group>
                     </div>
                   </div>
                   <div class="ar_wrap">
                     <img
                       src="https://mall.cowaystatic.com/static/front/resources/web/images/event/package/2503/numbering_arrow.png"
-                      class="load_img"
-                    />
+                      class="load_img" />
                   </div>
                 </div>
 
                 <p class="fixp">구독시</p>
               </div>
             </li>
-            <li
-              v-for="(pair, index) in numberPairs"
-              :key="index"
-              v-show="currentIndex === index"
-            >
+            <li v-for="(pair, index) in numberPairs" :key="index" v-show="currentIndex === index">
               <div class="rt">
                 <em>혜택</em>
                 <div class="b_txt"><b>최대20%</b></div>
                 <div class="numbering">
                   <div class="n_wrap">
                     <transition-group name="numbering" tag="div">
-                      <span class="n_list_sub" :class="{ animate: animate }">{{
-                        pair[1] + `%`
-                      }}</span>
+                      <span class="n_list_sub" :class="{ animate: animate }">{{ pair[1] + `%` }}</span>
                     </transition-group>
                   </div>
                 </div>
@@ -510,11 +396,7 @@ const swiperKey = ref(0);
       <div class="inner">
         <p class="top3_p">빙프라임+ 구독요금제&nbsp; <span>TOP3</span></p>
         <div class="top3_card_content">
-          <div
-            class="top3_card_list"
-            v-for="(description, index) in descriptions"
-            :key="index"
-          >
+          <div class="top3_card_list" v-for="(description, index) in descriptions" :key="index">
             <!-- 요금제 제목 -->
             <p class="price_title">{{ description.title }}</p>
 
@@ -528,7 +410,7 @@ const swiperKey = ref(0);
             <div class="description">
               <!-- 구독 횟수 -->
               <p>
-                <span><img src="/public/check/price_tag.png" alt="" /></span>
+                <span><img src="/public/check/price_tag.png" alt="태그아이콘" /></span>
                 <span>
                   <strong>{{ description.detail.times }}</strong
                   >&nbsp구독
@@ -536,38 +418,26 @@ const swiperKey = ref(0);
               </p>
               <!-- 서비스 내용 -->
               <p>
-                <span
-                  ><img
-                    src="/public/check/price_description_tag.png"
-                    alt="" /></span
+                <span><img src="/public/check/price_description_tag.png" alt="price아이콘" /></span
                 ><span>무료진단 서비스 1회 , 자사몰 클리너 증정</span>
               </p>
               <!-- 맞춤 질문 -->
               <p>
-                <span
-                  ><img
-                    src="/public/check/price_description_tag.png"
-                    alt="" /></span
+                <span><img src="/public/check/price_description_tag.png" alt="price아이콘" /></span
                 ><span>{{ description.detail.label }}</span>
               </p>
             </div>
 
             <!-- 가격 내용 -->
             <p class="entire_price">
-              <span class="before-price"
-                >회당&nbsp;{{ description.detail.beforeprice }}원</span
-              >
-              <span class="total-price"
-                >{{ description.detail.totalprice }}원</span
-              >
+              <span class="before-price">회당&nbsp;{{ description.detail.beforeprice }}원</span>
+              <span class="total-price">{{ description.detail.totalprice }}원</span>
             </p>
 
             <!-- 버튼 -->
             <div class="buttons">
               <button>상세보기</button>
-              <router-link to="/reservation"
-                ><button>가입하기</button></router-link
-              >
+              <router-link to="/reservation"><button>가입하기</button></router-link>
             </div>
           </div>
         </div>
@@ -581,15 +451,11 @@ const swiperKey = ref(0);
           class="ordinary_text_content ordinary_right"
           data-aos="fade-left"
           data-aos-duration="1500"
-          style="margin-left: 41%"
-        >
+          style="margin-left: 41%">
           <div class="text_box">
             <p>요금안내</p>
             <p>깨끗한 얼음, 완벽한 시작! 빙프리와 함께하세요!</p>
-            <p>
-              프랜차이즈 카페·식당 사장님을 위한 스마트한 선택, 제빙기 구독 관리
-              서비스!
-            </p>
+            <p>프랜차이즈 카페·식당 사장님을 위한 스마트한 선택, 제빙기 구독 관리 서비스!</p>
             <p>
               구독 시 제빙기 검사 무료 + 전용 세제 무상 제공 + 세균 시트지까지!
               <br />
@@ -604,25 +470,20 @@ const swiperKey = ref(0);
           class="ordinary_text_content ordinary_left"
           style="margin-right: 32%"
           data-aos="fade-right"
-          data-aos-duration="1500"
-        >
+          data-aos-duration="1500">
           <div class="text_box">
             <p>호시자키 모델도 문제없이!</p>
             <p>
               분해 난이도가 높은 호시자키 제빙기,<br />
-              <strong>빙프리에서는 추가요금 없이</strong> 구독 요금제로 이용할
-              수 있습니다.
+              <strong>빙프리에서는 추가요금 없이</strong> 구독 요금제로 이용할 수 있습니다.
             </p>
             <p>
-              복잡한 구조 때문에 타사에서는 추가 비용이 발생하는 경우가
-              많지만,<br />
-              빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소
-              서비스를 제공합니다.
+              복잡한 구조 때문에 타사에서는 추가 비용이 발생하는 경우가 많지만,<br />
+              빙프리는 <strong>모델 구분 없이 동일한 기준</strong>으로 청소 서비스를 제공합니다.
             </p>
             <p>
               1회 청소만으로도 만족하셨다면,<br />
-              <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong
-              >로 편하게 이어가 보세요.
+              <strong>호시자키 전용 구독 요금제 ‘호시자키’, ‘호시자키+’</strong>로 편하게 이어가 보세요.
               <span>구독요금 안내참조</span>
             </p>
           </div>
@@ -631,17 +492,11 @@ const swiperKey = ref(0);
         <div class="bingfrime_wrap_section">
           <div class="inner">
             <p class="bing_h1">
-              필요한 만큼 선택하는<span>&nbsp#빙프라임+ 맞춤케어</span
-              ><span>&nbsp;구독&nbsp;요금제</span>
+              필요한 만큼 선택하는<span>&nbsp#빙프라임+ 맞춤케어</span><span>&nbsp;구독&nbsp;요금제</span>
             </p>
             <div class="pricelist_tap">
               <ul class="tab_list">
-                <li
-                  v-for="(tab, index) in tabs"
-                  :key="index"
-                  class="tab_item"
-                  :class="{ on: selectedTab === tab }"
-                >
+                <li v-for="(tab, index) in tabs" :key="index" class="tab_item" :class="{ on: selectedTab === tab }">
                   <a href="#" class="btn_tab" @click.prevent="selectTab(tab)">
                     {{ tab }}
                   </a>
@@ -664,8 +519,7 @@ const swiperKey = ref(0);
                     :key="idx"
                     :class="{
                       'last-card': idx === pricePlans[selectedTab].length - 1,
-                    }"
-                  >
+                    }">
                     <div class="card_in_times">
                       회차: <span>{{ plan.times }}회</span>
                     </div>
@@ -695,10 +549,7 @@ const swiperKey = ref(0);
                 <div class="first_box_section" v-if="!showBenefits">
                   <div class="first_box_before">
                     <p>
-                      <span
-                        >혜택하기를 누르고<br />자세한 정보를
-                        확인해보세요.</span
-                      >
+                      <span>혜택하기를 누르고<br />자세한 정보를 확인해보세요.</span>
                     </p>
                   </div>
                   <div class="second_box">
@@ -718,67 +569,32 @@ const swiperKey = ref(0);
                 <div v-else>
                   <div class="first_box_after">
                     <p>
-                      <span
-                        ><img
-                          class="check_icon"
-                          src="/public/check/price_check_icon.png"
-                          alt="checkicon"
-                      /></span>
-                      <span
-                        >3년 구독 혜택으로<strong>&nbsp;5% 추가</strong
-                        >할인까지!</span
-                      >
+                      <span><img class="check_icon" src="/public/check/price_check_icon.png" alt="checkicon" /></span>
+                      <span>3년 구독 혜택으로<strong>&nbsp;5% 추가</strong>할인까지!</span>
                     </p>
                     <p>
-                      <span
-                        ><img
-                          class="check_icon"
-                          src="/public/check/price_check_icon.png"
-                          alt="checkicon"
-                      /></span>
-                      <span
-                        >1년 4회의 청소, <strong>3년까지</strong>사용할 수
-                        있는<br />특별 구독 혜택
-                      </span>
+                      <span><img class="check_icon" src="/public/check/price_check_icon.png" alt="checkicon" /></span>
+                      <span>1년 4회의 청소, <strong>3년까지</strong>사용할 수 있는<br />특별 구독 혜택 </span>
                     </p>
                     <p>
-                      <span
-                        ><img
-                          class="check_icon"
-                          src="/public/check/price_check_icon.png"
-                          alt="checkicon"
-                      /></span>
-                      <span
-                        >동절기엔 청소를 미뤄도 괜찮아요,<br /><strong
-                          >AI 알림</strong
-                        >&nbsp;으로 언제든 체크!</span
-                      >
+                      <span><img class="check_icon" src="/public/check/price_check_icon.png" alt="checkicon" /></span>
+                      <span>동절기엔 청소를 미뤄도 괜찮아요,<br /><strong>AI 알림</strong>&nbsp;으로 언제든 체크!</span>
                     </p>
                   </div>
 
                   <div class="second_box" v-if="selectedPlan">
                     <p>
                       <span>기본 {{ selectedPlan.times }}회권</span>
-                      <span
-                        >회당
-                        {{ selectedPlan.pricePerUse.toLocaleString() }}원</span
-                      >
+                      <span>회당 {{ selectedPlan.pricePerUse.toLocaleString() }}원</span>
                     </p>
                     <p>
                       <span>2년 연장 혜택 {{ selectedPlan.times }}회권</span>
-                      <span
-                        >회당
-                        {{
-                          (selectedPlan.pricePerUse * 0.9).toLocaleString()
-                        }}원</span
-                      >
+                      <span>회당 {{ (selectedPlan.pricePerUse * 0.9).toLocaleString() }}원</span>
                     </p>
                   </div>
                 </div>
 
-                <p class="years2_banner">
-                  2년 연장 구독하고 최대 25% 혜택을 누려보세요.
-                </p>
+                <p class="years2_banner">2년 연장 구독하고 최대 25% 혜택을 누려보세요.</p>
                 <button class="years2_bt" @click="handleBottomButtonClick">
                   {{ showBenefits ? "구독하기" : "혜택보기" }}
                 </button>
@@ -786,11 +602,6 @@ const swiperKey = ref(0);
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- 계산하기배너 -->
-      <div class="calculation_banner">
-        <img src="" alt="" />
       </div>
     </div>
   </div>
