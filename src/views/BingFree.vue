@@ -219,11 +219,7 @@ const swiperBreakpoints = {
   <!-- 오른쪽 사이드 (예약, 챗봇 등) -->
   <div class="side">
     <div>
-      <router-link
-        to="/reservation"
-        class="sideBtn reservBtn main-icon-drop"
-        :class="{ compact: currentSection !== 'visual' }"
-      >
+      <router-link to="/reservation" class="sideBtn reservBtn main-icon-drop">
         <img src="/images/calendar_blue.png" alt="캘린더" />
         <span class="text">예약하기</span>
       </router-link>
@@ -471,7 +467,7 @@ const swiperBreakpoints = {
           <div class="image-wrapper">
             <div class="image-section">
               <img
-                style="width=100%"
+                style="width: 100%"
                 src="/introbing/intromain/2-2.png"
                 alt="Before Image"
               />
