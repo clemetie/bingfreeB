@@ -1,0 +1,577 @@
+@use "./admin_table" as *;
+@use "./variables" as *;
+.workerreservation {
+  position: relative;
+}
+.dashboard {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  padding: 1%;
+
+  .allcard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    .profile-h3 {
+      display: flex;
+      align-items: flex-start;
+      height: 30px;
+    }
+    &.total {
+      border-left: 5px solid$bingprime-all;
+    }
+
+    &.done {
+      border-left: 5px solid $bingprime-done;
+    }
+
+    &.waiting {
+      border-left: 5px solid red;
+      cursor: pointer;
+    }
+
+    &.assigned {
+      border-left: 5px solid$bingprime-assigned;
+    }
+    &.confirmed {
+      border-left: 5px solid blue;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      margin-top: 5px;
+      color: #6b7280;
+    }
+  }
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba($color: #000000, $alpha: 0.4);
+  z-index: 99;
+}
+.reservdetailmodal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: #fff;
+  width: 900px;
+  min-height: 720px;
+  height: auto;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .reservdetail-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .reservdetail-info-box {
+    display: flex;
+    gap: 5%;
+    margin-top: 3%;
+    height: auto;
+    min-height: 600px;
+    .reservdetail-left {
+      display: flex;
+      flex-direction: column;
+      ul {
+        display: flex;
+        flex-direction: column;
+        background-color: $bingprime-gray1-f5f5f5;
+        border-radius: 8px;
+        padding: 3% 5%;
+        li {
+          width: 100%;
+          margin: 1.3% 0;
+          display: flex;
+          flex-wrap: wrap;
+          span {
+            width: 25%;
+            color: #757575;
+            display: inline-block;
+          }
+        }
+      }
+      .profile-h3 {
+        width: 280px;
+        height: 37px;
+        background-color: $bingprime-gray1-f5f5f5;
+        border-radius: 8px;
+        padding: 1% 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 10px 0;
+        cursor: pointer;
+        font-weight: 500;
+      }
+    }
+    .reservdetailinfo {
+      width: 540px;
+      background-color: $bingprime-gray1-f5f5f5;
+      border-radius: 8px;
+      margin: 10px 0;
+      button {
+        padding: 2% 3% 0;
+        display: inline;
+        float: right;
+      }
+      ul {
+        background-color: $bingprime-gray1-f5f5f5;
+        border-radius: 8px;
+        padding: 2.5% 3%;
+
+        li {
+          width: 100%;
+          margin: 3% 0;
+          span {
+            width: 25%;
+            color: #757575;
+            display: inline-block;
+          }
+        }
+      }
+    }
+    .info-box-bt {
+      display: flex;
+      justify-content: space-around;
+      .profile-h3 {
+        margin: 20px 0 14px;
+        font-weight: 500;
+      }
+      .timeline {
+        width: 40%;
+        li {
+          display: flex;
+          align-items: flex-start;
+          margin-bottom: 20px;
+          position: relative;
+
+          .dot {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background-color: #bdbdbd; // 기본 회색
+            margin-right: 8px;
+            position: relative;
+
+            &::after {
+              content: "";
+              position: absolute;
+              top: 15px;
+              left: 53.5%;
+              transform: translateX(-50%);
+              height: 42px;
+              border-left: 3px dashed #e0e0e0;
+            }
+          }
+
+          &:last-child .dot::after {
+            content: none;
+          }
+
+          .black {
+            background-color: #9e9e9e;
+          }
+
+          .orange {
+            background-color: #ffa000;
+          }
+
+          .green {
+            background-color: #4caf50;
+          }
+
+          .purple {
+            background-color: #893bee;
+          }
+
+          .label {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 60px;
+          }
+        }
+      }
+      .receipt {
+        width: 55%;
+        .payment {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          gap: 14px;
+          border-radius: 8px 8px 0px 0px;
+          background: #fff;
+          box-shadow: 0px 4px 15px rgba($color: #000000, $alpha: 0.08);
+          padding: 7%;
+          li {
+            display: flex;
+            justify-content: space-between;
+          }
+        }
+      }
+    }
+  }
+}
+.viewreceipt {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 999999;
+  background: #fff;
+  border: 1px solid #212121;
+  padding: 30px;
+  width: 600px;
+  margin: 0 auto;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  img {
+    width: 100%;
+  }
+  img.print-only {
+    display: none;
+  }
+  .btnbox {
+    .edit {
+      margin-right: 10px;
+    }
+  }
+  // 인쇄용 스타일
+  @media print {
+    /* 전체 다 숨기기 */
+    * {
+      visibility: hidden;
+    }
+
+    /* 이미지만 보이게 */
+    img.print-only {
+      visibility: visible;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%; // 필요 시 조절
+    }
+
+    /* 페이지 마진 제거 */
+    @page {
+      margin: 0;
+    }
+  }
+}
+.completemodal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: #fff;
+  width: 480px;
+  height: 480px;
+  border-radius: 8px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .form {
+    list-style: none;
+    padding: 2% 0;
+    li {
+      display: flex;
+      align-items: center;
+      padding: 2% 0;
+      border-top: 1px solid #e0e0e0;
+      &:last-child {
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .label {
+        display: inline-block;
+        width: 100px;
+        font-weight: 500;
+        margin-bottom: 4px;
+      }
+      .memo {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .value {
+        font-weight: 600;
+      }
+
+      select,
+      input[type="text"],
+      textarea {
+        width: 80%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      textarea {
+        width: 80%;
+        height: 100px;
+        resize: vertical;
+      }
+    }
+  }
+
+  .btn-box {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+.waitinglist {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: #fff;
+  width: 900px;
+  height: 700px;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  .profile-h1.title {
+    padding: 2% 3%;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+  }
+  .list-wrap-been {
+    display: flex;
+    .list-left {
+      width: 50%;
+      background-color: #eeeeee;
+      padding: 10px;
+      height: 100%;
+      .leftlist-wrap {
+        height: 80%;
+        overflow-y: auto; // ✅ 리스트만 스크롤
+        padding-right: 4px;
+        margin: 0;
+        padding: 0;
+        .profile-h1 {
+          padding: 1.5% 0;
+          color: $bingfree-main;
+        }
+        .leftlist {
+          background-color: #fff;
+          border: 2px solid #eeeeee;
+          border-radius: 8px;
+          padding: 3% 2%;
+          margin: 2%;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          cursor: pointer;
+          &.active {
+            border: 2px solid $bingprime-waiting;
+          }
+        }
+      }
+    }
+    .list-right {
+      .btnbox {
+        width: 100%;
+        text-align: center;
+        button {
+          margin: 0 2%;
+        }
+      }
+      width: 50%;
+      height: 100%;
+      padding: 2%;
+      display: flex;
+      flex-direction: column;
+      gap: 3%;
+      .listright {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .profile-h1 {
+          padding: 1.5% 0;
+          color: $bingfree-main;
+        }
+      }
+      .profile-h3 {
+        font-weight: 600;
+        margin-bottom: -10px;
+        &.customerlist {
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+
+      .customerinfo,
+      .reservdetailinfo {
+        background-color: rgba($color: #1456fd, $alpha: 0.1);
+        padding: 2%;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        ul {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          padding: 1%;
+          li {
+            display: flex;
+
+            span {
+              font-size: 14px;
+              width: 20%;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+button {
+  &.modal {
+    color: #9e9e9e;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: auto;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+  }
+  &.edit {
+    padding: 1% 2%;
+    flex-shrink: 0;
+    border-radius: 8px;
+    border: 1px solid #ff6b2c;
+    color: #ff6b2c;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    &.disabled {
+      background-color: $bingprime-gray4-bdbdbd;
+      color: #fff;
+      border: none;
+      cursor: not-allowed;
+    }
+  }
+  &.cancel {
+    padding: 1% 2%;
+    flex-shrink: 0;
+    border-radius: 8px;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    background-color: #fff;
+    color: #1456fd;
+    border: 1px solid #1456fd;
+    &.disabled {
+      background-color: $bingprime-gray4-bdbdbd;
+      color: #fff;
+      border: none;
+      cursor: not-allowed;
+    }
+  }
+  &.fix {
+    padding: 1% 3%;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #1456fd;
+    color: #fff;
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    &.disabled {
+      background-color: $bingprime-gray4-bdbdbd;
+      color: #fff;
+      border: none;
+      cursor: not-allowed;
+    }
+  }
+}
+.processing-done {
+  color: $bingprime-done;
+}
+.processing-waiting {
+  color: $bingprime-waiting;
+}
+.processing-assigned {
+  color: $bingprime-assigned;
+}
+.processing-confirmed {
+  color: $bingprime-all;
+}
+
+// 뱃지 스타일 공통
+%processing-badge {
+  width: 62px;
+  height: 28px;
+  text-align: center;
+  //   display: block;
+  color: #fff !important;
+  border-radius: 3px;
+  text-decoration: none !important;
+  font-weight: 300 !important;
+  font-size: 13px !important;
+  text-align: center;
+}
+
+// 상태 뱃지
+.processingbox-done {
+  @extend %processing-badge;
+  background-color: $bingprime-done;
+  text-align: center;
+}
+.processingbox-waiting {
+  @extend %processing-badge;
+  background-color: red;
+}
+.processingbox-assigned {
+  //   @extend %processing-badge;
+  //   background-color: $bingprime-assigned;
+  text-decoration: none !important;
+  text-align: center;
+}
+.processingbox-confirmed {
+  text-align: center;
+  //   @extend %processing-badge;
+  //   background-color: $bingprime-all;
+}

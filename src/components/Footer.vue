@@ -24,7 +24,7 @@
               </div>
               <div class="footer-hours">
                 <h3 style="color: #e9ff54">cs opening hours</h3>
-                <p class="footer-txt4">Monday - Friday <br />09:00 AM - 18:00 PM</p>
+                <p class="footer-txt4">We’re Always Here<br />24 Hours a Day!</p>
               </div>
             </div>
             <div class="footer-copy">

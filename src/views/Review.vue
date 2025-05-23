@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import Header from "@/components/Header.vue";
 // 기본값: 전체보기
 const selectedTab = ref("all");
 
@@ -77,6 +78,7 @@ const scrollToTop = () => {
 };
 </script>
 <template>
+  <Header/>
   <!-- 오른쪽 사이드 (예약, 챗봇 등) -->
   <div class="side">
     <div>
@@ -235,7 +237,7 @@ const scrollToTop = () => {
     <!-- 전체보기 -->
     <div v-if="selectedTab === 'all'">
       <!-- 사장님 후기 section -->
-      <h2 style="margin: 50px 0 100px; color: #212121">사장님 후기</h2>
+      <h2 class="sub-title ceo-title">사장님 후기</h2>
       <div class="ceo_review_wrap">
         <div class="mega_review">
           <div class="ceo_info">
@@ -321,7 +323,7 @@ const scrollToTop = () => {
         </div>
       </div>
       <!-- 고객님 후기 section -->
-      <h2 style="margin: 100px 0 50px; color: #212121">고객님 후기</h2>
+      <h2 class="sub-title">고객님 후기</h2>
       <div class="customer_review_wrap">
         <div class="customer_review_box">
           <img
@@ -494,7 +496,7 @@ const scrollToTop = () => {
         </div>
       </div>
       <!-- 블로그 후기 section -->
-      <h2 style="margin: 100px 0 50px; color: #212121">블로그 후기</h2>
+      <h2 class="sub-title">블로그 후기</h2>
       <div class="blog_review_wrap">
         <div class="blog_review_box">
           <img
@@ -618,7 +620,7 @@ const scrollToTop = () => {
     </div>
     <!-- 사장님 후기 -->
     <div v-else-if="selectedTab === 'ceo'">
-      <h2 style="margin: 50px 0 100px; color: #212121">사장님 후기</h2>
+      <h2 class="sub-title ceo-title">사장님 후기</h2>
       <div class="ceo_review_wrap ceo_section">
         <div class="mega_review">
           <div class="ceo_info">
@@ -805,7 +807,7 @@ const scrollToTop = () => {
     </div>
     <!-- 고객님 후기 -->
     <div v-else-if="selectedTab === 'customer'">
-      <h2 style="margin: 50px 0 50px; color: #212121">고객님 후기</h2>
+      <h2 class="sub-title customer-title">고객님 후기</h2>
       <div class="customer_review_wrap">
         <div
           v-for="(review, index) in visibleReviews"
@@ -849,7 +851,7 @@ const scrollToTop = () => {
       </div>
     </div>
     <div v-else-if="selectedTab === 'blog'">
-      <h2 style="margin: 50px 0 50px; color: #212121">블로그 후기</h2>
+      <h2 class="sub-title blog-title">블로그 후기</h2>
       <div class="blog_review_wrap" style="margin-bottom: 100px">
         <div class="blog_review_box">
           <img

@@ -204,6 +204,19 @@
 // 고객리뷰 상세
 // 전체보기
 // 전체보기 - 사장님 후기 section
+.sub-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 100px 0 24px;
+  color: #212121;
+}
+.ceo-title {
+  margin: 24px 0 120px;
+}
+.customer-title,
+.blog-title {
+  margin: 24px 0 24px;
+}
 .ceo_review_wrap {
   position: relative;
   display: flex;
@@ -309,11 +322,11 @@
   gap: 20px;
   .txt_ellipsis {
     display: -webkit-box;
-    -webkit-line-clamp: 3; //보여줄 줄 수
+    -webkit-line-clamp: 2; //보여줄 줄 수
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: 1.4;
+    line-height: 1.6;
   }
   .blog_review_txt {
     display: flex;
@@ -426,7 +439,7 @@
       font-size: 14px;
       margin-bottom: 50px;
     }
-    .review-title-box{
+    .review-title-box {
       padding-top: 100px;
     }
     .review-box-total {
@@ -479,14 +492,14 @@
     }
   }
   // 상세페이지
-  .banner_bg{
-  margin-top: 120px;
-  .banner_left{
-    position: absolute;
-    top: 0;
+  .banner_bg {
+    margin-top: 120px;
+    .banner_left {
+      position: absolute;
+      top: 0;
+    }
   }
-  }
-  .review_txt_wrap .txt_box{
+  .review_txt_wrap .txt_box {
     display: none;
   }
 }

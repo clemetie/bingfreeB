@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import { ref } from "vue";
 import { onMounted } from "vue";
 import { onBeforeUnmount } from "vue";
+import Header from "@/components/Header.vue";
 
 const introbingTab = ref("care");
 
@@ -82,6 +83,7 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
+  <Header/>
   <!-- 오른쪽 사이드 (예약, 챗봇 등) -->
   <div class="side">
       <div>

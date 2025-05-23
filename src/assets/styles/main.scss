@@ -4,6 +4,28 @@
 @use "./main_check" as *;
 @use "./main_review" as *;
 @use "./main_reservation" as *;
+@use "./bingprime_reservation" as *;
+@use "./bingprime_subbenefit" as *;
+@use "./binfprime_faq" as *;
+@use "./bingprime_profile" as *;
+@use "./admin_adminhome" as *;
+@use "./admin_board" as *;
+@use "./admin_claim" as *;
+@use "./admin_claim" as *;
+@use "./admin_customers" as *;
+@use "./admin_Dashboard" as *;
+@use "./admin_reservation" as *;
+@use "./admin_sale" as *;
+@use "./admin_settings" as *;
+@use "./admin_worker" as *;
+@use "./worker_board" as *;
+@use "./worker_customers" as *;
+@use "./worker_ddashboard" as *;
+@use "./worker_history" as *;
+@use "./worker_profile" as *;
+@use "./worker_sale" as *;
+@use "./worker_setting" as *;
+@use "./worker_workerhome" as *;
 
 @keyframes viewmore {
   0% {
@@ -214,6 +236,7 @@ a {
   top: 50%;
   left: 8%;
   transform: translateY(-50%);
+  z-index: 99;
   li {
     cursor: pointer;
     font-size: 20px;
@@ -260,6 +283,7 @@ a {
   height: 100vh;
   background-color: #fff;
   transition: background 1s ease;
+  z-index: 999;
   &.scroll {
     background-color: transparent;
     .slide {

@@ -5,6 +5,7 @@ import "flatpickr/dist/themes/material_blue.css"; // 💙 이게 저 UI 스타�
 import { Korean } from "flatpickr/dist/l10n/ko.js";
 import { useRouter } from "vue-router";
 import Cookies from "js-cookie";
+import Header from "@/components/Header.vue";
 
 const router = useRouter();
 const reservTab = ref("reserv"); // 탭
@@ -372,6 +373,7 @@ const handleReSubmit = () => {
 </script>
 
 <template>
+  <Header />
   <!-- 오른쪽 사이드 (예약, 챗봇 등) -->
   <div class="side">
     <div>

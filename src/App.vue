@@ -1,17 +1,20 @@
 <script setup>
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import Topbar from "./components/Topbar.vue";
-import Header from "./components/Header.vue";
 import Footer from "./components/Footer.vue";
 
 const route = useRoute();
+
+const isHiddenLayout = computed(
+  () => route.path.startsWith("/Admin") || route.path.startsWith("/Worker")
+);
 </script>
 
 <template>
   <div>
-    <Topbar v-if="route.name !== 'NotFound'" />
-    <Header v-if="route.name !== 'NotFound'" />
-    <router-view></router-view>
-    <Footer v-if="route.name !== 'NotFound'" />
+    <Topbar v-if="!isHiddenLayout && route.name !== 'NotFound'" />
+    <router-view />
+    <Footer v-if="!isHiddenLayout && route.name !== 'NotFound'" />
   </div>
 </template>

@@ -1,8 +1,10 @@
 <script setup>
+
 import { ref, onMounted, computed, nextTick, onBeforeUnmount } from "vue";
 import { onUnmounted } from "vue";
 import { useRouter } from "vue-router"; // ✅ 라우터 임포트 추가
 import Topbar from "@/components/Topbar.vue";
+import Header from "@/components/Header.vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
@@ -99,12 +101,37 @@ const pricePlans = {
 };
 
 const ordinarys = ref([
-  { title: "스탠다드", subtitle: "스탠다드", weight: "50kg 미만", totalprice: "99,000" },
-  { title: "스탠다드", subtitle: "스탠다드+", weight: "50~100kg", totalprice: "120,000" },
+  {
+    title: "스탠다드",
+    subtitle: "스탠다드",
+    weight: "50kg 미만",
+    totalprice: "99,000",
+  },
+  {
+    title: "스탠다드",
+    subtitle: "스탠다드+",
+    weight: "50~100kg",
+    totalprice: "120,000",
+  },
   { title: "디럭스", subtitle: "", weight: "100~200kg", totalprice: "150,000" },
-  { title: "프리미엄", subtitle: "", weight: "200kg 이상", totalprice: "170,000" },
-  { title: "호시자키", subtitle: "호시자키", weight: "250kg 미만", totalprice: "170,000" },
-  { title: "호시자키", subtitle: "호시자키+", weight: "250kg 이상", totalprice: "210,000" },
+  {
+    title: "프리미엄",
+    subtitle: "",
+    weight: "200kg 이상",
+    totalprice: "170,000",
+  },
+  {
+    title: "호시자키",
+    subtitle: "호시자키",
+    weight: "250kg 미만",
+    totalprice: "170,000",
+  },
+  {
+    title: "호시자키",
+    subtitle: "호시자키+",
+    weight: "250kg 이상",
+    totalprice: "210,000",
+  },
 ]);
 
 const selectTab = (tab) => {
@@ -196,7 +223,8 @@ onBeforeUnmount(() => {
 });
 </script>
 <template>
-  <div class="wrap">
+  <Header />
+  <div class="check-wrap">
     <!-- header -->
     <!-- <Topbar />
     <header /> -->
