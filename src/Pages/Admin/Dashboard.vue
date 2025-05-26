@@ -357,8 +357,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // 상태에 따라 이미지 변경
         stateIconImg.src = isActive
-          ? "/public/prime/alert-state-on-icon.png"
-          : "/public/prime/alert-state-off-icon.png";
+          ? "/prime/alert-state-on-icon.png"
+          : "/prime/alert-state-off-icon.png";
         stateIconImg = isActive ? "상태 활성화 아이콘" : "상태 비활성화 아이콘";
       }
     });
@@ -943,10 +943,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <div class="alert-box-wrap">
           <div class="alert-box">
             <div class="alert-icon">
-              <img
-                src="/public/prime/alert-claim-icon.png"
-                alt="클레임 알림 아이콘"
-              />
+              <img src="/prime/alert-claim-icon.png" alt="클레임 알림 아이콘" />
             </div>
             <div class="alert-desc">
               <p class="alert-instructions">클레임건이 있습니다.</p>
@@ -955,7 +952,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="alert-state-icon">
               <img
                 class="state-off-icon"
-                src="/public/prime/alert-state-off-icon.png"
+                src="/prime/alert-state-off-icon.png"
                 alt="상태 비활성화 아이콘"
               />
             </div>
@@ -963,7 +960,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="alert-box">
             <div class="alert-icon">
               <img
-                src="/public/prime/alert-newres-icon.png"
+                src="/prime/alert-newres-icon.png"
                 alt="새로운 예약 알림 아이콘"
               />
             </div>
@@ -974,7 +971,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="alert-state-icon">
               <img
                 class="state-off-icon"
-                src="/public/prime/alert-state-off-icon.png"
+                src="/prime/alert-state-off-icon.png"
                 alt="상태 활성화 아이콘"
               />
             </div>
@@ -982,7 +979,7 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="alert-box">
             <div class="alert-icon">
               <img
-                src="/public/prime/alert-saftytraining-icon.png"
+                src="/prime/alert-saftytraining-icon.png"
                 alt="안전교육 알림 아이콘"
               />
             </div>
@@ -995,7 +992,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="alert-state-icon">
               <img
                 class="state-off-icon"
-                src="/public/prime/alert-state-off-icon.png"
+                src="/prime/alert-state-off-icon.png"
                 alt="상태 비활성화 아이콘"
               />
             </div>
