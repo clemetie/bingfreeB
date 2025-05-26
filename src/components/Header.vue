@@ -49,7 +49,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <header :class="{ scrolled: isScrolled || isMenuOpen }">
+  <header class="freehead" :class="{ scrolled: isScrolled || isMenuOpen }">
     <div class="inner">
       <router-link to="/" @click="isMenuOpen = false">
         <img src="/images/main-logo.png" alt="메인 로고" />
@@ -148,13 +148,13 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped>
-header {
+header.freehead {
   margin-top: 40px;
   margin-bottom: -80px;
   width: 100%;
   height: 80px;
   position: relative;
-  z-index: 99;
+  z-index: 99999;
   .inner {
     width: 100%;
     height: 100%;
