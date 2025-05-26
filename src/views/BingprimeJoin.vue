@@ -218,7 +218,7 @@
     <div
       class="w-28 h-5 left-[506px] top-[429.12px] absolute text-center justify-start"
     >
-      <img src="/prime/Bingprime_just.logo.png" alt="로고" />
+      <img src="/prime/BingPrime_just.logo.png" alt="로고" />
     </div>
     <router-link
       to="/PersonulAgree"
