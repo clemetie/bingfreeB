@@ -136,6 +136,10 @@ const banks = [
 ];
 </script>
 <template>
+  <div class="dash">
+    <p class="dash-name">프로필</p>
+    <p class="dash-desc">내 프로필을 확인하고 수정할 수 있습니다.</p>
+  </div>
   <div class="workerprofile">
     <div class="left">
       <img src="/prime/workeritsub.png" alt="기사프로필" />
@@ -496,7 +500,9 @@ const banks = [
           <hr />
           <div class="form-group checkbox">
             <input type="checkbox" id="marketing" />
-            <label for="marketing"> 개인 정보 수집 및 이용에 동의합니다. </label>
+            <label for="marketing">
+              개인 정보 수집 및 이용에 동의합니다.
+            </label>
           </div>
           <hr style="color: #bdbdbd; height: 1px" />
           <div class="btnbox">

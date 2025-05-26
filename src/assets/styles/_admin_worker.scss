@@ -1,1 +1,59 @@
+@use "./admin_table" as *;
 @use "./variables" as *;
+.workers {
+  padding: 0 1%;
+  .workers-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: #424242;
+  }
+  .workers-desc {
+    font-size: 13px;
+    font-weight: 400;
+    color: #757575;
+  }
+}
+.dashboard.workers {
+  width: 100%;
+  display: flex;
+  gap: 12px;
+  padding: 1%;
+  .allcard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    background: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    .profile-h3 {
+      display: flex;
+      align-items: flex-start;
+      height: 30px;
+    }
+    &.total {
+      border-left: 5px solid #0F71F2;
+    }
+
+    &.done {
+      border-left: 5px solid $bingprime-done;
+    }
+
+    &.waiting {
+      border-left: 5px solid $bingprime-waiting;
+    }
+
+    &.assigned {
+      border-left: 5px solid$bingprime-assigned;
+    }
+    &.confirmed {
+      border-left: 5px solid$bingprime-assigned;
+    }
+
+    .card-desc {
+      font-size: 0.875rem;
+      margin-top: 5px;
+      color: #6b7280;
+    }
+  }
+}

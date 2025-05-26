@@ -1,22 +1,35 @@
 @use "./variables" as *;
 .dashboard {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   padding: 1%;
-
+  @include mobile {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
   .allcard {
     display: flex;
     flex-direction: column;
     flex: 1;
     background: white;
-    padding: 20px;
+    padding: 5%;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    svg {
+      margin-right: 0;
+    }
     .profile-h3 {
       display: flex;
       align-items: flex-start;
       height: 30px;
+      &.mbonly {
+        display: none;
+        @include mobile {
+          display: inline;
+        }
+      }
     }
     &.total {
       border-left: 5px solid$bingprime-all;
@@ -41,6 +54,9 @@
       font-size: 0.875rem;
       margin-top: 5px;
       color: #6b7280;
+      @include mobile {
+        display: none;
+      }
     }
   }
 }
@@ -134,158 +150,349 @@
     display: flex;
     flex-direction: column;
     border-radius: 8px;
-    .profile-h2 {
-      margin: 0 0 20px;
-    }
-    hr {
-      margin: 10px 0;
-    }
-    select,
-    input {
-      border: 1px solid #bdbdbd;
-      border-radius: 8px;
-      padding: 0.4% 2.5% 0.4% 1%;
-      cursor: pointer;
-    }
-    select {
-      padding: 0.4% 2.5% 0.4% 1%;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-
-      background-image: url("data:image/svg+xml,%3Csvg width='22' height='13' viewBox='0 0 22 13' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1' stroke='%23424242' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 6px center;
-      background-size: 14px;
-      option {
+    &.websearchbox {
+      @include mobile {
+        display: none !important;
+      }
+      .profile-h2 {
+        margin: 0 0 20px;
+      }
+      hr {
+        margin: 10px 0;
+      }
+      select,
+      input {
+        border: 1px solid #bdbdbd;
+        border-radius: 8px;
+        padding: 0.4% 2.5% 0.4% 1%;
         cursor: pointer;
       }
-    }
-    input[type="radio"] {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #bdbdbd;
-      border-radius: 50%;
-      position: relative;
-      margin-right: 6px;
-      cursor: pointer;
+      select {
+        padding: 0.4% 2.5% 0.4% 1%;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
 
-      &:checked {
-        border-color: #1456fd;
-        background-color: #1456fd;
-
-        &::after {
-          content: "";
-          position: absolute;
-          top: 3px;
-          left: 3px;
-          width: 6px;
-          height: 6px;
-          border-radius: 50%;
-          background-color: white;
+        background-image: url("data:image/svg+xml,%3Csvg width='22' height='13' viewBox='0 0 22 13' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1' stroke='%23424242' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 6px center;
+        background-size: 14px;
+        option {
+          cursor: pointer;
         }
       }
-    }
-    .namesearchbox {
-      margin: 0 2%;
+      input[type="radio"] {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #bdbdbd;
+        border-radius: 50%;
+        position: relative;
+        margin-right: 6px;
+        cursor: pointer;
 
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .searchtop {
-      margin: 0 2%;
-      display: flex;
-      justify-content: flex-start;
-      .memberbox,
-      .shopbox {
-        width: 40%;
-        display: flex;
-        align-items: center;
-        gap: 12px;
+        &:checked {
+          border-color: #1456fd;
+          background-color: #1456fd;
 
-        label {
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-      }
-    }
-
-    .searchbt {
-      margin: 0 2%;
-
-      display: flex;
-      justify-content: flex-start;
-
-      .statusbox {
-        width: 40%;
-        display: flex;
-        align-items: center;
-
-        label {
-          margin-right: 11px;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-      }
-
-      .searchdate {
-        width: 55%;
-        display: flex;
-        align-items: center;
-
-        gap: 6px;
-
-        .datepicker-box {
-          width: 45%;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          input {
-            padding: 1.5% 2%;
-          }
-        }
-
-        .date-filter {
-          display: flex;
-          list-style: none;
-          padding: 0;
-          margin: 0;
-
-          li {
-            width: 40px;
-            height: 30px;
-            line-height: 30px;
-            border: 1px solid #bdbdbd;
-            border-left: none;
-            cursor: pointer;
-            text-align: center;
-            &:first-child {
-              border-left: 1px solid #bdbdbd;
-            }
-            &.active {
-              background-color: #333;
-              color: white;
-            }
+          &::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: white;
           }
         }
       }
+      .namesearchbox {
+        margin: 0 2%;
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .searchtop {
+        margin: 0 2%;
+        display: flex;
+        justify-content: flex-start;
+        .memberbox,
+        .shopbox {
+          width: 40%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+        }
+      }
+
+      .searchbt {
+        margin: 0 2%;
+
+        display: flex;
+        justify-content: flex-start;
+
+        .statusbox {
+          width: 40%;
+          display: flex;
+          align-items: center;
+
+          label {
+            margin-right: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+        }
+
+        .searchdate {
+          width: 55%;
+          display: flex;
+          align-items: center;
+
+          gap: 6px;
+
+          .datepicker-box {
+            width: 45%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            input {
+              padding: 1.5% 2%;
+            }
+          }
+
+          .date-filter {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+              width: 40px;
+              height: 30px;
+              line-height: 30px;
+              border: 1px solid #bdbdbd;
+              border-left: none;
+              cursor: pointer;
+              text-align: center;
+              &:first-child {
+                border-left: 1px solid #bdbdbd;
+              }
+              &.active {
+                background-color: #333;
+                color: white;
+              }
+            }
+          }
+        }
+      }
+
+      .search-action {
+        display: flex;
+        justify-content: center;
+
+        .search-button {
+          padding: 6px 16px;
+          background-color: #333;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+      }
     }
-
-    .search-action {
-      display: flex;
-      justify-content: center;
-
-      .search-button {
-        padding: 6px 16px;
-        background-color: #333;
-        color: white;
-        border: none;
-        border-radius: 4px;
+    &.mbsearchbox {
+      display: none;
+      @include mobile {
+        display: block;
+      }
+      margin: 20px auto;
+      height: auto;
+      .profile-h2 {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 0 20px;
+        padding: 1% 4%;
+      }
+      hr {
+        margin: 10px 0;
+      }
+      select,
+      input {
+        border: 1px solid #bdbdbd;
+        border-radius: 8px;
+        padding: 1.4% 2% 1.4% 2%;
         cursor: pointer;
+      }
+      select {
+        padding: 1.4% 10% 1.4% 1%;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+
+        background-image: url("data:image/svg+xml,%3Csvg width='22' height='13' viewBox='0 0 22 13' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1' stroke='%23424242' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 6px center;
+        background-size: 14px;
+        option {
+          cursor: pointer;
+        }
+      }
+      input[type="radio"] {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #bdbdbd;
+        border-radius: 50%;
+        position: relative;
+        margin-right: 6px;
+        cursor: pointer;
+
+        &:checked {
+          border-color: #1456fd;
+          background-color: #1456fd;
+
+          &::after {
+            content: "";
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: white;
+          }
+        }
+      }
+      .namesearchbox {
+        margin: 0 2%;
+
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      label.filtermb {
+        width: 100%;
+      }
+      .searchtop {
+        margin: 0 2%;
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        .memberbox,
+        .shopbox {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-direction: column;
+          margin: 2% 0;
+          .mbbox {
+            width: 80%;
+            display: flex;
+            gap: 20px;
+          }
+          label {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+        }
+      }
+
+      .searchbt {
+        margin: 0 2%;
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        .statusbox {
+          width: 100%;
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          flex-direction: column;
+          margin: 2% 0;
+          .mbbox {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+          }
+          label {
+            margin-right: 11px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+          }
+        }
+
+        .searchdate {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          flex-direction: column;
+          gap: 6px;
+
+          .datepicker-box {
+            width: 100%;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            flex-direction: column;
+            margin: 2% 0;
+            .mbbox {
+              width: 100%;
+              display: flex;
+              gap: 10px;
+            }
+          }
+
+          .date-filter {
+            width: 100%;
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: auto;
+            li {
+              width: 40px;
+              height: 30px;
+              line-height: 30px;
+              border: 1px solid #bdbdbd;
+              border-left: none;
+              cursor: pointer;
+              text-align: center;
+              &:first-child {
+                border-left: 1px solid #bdbdbd;
+              }
+              &.active {
+                background-color: #333;
+                color: white;
+              }
+            }
+          }
+        }
+      }
+
+      .search-action {
+        display: flex;
+        justify-content: center;
+
+        .search-button {
+          padding: 6px 16px;
+          background-color: #333;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
       }
     }
   }
@@ -297,6 +504,60 @@
     display: flex;
     flex-direction: column;
     border-radius: 8px;
+    @include mobile {
+      .table {
+        thead {
+          display: none;
+        }
+
+        tr {
+          display: block;
+          margin-bottom: 1rem;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          background-color: #fff;
+          padding: 12px;
+        }
+
+        td {
+          display: block;
+          width: 100%;
+          padding: 10px 12px 10px 130px !important; // ✅ 왼쪽 라벨공간 확보
+          position: relative;
+          text-align: left !important;
+          border-bottom: none;
+          box-sizing: border-box;
+
+          &::before {
+            content: attr(data-label);
+            position: absolute;
+            top: 10px;
+            left: 12px;
+            font-weight: 600;
+            color: #666;
+            width: 100px;
+            text-align: left;
+            white-space: nowrap;
+          }
+        }
+        span {
+          display: inline;
+          padding: 1% 2% 0.5%;
+        }
+        .btnbox {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          gap: 8px;
+          margin-top: 10px;
+          justify-content: flex-start;
+          button {
+            text-align: center;
+          }
+        }
+      }
+    }
+
     .table {
       width: 100%;
       border-collapse: collapse;

@@ -5,7 +5,8 @@
 }
 .dashboard {
   width: 100%;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   padding: 1%;
 
@@ -17,6 +18,9 @@
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    svg {
+      margin-right: 0;
+    }
     .profile-h3 {
       display: flex;
       align-items: flex-start;
@@ -74,6 +78,9 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  @include mobile {
+    width: 90%;
+  }
   .reservdetail-title {
     display: flex;
     flex-direction: column;
@@ -86,9 +93,15 @@
     margin-top: 3%;
     height: auto;
     min-height: 600px;
+    @include mobile {
+      flex-direction: column;
+    }
     .reservdetail-left {
       display: flex;
       flex-direction: column;
+      @include mobile {
+        margin: 20px 0;
+      }
       ul {
         display: flex;
         flex-direction: column;
@@ -119,6 +132,10 @@
         margin: 10px 0;
         cursor: pointer;
         font-weight: 500;
+        @include mobile {
+          width: 100%;
+          margin: 6px 0;
+        }
       }
     }
     .reservdetailinfo {
@@ -126,6 +143,9 @@
       background-color: $bingprime-gray1-f5f5f5;
       border-radius: 8px;
       margin: 10px 0;
+      @include mobile {
+        width: 100%;
+      }
       button {
         padding: 2% 3% 0;
         display: inline;
@@ -243,6 +263,9 @@
   color: #333;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   text-align: center;
+  @include mobile {
+    width: 90%;
+  }
   img {
     width: 100%;
   }
@@ -355,6 +378,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  @include mobile {
+    width: 90%;
+    overflow-y: auto;
+  }
   .profile-h1.title {
     padding: 2% 3%;
     border-bottom: 1px solid #ccc;
@@ -363,17 +390,27 @@
   }
   .list-wrap-been {
     display: flex;
+    @include mobile {
+      flex-direction: column;
+    }
     .list-left {
       width: 50%;
       background-color: #eeeeee;
       padding: 10px;
       height: 100%;
+      @include mobile {
+        width: 100%;
+        height: 25vh;
+      }
       .leftlist-wrap {
         height: 80%;
         overflow-y: auto; // ✅ 리스트만 스크롤
         padding-right: 4px;
         margin: 0;
         padding: 0;
+        @include mobile {
+          height: 100%;
+        }
         .profile-h1 {
           padding: 1.5% 0;
           color: $bingfree-main;
@@ -382,7 +419,7 @@
           background-color: #fff;
           border: 2px solid #eeeeee;
           border-radius: 8px;
-          padding: 3% 2%;
+          padding: 3% 3%;
           margin: 2%;
           display: flex;
           flex-direction: column;
@@ -408,6 +445,10 @@
       display: flex;
       flex-direction: column;
       gap: 3%;
+      @include mobile {
+        width: 100%;
+        gap: 20px;
+      }
       .listright {
         display: flex;
         flex-direction: column;
@@ -552,6 +593,9 @@ button {
   font-weight: 300 !important;
   font-size: 13px !important;
   text-align: center;
+  @include mobile {
+    height: 24px;
+  }
 }
 
 // 상태 뱃지

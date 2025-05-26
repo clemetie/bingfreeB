@@ -37,6 +37,21 @@ $sub-black: #212121;
   box-shadow: $main-icon-inner;
 }
 
+$mobile: 768px;
+$tablet: 1024px;
+
+@mixin mobile {
+  @media (max-width: $mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: $tablet) {
+    @content;
+  }
+}
+
 @mixin text-style($size, $weight) {
   font-size: $size;
   font-weight: $weight;
@@ -62,17 +77,17 @@ $sub-black: #212121;
 .main-h6 {
   @include text-style(20px, 400);
 }
-.profile-h1{
-    @include text-style(24px, 600);
+.profile-h1 {
+  @include text-style(24px, 600);
 }
-.profile-h2{
-    @include text-style(18px, 500);
+.profile-h2 {
+  @include text-style(18px, 500);
 }
-.profile-h3{
-    @include text-style(16px, 400);
+.profile-h3 {
+  @include text-style(16px, 400);
 }
-.profile-h4{
-    @include text-style(14px, 400);
+.profile-h4 {
+  @include text-style(14px, 400);
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {

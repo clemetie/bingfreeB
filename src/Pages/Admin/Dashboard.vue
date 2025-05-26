@@ -1,810 +1,773 @@
-<!-- 지수 관리자 대시보드 -->
+<script setup>
+import { ref, computed, watch, onMounted } from "vue";
+import { fullReservationList } from "@/data.mjs";
+import dayjs from "dayjs";
+import MonthlyChart from "@/components/MonthlyChart.vue";
+import MonthlyBarChart from "@/components/MonthlyBarChart.vue";
+
+const currentPage = ref(1);
+// ㄴ테이블 페이지 표시
+const perPage = 5;
+// ㄴ한 페이지에 5개씩 보여줌
+
+const searchType = ref("customer");
+// ㄴ고객(기본값) 또는 기사 검색
+const searchText = ref("");
+// ㄴ이름 검색창 내용 받아오기
+const memberFilter = ref("all");
+// ㄴ회원 등급 검색 normal=일반 | prime=구독 | all= 전체(기본값)
+const statusFilter = ref("all");
+// ㄴwaiting = 배정대기 | assigned = 배정은 받았고 청소 대기 | done = 청소 완료 | confirmed = 확정완료  | all = 전체(기본값)
+const shopFilter = ref("all");
+// ㄴ personal = 일반회원 | business = 사업자회원 | all = 전체(기본값)
+const dateFilter = ref("today");
+// ㄴ날짜 필터링 today = 오늘 | plus7d = 오늘+7일 | plus15d = +15일 | plus1m + 한달 | plus3m = +3달 | all = 전체(기본값) | custom = 날짜 선택
+const today = dayjs();
+// ㄴ 오늘 날짜
+const fromDate = ref(null);
+// ㄴ 검색 날짜 시작일 ~
+const toDate = ref(null);
+// ㄴ 검색 날짜 끝나는 날
+
+// 여기부터는 안 쓰면 주석 처리 또는 삭제
+const openReservDetail = ref(false);
+const reservdetail = ref(null);
+// ㄴ 둘 다 예약 상세 모달 띄우는 거
+const isCustomerOpen = ref(true);
+const isMembershipOpen = ref(true);
+const isWorkerOpen = ref(true);
+const isInquiryOpen = ref(true);
+// 상세 모달 안에 토글
+const viewreceipt = ref(false);
+function printReceipt() {
+  window.print();
+}
+// ㄴ 영수증 모달 , 출력하기 설정
+
+const stepStates = computed(() => {
+  const status = reservdetail.value?.status;
+
+  const labels = ["배정 완료", "작업 시작", "작업 완료", "확정 완료"];
+  const times = {
+    waiting: ["25.03.17 14:00", "-", "-", "-"],
+    assigned: ["25.03.17 14:00", "25.05.15 23:00", "-", "-"],
+    done: ["25.03.17 14:00", "25.05.15 23:00", "25.05.15 00:20", "-"],
+    confirmed: ["25.03.17 14:00", "25.05.15 23:00", "25.05.15 00:20", "25.05.22 14:00"],
+  };
+
+  const colorPerStatus = {
+    waiting: ["black", "", "", ""],
+    assigned: ["black", "orange", "", ""],
+    done: ["black", "black", "green", ""],
+    confirmed: ["black", "black", "black", "purple"], // 확정 완료
+  };
+
+  const timeList = times[status] || ["-", "-", "-", "-"];
+  const colorList = colorPerStatus[status] || ["", "", "", ""];
+
+  return labels.map((label, i) => ({
+    label,
+    time: timeList[i],
+    class: colorList[i],
+  }));
+});
+// ㄴ 상세 모달 작업 진행 상황
+
+function openDetailById(id) {
+  const found = fullReservationList.find((item) => item.id === id);
+  if (found) {
+    reservdetail.value = found;
+    openReservDetail.value = true;
+  }
+}
+// ㄴ 테이블 정보 받아서 예약 모달에 넣는 함수
+
+const fromDateInput = computed({
+  get: () => (fromDate.value ? dayjs(fromDate.value).format("YYYY-MM-DD") : ""),
+  set: (val) => {
+    fromDate.value = val ? dayjs(val).startOf("day") : null;
+  },
+});
+const toDateInput = computed({
+  get: () => (toDate.value ? dayjs(toDate.value).format("YYYY-MM-DD") : ""),
+  set: (val) => {
+    toDate.value = val ? dayjs(val).endOf("day") : null;
+  },
+});
+watch(dateFilter, (val) => {
+  if (val === "today") {
+    fromDate.value = today.startOf("day");
+    toDate.value = today.endOf("day");
+  } else if (val === "plus7d") {
+    fromDate.value = today;
+    toDate.value = today.add(7, "day");
+  } else if (val === "plus15d") {
+    fromDate.value = today;
+    toDate.value = today.add(15, "day");
+  } else if (val === "plus1m") {
+    fromDate.value = today;
+    toDate.value = today.add(1, "month");
+  } else if (val === "plus3m") {
+    fromDate.value = today;
+    toDate.value = today.add(3, "month");
+  } else if (val === "all") {
+    fromDate.value = null;
+    toDate.value = null;
+  } else if (val === "custom") {
+    // 날짜 선택 시 별도 초기화 X
+    // 하지만 필터 적용은 수동으로 해야 하니 다음 라인 추가 👇
+  }
+  applyFilters(); // ✅ 날짜 변경 후 즉시 필터 반영
+});
+const dateRange = computed(() => {
+  if (!fromDate.value || !toDate.value) return null;
+  return [fromDate.value, toDate.value];
+});
+// 4개 다 날짜 필터링 관련
+
+const filteredList = ref([]);
+function applyFilters() {
+  const result = fullReservationList
+    .filter((item) => {
+      const reservDate = dayjs(item.reservinfo.date, "YYYY.MM.DD"); // 이제 date만 사용!
+
+      const isInDateRange =
+        !fromDate.value || !toDate.value
+          ? true
+          : reservDate.isAfter(fromDate.value.subtract(1, "day")) && reservDate.isBefore(toDate.value.add(1, "day"));
+
+      const statusMatched = statusFilter.value === "all" || item.status === statusFilter.value;
+
+      const memberMatched =
+        memberFilter.value === "all" ||
+        (memberFilter.value === "normal" && !item.primemember) ||
+        (memberFilter.value === "prime" && item.primemember);
+
+      const shopMatched = shopFilter.value === "all" || item.customer.shop === shopFilter.value;
+
+      const searchMatched = searchText.value
+        ? (searchType.value === "customer" ? item.customer.name : item.worker.name || "").includes(searchText.value)
+        : true;
+
+      return statusMatched && memberMatched && shopMatched && searchMatched && isInDateRange;
+    })
+    .sort((a, b) => a.id - b.id);
+
+  filteredList.value = result;
+  currentPage.value = 1;
+}
+onMounted(() => {
+  applyFilters();
+});
+// 3개 다 필터링 관련
+
+const paginatedList = computed(() => {
+  const start = (currentPage.value - 1) * perPage;
+  return filteredList.value.slice(start, start + perPage);
+});
+const totalPages = computed(() => Math.ceil(filteredList.value.length / perPage));
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) currentPage.value = page;
+};
+// 페이지 네이션 관련
+
+// 상태별 개수 계산
+const totalCount = computed(() => fullReservationList.length);
+// 대시보드 전체 예약 보기
+const doneCount = computed(() => fullReservationList.filter((item) => item.status === "done").length);
+// 대시 보드 청소 완료 보기
+// const waitingCount = computed(
+//   () => fullReservationList.filter((item) => item.status === "waiting").length
+// );
+// 대시 보드 배정 대기 보기
+const assignedCount = computed(() => fullReservationList.filter((item) => item.status === "assigned").length);
+// 대시 보드 청소 진행 보기
+const confirmedCount = computed(() => fullReservationList.filter((item) => item.status === "confirmed").length);
+// 대시보드 확정 완료 보기 (고객-> 확정완료 누르거나 기사-> 완료제출 누르는 거)
+
+// 카드에 쓸 데이터 (여기에 svg바꾸면 됩니다 이름이나)
+const statusCards = computed(() => [
+  {
+    status: "total",
+    title: "전체 예약",
+    count: totalCount.value,
+    desc: `이 달 ${totalCount.value}개의 청소가 있습니다.`,
+    icon: `<svg width="27" height="20" viewBox="0 0 27 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M25.4349 10H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4349 1.99414H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4349 18.0059H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+  //   {
+  //     status: "waiting",
+  //     title: "배정 대기",
+  //     count: waitingCount.value,
+  //     desc: `${waitingCount.value}개의 예약이 배정 대기 중입니다.`,
+  //     icon: `<svg width="27" height="26" viewBox="0 0 27 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  // <path d="M13.062 1.9005C13.2454 1.52892 13.7753 1.52892 13.9587 1.9005L17.2773 8.62368C17.3501 8.7711 17.4907 8.87333 17.6534 8.89711L25.0755 9.98196C25.4854 10.0419 25.6488 10.5458 25.352 10.8349L19.9823 16.065C19.8643 16.1799 19.8105 16.3455 19.8383 16.5077L21.1055 23.8959C21.1755 24.3044 20.7468 24.6159 20.38 24.423L13.7431 20.9327C13.5974 20.8561 13.4233 20.8561 13.2776 20.9327L6.64077 24.423C6.27396 24.6159 5.84518 24.3044 5.91524 23.8959L7.1824 16.5077C7.21024 16.3455 7.1564 16.1799 7.03847 16.065L1.6687 10.8349C1.3719 10.5458 1.53529 10.0419 1.94525 9.98196L9.36734 8.89711C9.53002 8.87333 9.67061 8.7711 9.74338 8.62368L13.062 1.9005Z" stroke="#0F71F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  // </svg>
+  // `,
+  //   },
+  {
+    status: "done",
+    title: "완료 대기",
+    count: doneCount.value,
+    desc: `${doneCount.value}개의 예약이 완료 대기 중입니다.`,
+    icon: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.9352 26.0072C20.5668 26.0072 25.9427 20.6313 25.9427 13.9997C25.9427 7.36813 20.5668 1.99219 13.9352 1.99219C7.30368 1.99219 1.92773 7.36813 1.92773 13.9997C1.92773 20.6313 7.30368 26.0072 13.9352 26.0072Z" stroke="#5AB21A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.9355 6.79688V14.0014L18.7385 16.4029" stroke="#5AB21A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+  {
+    status: "assigned",
+    title: "청소 대기",
+    count: assignedCount.value,
+    desc: `${assignedCount.value}개의 예약이 청소 대기 중입니다.`,
+    icon: `<svg width="27" height="28" viewBox="0 0 27 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M25.4504 12.902V14.0067C25.4489 16.596 24.6104 19.1155 23.0601 21.1894C21.5097 23.2633 19.3305 24.7805 16.8475 25.5146C14.3644 26.2488 11.7106 26.1606 9.28175 25.2633C6.85291 24.3659 4.77919 22.7075 3.36989 20.5353C1.96059 18.3631 1.29121 15.7935 1.46158 13.2097C1.63194 10.626 2.63293 8.16656 4.31526 6.19821C5.99758 4.22986 8.27111 2.85806 10.7967 2.28742C13.3224 1.71677 15.9648 1.97785 18.33 3.03171" stroke="#F99B23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4514 4.40039L13.444 16.42L9.8418 12.8177" stroke="#F99B23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+
+  {
+    status: "confirmed",
+    title: "확정 완료",
+    count: confirmedCount.value,
+    desc: `이 달 ${confirmedCount.value}개의 청소가 완료되었습니다.`,
+    icon: `<svg width="27" height="20" viewBox="0 0 27 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M25.4349 10H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4349 1.99414H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4349 18.0059H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+]);
+
+import { Chart as ChartJS, LineElement, PointElement, LinearScale, Title, Tooltip, CategoryScale } from "chart.js";
+import { Line } from "vue-chartjs";
+import { data } from "autoprefixer";
+
+// Chart.js 구성 요소 등록
+ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, CategoryScale);
+
+// 데이터 정의
+const chartData = {
+  labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+  datasets: [
+    {
+      label: "청소 횟수",
+      data: [45, 52, 60, 60, 65, 80, 98, 90, 68, 60, 45, 40],
+      borderColor: "#3b82f6",
+      backgroundColor: "rgba(59, 130, 246, 0.1)",
+      tension: 0.4,
+      fill: false,
+      pointBackgroundColor: "#3b82f6",
+    },
+  ],
+};
+
+const chartOptions = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: { enabled: true },
+  },
+  scales: {
+    y: {
+      beginAtZero: true,
+      ticks: {
+        stepSize: 20,
+      },
+    },
+  },
+};
+
+// 알림 활성화 토글
+document.addEventListener("DOMContentLoaded", function () {
+  // 모든 .alert-box 요소에 대해 이벤트 등록
+  const alertBoxes = document.querySelectorAll(".alert-box");
+
+  alertBoxes.forEach(function (box) {
+    box.addEventListener("click", function () {
+      // active 클래스 토글
+      box.classList.toggle("active");
+
+      // 상태 아이콘 이미지찾기
+      const stateIconImg = box.querySelector(".alert-state-icon img");
+
+      if (stateIconImg) {
+        const isActive = box.classList.contains("active");
+
+        // 상태에 따라 이미지 변경
+        stateIconImg.src = isActive
+          ? "/public/prime/alert-state-on-icon.png"
+          : "/public/prime/alert-state-off-icon.png";
+        stateIconImg = isActive ? "상태 활성화 아이콘" : "상태 비활성화 아이콘";
+      }
+    });
+  });
+});
+// 대시 보드 관련
+</script>
 <template>
-  <div class="tw-space-y-6 tw-bg-white tw-text-black tw-dark:bg-black tw-dark:text-white tw-p-4 tw-rounded">
-    <!-- Font Awesome CDN 추가 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
-    <h1 class="tw-text-3xl tw-font-bold tw-text-gray-800 tw-dark:text-white">관리자 대시보드</h1>
-
-    <!-- 통계 카드 -->
-    <div class="tw-grid grid-cols-1 tw-sm:grid-cols-2 tw-lg:grid-cols-3 tw-gap-4 tw-md:gap-6">
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 hover:shadow-lg transition-shadow">
-        <div class="tw-flex tw-items-center">
-          <div class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-            <i class="fas fa-calendar-check text-xl md:text-2xl"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">전체 예약</h3>
-            <p class="text-xl md:text-2xl font-semibold text-gray-800 dark:text-white">120</p>
-            <span class="text-sm text-green-600 dark:text-green-400">+12%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300">
-            <i class="fas fa-users text-xl md:text-2xl"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">전체 사용자</h3>
-            <p class="text-xl md:text-2xl font-semibold text-gray-800 dark:text-white">50</p>
-            <span class="text-sm text-green-600 dark:text-green-400">+5%</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 md:p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300">
-            <i class="fas fa-star text-xl md:text-2xl"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">평균 평점</h3>
-            <p class="text-xl md:text-2xl font-semibold text-gray-800 dark:text-white">4.8</p>
-            <span class="text-sm text-green-600 dark:text-green-400">+0.2</span>
-          </div>
-        </div>
-      </div>
+  <div class="dashboard-wrap">
+    <div class="dash">
+      <p class="dash-name">대시보드</p>
+      <p class="dash-desc">오늘의 작업현항과 일정을 확인할 수 있습니다.</p>
     </div>
-
-    <!-- 예약 현황 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow text-gray-700 dark:text-gray-300">
-      <!-- 검색 필터 -->
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:items-center md:justify-between md:space-x-4">
-          <!-- 날짜 선택 -->
-          <div class="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:space-x-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">기준일</label>
-            <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
-              <input
-                type="date"
-                v-model="dateRange.start"
-                class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-              <span class="text-gray-500 dark:text-gray-400">~</span>
-              <input
-                v-model="dateRange.end"
-                type="date"
-                class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-            </div>
-          </div>
-
-          <!-- 접수 구분 -->
-          <div class="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:space-x-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">접수구분</label>
-            <select
-              v-model="serviceType"
-              class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-              <option value="all">전체</option>
-              <option value="일반청소">일반청소</option>
-              <option value="입주청소">입주청소</option>
-              <option value="이사청소">이사청소</option>
-            </select>
-          </div>
-
-          <!-- 접수 상태 -->
-          <div class="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:space-x-2">
-            <label class="text-sm font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">접수상태</label>
-            <select
-              v-model="receiptStatus"
-              class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-              <option value="all">전체</option>
-              <option value="예약완료">예약완료</option>
-              <option value="진행중">진행중</option>
-              <option value="대기중">대기중</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- 예약 목록 -->
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                예약번호
-              </th>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                고객명
-              </th>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                청소유형
-              </th>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                예약일시
-              </th>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                상태
-              </th>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                담당기사
-              </th>
-              <th
-                class="px-4 md:px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                액션
-              </th>
-            </tr>
-          </thead>
-          <tbody
-            v-for="reservation in paginatedReservations"
-            :key="reservation.id"
-            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ reservation.id }}
-              </td>
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ reservation.customerName }}
-              </td>
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ reservation.type }}
-              </td>
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ formatDate(reservation.date) }}
-              </td>
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="getStatusClass(reservation.status)"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                  {{ reservation.status }}
-                </span>
-              </td>
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ reservation.worker }}
-              </td>
-              <td class="px-4 md:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  @click="showReservationDetails(reservation)"
-                  class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-3">
-                  <i class="fa-solid fa-eye mr-1"></i> 상세
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- 페이지네이션 -->
+    <div class="dashboard">
       <div
-        class="px-4 py-3 flex flex-col sm:flex-row items-center justify-between border-t border-gray-200 dark:border-gray-700">
-        <!-- 페이지네이션 모바일 -->
-        <div class="flex-1 flex justify-between sm:hidden">
-          <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-            이전
-          </button>
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-            다음
-          </button>
-        </div>
-        <!-- 페이지네이션 데스크탑 -->
-        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-          <div>
-            <p class="text-sm text-gray-700 dark:text-gray-300">
-              총
-              <span class="font-medium">{{ filteredReservaions.length }}</span
-              >개 중 <span class="font-medium">{{ (currentPage - 1) * itemsPerPage + 1 }}</span
-              >- <span class="font-medium">{{ Math.min(currentPage * itemsPerPage, filteredReservaions.length) }}</span
-              >개 표시
-            </p>
-          </div>
-          <div>
-            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-              <button
-                @click="prevPage"
-                :disabled="currentPage === 1"
-                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                <span class="sr-only">이전</span>
-                <i class="fas fa-chevron-left"></i>
-              </button>
-              <button
-                v-for="page in totalPages"
-                :key="page"
-                @click="goToPage(page)"
-                :class="[
-                  currentPage === page
-                    ? 'bg-indigo-600 text-white border-indigo-600'
-                    : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300',
-                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
-                ]">
-                {{ page }}
-              </button>
-              <button
-                @click="nextPage"
-                :disabled="currentPage === totalPages"
-                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed">
-                <span class="sr-only">다음</span>
-                <i class="fas fa-chevron-right"></i>
-              </button>
-            </nav>
-          </div>
-        </div>
+        class="allcard"
+        v-for="card in statusCards"
+        :key="card.status"
+        :class="card.status"
+        @click="
+          card.status === 'waiting'
+            ? (waitinglist = true)
+            : card.status === 'assigned'
+            ? null
+            : card.status === 'done'
+            ? null
+            : card.status === 'confirmed'
+            ? null
+            : null
+        ">
+        <p class="profile-h3">
+          {{ card.title }}
+          <span class="card-icon" v-html="card.icon" style="margin-left: auto; display: inline"></span>
+        </p>
+        <p class="profile-h1">{{ card.count }}</p>
+        <p class="card-desc" v-html="card.desc"></p>
       </div>
     </div>
-
-    <!-- 기사 현황 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">기사 현황</h2>
-      </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700">
+    <div class="table-wrap">
+      <!-- 테이블 -->
+      <div class="tablelist">
+        <h2 class="today-reservation-h2">오늘의 예약</h2>
+        <table class="table">
+          <!-- 여기서 본인이 쓸 제목으로 바꾸기! -->
+          <thead>
             <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                기사ID
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                이름
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                연락처
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                평점
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                현재상태
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                담당예약
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                액션
-              </th>
+              <th>예약번호</th>
+              <th>고객명</th>
+              <th>고객 연락처</th>
+              <th>예약일자</th>
+              <th>청소일자</th>
+              <th>담당기사</th>
+              <th>담당 기사 연락처</th>
+              <th>상태</th>
+              <th>액션</th>
             </tr>
           </thead>
-          <tbody
-            v-for="worker in workers"
-            :key="worker.id"
-            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ worker.id }}
+          <!-- 여기서 내용 바꾸기 -->
+          <tbody>
+            <tr v-for="item in paginatedList" :key="item.id">
+              <td>{{ item.number }}</td>
+              <td class="customername">
+                <template v-if="item.primemember">
+                  <!-- 파란 북마크 아이콘 -->
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <rect width="15" height="15" fill="url(#pattern0_273_889)" />
+                    <defs>
+                      <pattern id="pattern0_273_889" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <use xlink:href="#image0_273_889" transform="scale(0.0185185)" />
+                      </pattern>
+                      <image
+                        id="image0_273_889"
+                        width="54"
+                        height="54"
+                        preserveAspectRatio="none"
+                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAACXBIWXMAAAsSAAALEgHS3X78AAAEXUlEQVRogd1aPUwUQRR+u6HCxKNZO/QSO8BISGig4OproNAsNgKNJgYSGmjhEis0EaPBaAPRAi5SYHOUHgU2GIMJ0pkc0rmFnImUu+bbn9u9vdmfmb29H76EAHO7c++b7817b96uZBgGJYGi6lkiyiaaJBzHWlG+4L2Jm5ii6n1ENEtEU0Q00RTTo1ElojIR7eEnDtHYxGxC60Q0kzqNcFRtO9bDCMYipqj6rD1ZpmXmRwMEp7SiXGZdKUfdrqj6FhFtdhgpsu35bC96A0KJ2aTa7XpR2FRUfdF/TSAxRdVXu4CUgxd+5Zh7TFH1HGRusXFJgT03rBXlCoUott41dFxkvHY3ELMlvdse2xJjUlH1YQpQjBllugiLDcTs8ihRNTE+ING31zJ9WpGpX2nLaqAialAsJzobSIDM3opk/j02QPQgJ0Xe83PTWgQsCOtzjHMuUAbu6CfGXcxmrhG9emKpBDI8uKlIdL3XWgQsSH7UJbd835oT41ELxEADsWHeGZ7OSDQ9wf3FTAzZy4rfS/fcOU8q3FNl/cT6eGdIQqp6ya5TM731c1b/8c8dWSumCSgxVTDo72U9gf4b7peea0S/NP4zY087iQGHpwbllg1zT5WOLALnvy1COwcGrX0UOwj7ibXq4FgHkFjYcAmA7Mh8PSFn/8Xdby1RbDon0fgA0Z2sRIO33HG4IAyFUlDHv5cQcR/nreDkhPyFNwbtlKNVrCuCFVXn1l0rBm/TL6dWLoqbh96VDFrbdQki3LPuHZnXTZVDUKhZ5dRYzQTyE09yfZSXzGTtuN3D5zr9OHM/h8LPdt1gE4aaYqJHlTDFRAHDc8uuKnBHuOXbUqO7BqDQ9qjIAqqRD0uySQ4AIV54l5s7OacJBBkoJQqvYk3fY14gkHhdaXzQMhzqBAGfi6hFrQr3rBB9eEq0XTZCjzcYR2HsJG4epF5S7X8Nzjv+xMzCkGDz3EtM+CwWhh1mO9MFqgxvSPeDdU6Lg9QVg+FREKneo9DW6j5NeImlEhXjuFIavREvsVR681G5KKqnEceVWUjdFVEvTgf0LBDx3i+FExdoC5gwa0X72dcfkQni1opI0NsHhnmIBPKjFuGwBI2a8facLmJWrVZMteogW7kxztAtWnVQJ0dF5DbRtgB1KjG44PyGkAvW4BBretUR5zDIApSaLOjCQcNGJbFiKHBZQOGK1lpYueSFczpuAingOHF1jwL3pGI0NDnRC0SRi9YachWi4FBWqmuDgzSuKx0R7R/FPh1H4UwrysdNiYrWCgdvdCRZHFPCrmki8C5IbY911Ok5IcynmletCH7pfwZ9FRTDw/VV5x+HWLc+c/Yi530F6aq44hwioXegI/uKHID7zWpFec9/i2x3gLsRB/YLKw2kqEsVQy2zqhXlrbCLuoUY1MEe2vLvpSD0tOIs5kHVNtCBtzmHcSeqXcQlEISeBDnsu9eQMINF3ulNCscVIXXNkCCDg97m7DgQ0X+1TJk9rcZcSQAAAABJRU5ErkJggg==" />
+                    </defs>
+                  </svg>
+
+                  {{ item.customer.name }}
+                </template>
+                <template v-else>
+                  <!-- 초록 나뭇잎 아이콘 -->
+                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
+                      fill="#4ECF50" />
+                  </svg>
+                  {{ item.customer.name }}
+                </template>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ worker.name }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ worker.phone }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ worker.rating }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="getStatusClass(worker.status)"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                  {{ worker.status }}
+
+              <!-- 데이터 바꾸려면 data.mjs 참고해서 사용하기
+            ex) 고객 주소 사용할 거면 {{ item.customer.mobile }} => {{ item.customer.address }}
+            기사 이메일 사용할 거면 {{ item.worker.name || "-" }} => {{ item.worker.email || "-" }}
+             -->
+              <td class="profile-h4">{{ item.customer.mobile }}</td>
+              <td class="profile-h4">{{ item.reservdate }}</td>
+              <td class="profile-h4">{{ item.reservinfo.date }} {{ item.reservinfo.time }}</td>
+              <td class="profile-h4">{{ item.worker.name || "-" }}</td>
+              <td class="profile-h4">{{ item.worker.mobile || "-" }}</td>
+              <td class="profile-h4">
+                <span :class="`statusbox-${item.status}`">
+                  {{
+                    item.status === "waiting"
+                      ? "대기중"
+                      : item.status === "assigned"
+                      ? "진행중"
+                      : item.status === "done"
+                      ? "청소완료"
+                      : item.status === "confirmed"
+                      ? "확정완료"
+                      : "알수없음"
+                  }}
                 </span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-300">
-                {{ worker.reservations }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button
-                  @click="showWorkerDetails(worker)"
-                  class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 mr-3">
-                  <i class="fa-solid fa-eye mr-1"></i>상세
-                </button>
-                <button
-                  @click="toggleWorkerStatus(worker)"
-                  :class="[
-                    worker.status === '활동중'
-                      ? 'text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300'
-                      : 'text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-300',
-                  ]">
-                  <i :class="worker.status === '활동중' ? 'fa-solid fa-ban' : 'fa-solid fa-check'" class="mr-1"></i>
-                  {{ worker.status === "활동중" ? "비활성화" : "활성화" }}
-                </button>
+              <td class="btnbox">
+                <button class="modal" v-on:click="viewreceipt = true">영수증 보기</button>
+                <button class="modal" @click="openDetailById(item.id)">상세보기</button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
 
-    <!-- 차트와 최근 예약 -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- 차트 -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">예약 추이</h2>
-        <div class="h-64">
-          <Chart />
-        </div>
-      </div>
-
-      <!-- 최근 예약 -->
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">최근 예약</h2>
-        <div class="space-y-4">
-          <div
-            v-for="reservation in recentReservations"
-            :key="reservation.id"
-            class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <div>
-              <p class="font-medium text-gray-900 dark:text-white">{{ reservation.customerName }}</p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">{{ reservation.date }}</p>
-            </div>
-
-            <span :class="getStatusClass(reservation.status)" class="px-2 py-1 text-xs font-semibold rounded-full">
-              {{ reservation.status }}
-            </span>
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+          <span>총 {{ filteredList.length }}건의 예약</span>
+          <div class="pagebox">
+            <button @click="goToPage(currentPage - 1)">←</button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              :class="{ active: currentPage === page }"
+              @click="goToPage(page)">
+              {{ page }}
+            </button>
+            <button @click="goToPage(currentPage + 1)">→</button>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- 예약 상세 모달 -->
-  <div
-    v-if="selectedReservation"
-    class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-    <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-      @click.stop>
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex justify-between items-center">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white">예약 상세 정보</h3>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-            <i class="fas fa-times"></i>
-          </button>
+      <!-- 모달 오버레이 -->
+      <div
+        class="overlay"
+        v-show="openReservDetail || viewreceipt"
+        @click="
+          () => {
+            openReservDetail = false;
+            viewreceipt = false;
+          }
+        "></div>
+      <!-- 예약 상세 모달 -->
+      <div class="reservdetailmodal" v-if="openReservDetail && reservdetail">
+        <div class="reservdetail-title">
+          <p class="profile-h2">예약 상세 정보</p>
+          <hr />
+          <div class="title" :class="`status-${reservdetail.status}`" style="font-weight: 600">
+            예약 번호: {{ reservdetail.number }}
+            <span
+              style="display: inline; padding: 0.5% 1% 0.5%"
+              :class="reservdetail?.status ? `statusbox-${reservdetail.status}` : ''">
+              {{
+                reservdetail?.status === "waiting"
+                  ? "대기중"
+                  : reservdetail?.status === "assigned"
+                  ? "진행중"
+                  : reservdetail?.status === "done"
+                  ? "청소완료"
+                  : reservdetail?.status === "confirmed"
+                  ? "확정완료"
+                  : "알수없음"
+              }}</span
+            >
+          </div>
         </div>
-      </div>
-      <div class="p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- 기본 정보 -->
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">기본 정보</h4>
-              <div class="space-y-2">
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">기사ID</label>
-                  <span class="text-sm text-gray-900 dark:text-white">{{ selectedWorker.id }}</span>
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">이름</label>
-                  <input
-                    v-model="selectedWorker.name"
-                    type="text"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">연락처</label>
-                  <input
-                    v-model="selectedWorker.phone"
-                    type="tel"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">평점</label>
-                  <input
-                    v-model="selectedWorker.rating"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="5"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">상태</label>
-                  <select
-                    v-model="selectedWorker.status"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                    <option value="활동중">활동중</option>
-                    <option value="비활성화">비활성화</option>
-                  </select>
-                </div>
+        <div class="reservdetail-info-box">
+          <div class="reservdetail-left">
+            <p class="profile-h2" style="font-size: 16px; font-weight: 500">기본 정보</p>
+            <div class="customerinfo">
+              <p class="profile-h3" @click="isCustomerOpen = !isCustomerOpen">
+                예약자 정보
+                <span class="icon">
+                  <template v-if="isCustomerOpen">
+                    <!-- 위쪽 아이콘 (▲) -->
+                    <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                  <template v-else>
+                    <!-- 아래쪽 아이콘 (▼) -->
+                    <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                </span>
+              </p>
+
+              <ul v-show="isCustomerOpen" class="profile-h4">
+                <li><span>이름</span>{{ reservdetail.customer.name }}</li>
+                <li><span>연락처</span>{{ reservdetail.customer.mobile }}</li>
+                <li><span>이메일</span>{{ reservdetail.customer.email }}</li>
+                <li><span>주소</span>{{ reservdetail.customer.address }}</li>
+              </ul>
+            </div>
+            <div class="membershipinfo">
+              <p class="profile-h3" @click="isMembershipOpen = !isMembershipOpen">
+                구독권 정보
+                <span class="icon">
+                  <template v-if="isMembershipOpen">
+                    <!-- 위쪽 아이콘 (▲) -->
+                    <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                  <template v-else>
+                    <!-- 아래쪽 아이콘 (▼) -->
+                    <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                </span>
+              </p>
+
+              <ul v-show="isMembershipOpen" class="profile-h4">
+                <li><span>구독권</span>{{ reservdetail.membership?.name || "-" }}</li>
+                <li><span>구독일</span>{{ reservdetail.membership?.date || "-" }}</li>
+                <li><span>회차</span>{{ reservdetail.membership?.count || "-" }}</li>
+                <li><span>주기</span>{{ reservdetail.membership?.during || "-" }}</li>
+              </ul>
+            </div>
+            <div class="workerinfo">
+              <p class="profile-h3" @click="isWorkerOpen = !isWorkerOpen">
+                담당자 정보
+                <span class="icon">
+                  <template v-if="isWorkerOpen">
+                    <!-- 위쪽 아이콘 (▲) -->
+                    <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                  <template v-else>
+                    <!-- 아래쪽 아이콘 (▼) -->
+                    <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                </span>
+              </p>
+
+              <ul v-show="isWorkerOpen" class="profile-h4">
+                <li><span>이름</span>{{ reservdetail.worker.name }}</li>
+                <li><span>연락처</span>{{ reservdetail.worker.mobile }}</li>
+                <li><span>이메일</span>{{ reservdetail.worker.email }}</li>
+              </ul>
+            </div>
+            <div class="inquiryinfo">
+              <p class="profile-h3" @click="isInquiryOpen = !isInquiryOpen">
+                문의 정보
+                <span class="icon">
+                  <template v-if="isInquiryOpen">
+                    <!-- 위쪽 아이콘 (▲) -->
+                    <svg width="18" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                  <template v-else>
+                    <!-- 아래쪽 아이콘 (▼) -->
+                    <svg width="18" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                        stroke="#424242"
+                        stroke-width="1.4"
+                        stroke-linecap="round" />
+                    </svg>
+                  </template>
+                </span>
+              </p>
+
+              <ul v-show="isInquiryOpen" class="profile-h4">
+                <li><span>문의유형</span>{{ reservdetail.inquiry?.type || "-" }}</li>
+                <li><span>제목</span>{{ reservdetail.inquiry?.title || "-" }}</li>
+                <li><span>내용</span>{{ reservdetail.inquiry?.memo || "-" }}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="reservdetail-right">
+            <p class="profile-h3" style="font-weight: 500">예약 정보</p>
+            <div class="reservdetailinfo">
+              <button class="modal profile-h4" style="text-align: right; font-size: 14px">첨부파일보기</button>
+              <ul class="profile-h4">
+                <li class="firstli"><span>서비스 유형</span>{{ reservdetail.reservinfo?.type || "-" }}</li>
+                <li><span>제빙기 정보</span>{{ reservdetail.reservinfo?.machine || "-" }}</li>
+                <li><span>서비스 주소</span>{{ reservdetail.reservinfo?.address || "-" }}</li>
+                <li><span>서비스 일시</span>{{ reservdetail.reservinfo?.date || "-" }}</li>
+                <li><span>추가 서비스</span>{{ reservdetail.reservinfo?.plus || "-" }}</li>
+                <li><span>요청사항</span>{{ reservdetail.reservinfo?.memo || "-" }}</li>
+              </ul>
+            </div>
+            <div class="info-box-bt">
+              <ul class="timeline">
+                <p class="profile-h3">작업 진행 상황</p>
+                <li v-for="(step, index) in stepStates" :key="index">
+                  <span class="dot" :class="step.class"></span>
+                  <div class="label profile-h4">
+                    <p>{{ step.label }}</p>
+                    <p>{{ step.time }}</p>
+                  </div>
+                </li>
+              </ul>
+              <div class="receipt">
+                <p class="profile-h3">결제 정보</p>
+                <ul class="payment profile-h4">
+                  <li>
+                    <p style="color: #616161">서비스 금액</p>
+                    <p>{{ reservdetail.payment?.service.toLocaleString() }}원</p>
+                  </li>
+                  <li>
+                    <p style="color: #616161">추가 서비스</p>
+                    <p>{{ reservdetail.payment?.extra.toLocaleString() }}원</p>
+                  </li>
+                  <li>
+                    <p style="color: #616161">쿠폰 할인</p>
+                    <p>{{ reservdetail.payment?.coupon.toLocaleString() }}원</p>
+                  </li>
+                  <li>
+                    <p style="color: #616161">구독권 차감</p>
+                    <p>
+                      {{
+                        reservdetail.payment?.membershipDiscount.toLocaleString("ko-KR", {
+                          signDisplay: "always",
+                        })
+                      }}원
+                    </p>
+                  </li>
+                  <li>
+                    <p style="color: #616161">서비스 차감</p>
+                    <p>
+                      {{
+                        reservdetail.payment?.extraDiscount.toLocaleString("ko-KR", {
+                          signDisplay: "always",
+                        })
+                      }}원
+                    </p>
+                  </li>
+                  <hr />
+                  <li class="profile-h3" style="margin: 0">
+                    <p><strong>총 결제 금액</strong></p>
+                    <p style="color: red">
+                      {{
+                        (
+                          (reservdetail.payment?.service || 0) +
+                          (reservdetail.payment?.extra || 0) +
+                          (reservdetail.payment?.coupon || 0) +
+                          (reservdetail.payment?.membershipDiscount || 0) +
+                          (reservdetail.payment?.extraDiscount || 0)
+                        ).toLocaleString()
+                      }}원
+                    </p>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- 활동 정보 -->
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">활동 정보</h4>
-              <div class="space-y-2">
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">담당예약</label>
-                  <span class="text-sm text-gray-900 dark:text-white">{{ selectedWorker.reservations }}</span>
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">활동지역</label>
-                  <input
-                    v-model="selectedWorker.area"
-                    type="text"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-              </div>
+        <button @click="openReservDetail = false">닫기</button>
+      </div>
+      <!-- 영수증 보기 모달 -->
+      <div class="viewreceipt" v-show="viewreceipt">
+        <img src="/prime/profile_receipt.png" alt="영수증 이미지" />
+        <img src="/prime/profile_receipt.png" class="print-only" alt="영수증 이미지" />
+
+        <div class="btnbox">
+          <button class="edit" style="padding: 1.5% 3%" @click="printReceipt">출력하기</button>
+          <button class="fix" style="padding: 1.6% 5.5%" @click="viewreceipt = false">닫기</button>
+        </div>
+      </div>
+      <div class="update">
+        <!-- 왼쪽 박스 -->
+        <!-- <Line :data="chartData" :options="chartOptions" /> -->
+        <MonthlyChart />
+        <!-- </div> -->
+        <!-- 오른쪽 박스 -->
+        <!-- <Bar :data="chartData" :options="chartOptions" /> -->
+        <MonthlyBarChart />
+        <!-- </div> -->
+      </div>
+      <div class="alert">
+        <h2 class="alert-h2">알림</h2>
+        <div class="alert-box-wrap">
+          <div class="alert-box">
+            <div class="alert-icon">
+              <img src="/public/prime/alert-claim-icon.png" alt="클레임 알림 아이콘" />
             </div>
-
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">메모</h4>
-              <textarea
-                v-model="selectedWorker.memo"
-                rows="3"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="기사에 대한 메모를 입력하세요"></textarea>
+            <div class="alert-desc">
+              <p class="alert-instructions">클레임건이 있습니다.</p>
+              <p class="alert-time">오전 10:00</p>
+            </div>
+            <div class="alert-state-icon">
+              <img class="state-off-icon" src="/public/prime/alert-state-off-icon.png" alt="상태 비활성화 아이콘" />
+            </div>
+          </div>
+          <div class="alert-box">
+            <div class="alert-icon">
+              <img src="/public/prime/alert-newres-icon.png" alt="새로운 예약 알림 아이콘" />
+            </div>
+            <div class="alert-desc">
+              <p class="alert-instructions">새로운 예약이 있습니다.</p>
+              <p class="alert-time">오전 11:10</p>
+            </div>
+            <div class="alert-state-icon">
+              <img class="state-off-icon" src="/public/prime/alert-state-off-icon.png" alt="상태 활성화 아이콘" />
+            </div>
+          </div>
+          <div class="alert-box">
+            <div class="alert-icon">
+              <img src="/public/prime/alert-saftytraining-icon.png" alt="안전교육 알림 아이콘" />
+            </div>
+            <div class="alert-desc">
+              <p class="alert-instructions">새로운 안전교육 영상을 시청해 주세요.</p>
+              <p class="alert-time">오후 14:00</p>
+            </div>
+            <div class="alert-state-icon">
+              <img class="state-off-icon" src="/public/prime/alert-state-off-icon.png" alt="상태 비활성화 아이콘" />
             </div>
           </div>
         </div>
-      </div>
-      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-3">
-        <button
-          @click="closeModal"
-          class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
-          닫기
-        </button>
-        <button
-          @click="saveReservaton"
-          class="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-          저장
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 기사 상세 모달 -->
-  <div v-if="selectedWorker" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50">
-    <div
-      class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
-      @click.stop>
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex justify-between items-center">
-          <h3 class="text-lg font-medium text-gray-900 dark:text-white">기사 상세 정보</h3>
-          <button class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
-      <div class="p-6">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- 기본 정보 -->
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">기본 정보</h4>
-              <div class="space-y-2">
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">기사ID</label>
-                  <span class="text-sm text-gray-900 dark:text-white">{{}}</span>
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">이름</label>
-                  <input
-                    type="text"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">연락처</label>
-                  <input
-                    type="tel"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">평점</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="5"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">상태</label>
-                  <select
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                    <option value="활동중">활동중</option>
-                    <option value="비활성화">비활성화</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 활동 정보 -->
-          <div class="space-y-6">
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">활동 정보</h4>
-              <div class="space-y-2">
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">담당예약</label>
-                  <span class="text-sm text-gray-900 dark:text-white">{{}}</span>
-                </div>
-                <div class="flex items-center">
-                  <label class="w-32 text-sm font-medium text-gray-700 dark:text-gray-300">활동지역</label>
-                  <input
-                    type="text"
-                    class="ml-2 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">메모</h4>
-              <textarea
-                rows="3"
-                class="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="기사에 대한 메모를 입력하세요"></textarea>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-3">
-        <button
-          @click="closeWorkermodal"
-          class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
-          닫기
-        </button>
-        <button
-          @click="saveWorker"
-          class="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-          저장
-        </button>
       </div>
     </div>
   </div>
 </template>
-<script setup>
-// import Chart from "./components/Chart.vue";
-import { ref, computed } from "vue";
-// 선택된 기사 정보
-const selectedWorker = ref(null);
-// 선택된 예약 정보
-const selectedReservation = ref(null);
-// 서비스유형
-const serviceType = ref("all");
-// 상태
-const receiptStatus = ref("all");
-// 예약 정보
-const reservations = ref([
-  {
-    id: "#1001",
-    customerName: "김철수",
-    type: "일반청소",
-    date: "2025-05-10 14:00",
-    status: "예약완료",
-    worker: "이지은",
-  },
-  {
-    id: "#1002",
-    customerName: "박영희",
-    type: "입주청소",
-    date: "2025-05-11 10:00",
-    status: "진행중",
-    worker: "최윤호",
-  },
-  {
-    id: "#1003",
-    customerName: "이민수",
-    type: "이사청소",
-    date: "2025-05-12 15:00",
-    status: "대기중",
-    worker: "-",
-  },
-  {
-    id: "#1004",
-    customerName: "정다은",
-    type: "일반청소",
-    date: "2025-05-13 11:00",
-    status: "예약완료",
-    worker: "이지은",
-  },
-  {
-    id: "#1005",
-    customerName: "최준호",
-    type: "입주청소",
-    date: "2025-05-14 09:00",
-    status: "대기중",
-    worker: "-",
-  },
-  {
-    id: "#1006",
-    customerName: "한미영",
-    type: "이사청소",
-    date: "2025-05-15 13:00",
-    status: "예약완료",
-    worker: "최윤호",
-  },
-  {
-    id: "#1007",
-    customerName: "송민준",
-    type: "일반청소",
-    date: "2025-05-16 15:00",
-    status: "진행중",
-    worker: "이지은",
-  },
-  {
-    id: "#1008",
-    customerName: "윤서연",
-    type: "입주청소",
-    date: "2025-05-17 10:00",
-    status: "대기중",
-    worker: "-",
-  },
-]);
-// 날짜 범위 필터
-const dateRange = ref({
-  start: "", // 시작일
-  end: "", // 종료일
-});
-// 필터링된 예약 목록 계산
-const filteredReservaions = computed(() => {
-  let result = [...reservations.value]; // 예약목록을 복사
-  //    날짜를 필터링:시작일과 종료일을 지정한 경우, 해당 범위내의 예약난 필터링
-  if (dateRange.value.start && dateRange.value.end) {
-    result = result.filter((reservation) => {
-      const resevationDate = new Date(reservation.date);
-      const startDate = new Date(dateRange.value.start); //시작일
-      const endDate = new Date(dateRange.value.end); //종료일
-      return resevationDate >= startDate && resevationDate <= endDate;
-    });
-  }
-  // 청소서비스 유형 필터링
-  if (serviceType.value !== "all") {
-    result = result.filter((reservation) => reservation.type === serviceType.value);
-  }
-
-  // 접수 상태 필터링
-  if (receiptStatus.value !== "all") {
-    result = result.filter((reservation) => reservation.status === receiptStatus.value);
-  }
-
-  return result;
-});
-// 페이지네이션 상태
-const currentPage = ref(1);
-const itemsPerPage = ref(5);
-// 전체 페이지 수 를 계산
-const totalPages = computed(() => {
-  return Math.ceil(filteredReservaions.value.length / itemsPerPage.value);
-});
-// 페이지네이션 예약 목록 계산
-const paginatedReservations = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredReservaions.value.slice(start, end);
-});
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-  }
-};
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-// 날짜 포맷을 변경하는 함수
-// 입력된 날짜 값을 'yyyy년 MM월 dd일 (요일)' 형식으로 변환
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString("ko-KR", {
-    year: "numeric", // 년도
-    month: "long", // 월 (한글 월 이름)
-    day: "numeric", // 일
-    weekday: "long", // 요일 (한글 요일 이름)
-  });
-};
-// 상태 css
-const getStatusClass = (status) => {
-  const statusClasses = {
-    예약완료: "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300",
-    진행중: "bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-300",
-    대기중: "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-300",
-    확정: "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300",
-    대기: "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300",
-    취소: "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300",
-    활동중: "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300",
-  };
-  return statusClasses[status] || "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-300";
-};
-
-// 예약관리 상세 모달
-const showReservationDetails = (reservation) => {
-  selectedReservation.value = { ...reservation, memo: reservation.memo || "" };
-};
-// 예약상세 모달 닫기
-const closeModal = () => {
-  selectedReservation.value = null;
-};
-// 예약 정보 저장 함수
-const saveReservaton = () => {
-  // 입력값 유효성 검사
-  if (!selectedReservation.value.customerName || !selectedReservation.value.date) {
-    alert("고객명과 예약일시는 필수 입력 항목입니다.");
-    return;
-  }
-  const index = reservations.value.findIndex((r) => r.id === selectedReservation.value.id);
-  if (index !== -1) {
-    reservations.value[index] = { ...selectedReservation.value };
-  }
-  //   모달닫기
-  closeModal();
-};
-// 기사현황
-const workers = ref([
-  {
-    id: "#C001",
-    name: "이지은",
-    phone: "010-1234-5678",
-    rating: 4.8,
-    status: "활동중",
-    reservations: "2건",
-    area: "서울, 경기",
-    memo: "",
-  },
-  {
-    id: "#C002",
-    name: "최윤호",
-    phone: "010-8765-4321",
-    rating: 4.5,
-    status: "활동중",
-    reservations: "1건",
-    area: "인천",
-    memo: "",
-  },
-]);
-//기사상태 토글 함수
-const toggleWorkerStatus = (worker) => {
-  const index = workers.value.findIndex((w) => (w.id = worker.id));
-  //해당 기사가 목록에 있으면
-  if (index !== -1) {
-    workers.value[index].status = worker.status === "활동중" ? "비활성화" : "활동중 ";
-  }
-};
-
-// 기사 상세모달 관련 함수
-const showWorkerDetails = (worker) => {
-  selectedWorker.value = {
-    ...worker,
-    memo: worker.memo || "",
-    area: worker.area || "",
-  };
-};
-const closeWorkermodal = () => {
-  selectedWorker.value = null;
-};
-const saveWorker = () => {
-  //연락처랑 이름이 비어있으면 유효성 검사
-  if (!selectedWorker.value.name || !selectedWorker.value.phone) {
-    alert("이름과 연락처는 필수 입력 항목입니다");
-    return;
-  }
-  //   기존기사 목록에서 현재 수정중인 기사의 인덱스를 찾음
-  const index = workers.value.findIndex((w) => w.id === selectedWorker.value.id);
-  if (index !== -1) {
-    workers.value[index] = { ...selectedWorker.value };
-  }
-  closeWorkerModal();
-};
-//최근예약
-const recentReservations = ref([
-  { id: 1, customerName: "김철수", date: "2024-03-20", status: "확정" },
-  { id: 2, customerName: "이영희", date: "2024-03-21", status: "대기" },
-  { id: 3, customerName: "박민수", date: "2024-03-22", status: "취소" },
-  { id: 4, customerName: "정지은", date: "2024-03-23", status: "확정" },
-]);
-</script>
+<style></style>

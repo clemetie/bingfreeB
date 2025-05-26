@@ -506,6 +506,7 @@ const stepStates = computed(() => {
                   :disabled="list.status !== 'assigned'"
                   :class="{ disabled: list.status !== 'assigned' }"
                   @click="() => handleConfirmClick(list)"
+                  style="padding: 0"
                 >
                   {{ list.status === "confirmed" ? "확정 완료" : "청소 확정" }}
                 </button>

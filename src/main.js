@@ -10,6 +10,8 @@ import router from "./router";
 import App from "./App.vue";
 import AOS from "aos";
 import "aos/dist/aos.css";
+// 지도
+
 
 // font-awesome과 관련된 import를 정의
 import { library } from "@fortawesome/fontawesome-svg-core";
@@ -29,6 +31,8 @@ app.directive("title", {
 
 // 위에 createApp을 통해 생성한 Vue Application 인스턴스의 component API 활용
 app.component("font-awesome-icon", FontAwesomeIcon);
+// 지도
+
 app.use(router);
 app.use(pinia);
 app.mount("#app");

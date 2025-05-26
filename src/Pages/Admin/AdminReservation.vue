@@ -229,14 +229,19 @@ const statusCards = [
     count: waitingCount,
     desc: `${waitingCount}개의 예약이 배정 대기 중입니다.`,
     icon: `<svg width="27" height="26" viewBox="0 0 27 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.062 1.9005C13.2454 1.52892 13.7753 1.52892 13.9587 1.9005L17.2773 8.62368C17.3501 8.7711 17.4907 8.87333 17.6534 8.89711L25.0755 9.98196C25.4854 10.0419 25.6488 10.5458 25.352 10.8349L19.9823 16.065C19.8643 16.1799 19.8105 16.3455 19.8383 16.5077L21.1055 23.8959C21.1755 24.3044 20.7468 24.6159 20.38 24.423L13.7431 20.9327C13.5974 20.8561 13.4233 20.8561 13.2776 20.9327L6.64077 24.423C6.27396 24.6159 5.84518 24.3044 5.91524 23.8959L7.1824 16.5077C7.21024 16.3455 7.1564 16.1799 7.03847 16.065L1.6687 10.8349C1.3719 10.5458 1.53529 10.0419 1.94525 9.98196L9.36734 8.89711C9.53002 8.87333 9.67061 8.7711 9.74338 8.62368L13.062 1.9005Z" stroke="#0F71F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.062 1.9005C13.2454 1.52892 13.7753 1.52892 13.9587 1.9005L17.2773 8.62368C17.3501 8.7711 17.4907 8.87333 17.6534 8.89711L25.0755 9.98196C25.4854 10.0419 25.6488 10.5458 25.352 10.8349L19.9823 16.065C19.8643 16.1799 19.8105 16.3455 19.8383 16.5077L21.1055 23.8959C21.1755 24.3044 20.7468 24.6159 20.38 24.423L13.7431 20.9327C13.5974 20.8561 13.4233 20.8561 13.2776 20.9327L6.64077 24.423C6.27396 24.6159 5.84518 24.3044 5.91524 23.8959L7.1824 16.5077C7.21024 16.3455 7.1564 16.1799 7.03847 16.065L1.6687 10.8349C1.3719 10.5458 1.53529 10.0419 1.94525 9.98196L9.36734 8.89711C9.53002 8.87333 9.67061 8.7711 9.74338 8.62368L13.062 1.9005Z" stroke="#F20F0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
+
 `,
   },
 ];
 </script>
 <template>
   <div class="adminreservation">
+    <div class="dash">
+      <p class="dash-name">예약 관리</p>
+      <p class="dash-desc">전체 예약을 관리할 수 있습니다.</p>
+    </div>
     <div class="dashboard">
       <div
         class="allcard"
@@ -252,12 +257,14 @@ const statusCards = [
             style="margin-left: auto; display: inline"
           ></span>
         </p>
-        <p class="profile-h1">{{ item.count }}</p>
+        <p class="profile-h1">
+          {{ item.count }} <span class="profile-h3 mbonly">개</span>
+        </p>
         <p class="card-desc" v-html="item.desc"></p>
       </div>
     </div>
     <div class="table-wrap">
-      <div class="searchbox">
+      <div class="searchbox websearchbox">
         <p class="profile-h2">회원 검색</p>
         <div class="namesearchbox profile-h4">
           <label>검색어</label>
@@ -276,6 +283,7 @@ const statusCards = [
         <div class="searchtop profile-h4">
           <div class="memberbox">
             <label>회원등급</label>
+
             <label
               ><input type="radio" v-model="memberFilter" value="all" />
               전체</label
@@ -448,6 +456,224 @@ const statusCards = [
           <button class="search-button" @click="applyFilters">검색</button>
         </div>
       </div>
+      <div class="searchbox mbsearchbox">
+        <p class="profile-h2">
+          회원 검색
+          <button class="modal profile-h4" v-on:click="clickadd = !clickadd">
+            상세검색
+          </button>
+        </p>
+        <div class="namesearchbox profile-h4">
+          <label>검색어</label>
+          <select v-model="searchType">
+            <option value="customer">고객</option>
+            <option value="worker">기사</option>
+          </select>
+          <input
+            v-model="searchText"
+            type="text"
+            placeholder="이름을 입력하세요"
+            @keydown.enter="applyFilters"
+          />
+        </div>
+        <hr />
+        <div class="clickadd" v-show="clickadd">
+          <div class="searchtop profile-h4">
+            <div class="memberbox">
+              <label class="filtermb">회원등급</label>
+              <div class="mbbox">
+                <label
+                  ><input type="radio" v-model="memberFilter" value="all" />
+                  전체</label
+                >
+                <label
+                  ><input type="radio" v-model="memberFilter" value="normal" />
+                  <svg
+                    width="14"
+                    height="11"
+                    viewBox="0 0 14 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
+                      fill="#4ECF50"
+                    />
+                  </svg>
+                  일반</label
+                >
+                <label
+                  ><input type="radio" v-model="memberFilter" value="prime" />
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                  >
+                    <rect
+                      width="15"
+                      height="15"
+                      fill="url(#pattern0_273_887)"
+                    />
+                    <defs>
+                      <pattern
+                        id="pattern0_273_887"
+                        patternContentUnits="objectBoundingBox"
+                        width="1"
+                        height="1"
+                      >
+                        <use
+                          xlink:href="#image0_273_887"
+                          transform="scale(0.0185185)"
+                        />
+                      </pattern>
+                      <image
+                        id="image0_273_887"
+                        width="54"
+                        height="54"
+                        preserveAspectRatio="none"
+                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAACXBIWXMAAAsSAAALEgHS3X78AAAEXUlEQVRogd1aPUwUQRR+u6HCxKNZO/QSO8BISGig4OproNAsNgKNJgYSGmjhEis0EaPBaAPRAi5SYHOUHgU2GIMJ0pkc0rmFnImUu+bbn9u9vdmfmb29H76EAHO7c++b7817b96uZBgGJYGi6lkiyiaaJBzHWlG+4L2Jm5ii6n1ENEtEU0Q00RTTo1ElojIR7eEnDtHYxGxC60Q0kzqNcFRtO9bDCMYipqj6rD1ZpmXmRwMEp7SiXGZdKUfdrqj6FhFtdhgpsu35bC96A0KJ2aTa7XpR2FRUfdF/TSAxRdVXu4CUgxd+5Zh7TFH1HGRusXFJgT03rBXlCoUott41dFxkvHY3ELMlvdse2xJjUlH1YQpQjBllugiLDcTs8ihRNTE+ING31zJ9WpGpX2nLaqAialAsJzobSIDM3opk/j02QPQgJ0Xe83PTWgQsCOtzjHMuUAbu6CfGXcxmrhG9emKpBDI8uKlIdL3XWgQsSH7UJbd835oT41ELxEADsWHeGZ7OSDQ9wf3FTAzZy4rfS/fcOU8q3FNl/cT6eGdIQqp6ya5TM731c1b/8c8dWSumCSgxVTDo72U9gf4b7peea0S/NP4zY087iQGHpwbllg1zT5WOLALnvy1COwcGrX0UOwj7ibXq4FgHkFjYcAmA7Mh8PSFn/8Xdby1RbDon0fgA0Z2sRIO33HG4IAyFUlDHv5cQcR/nreDkhPyFNwbtlKNVrCuCFVXn1l0rBm/TL6dWLoqbh96VDFrbdQki3LPuHZnXTZVDUKhZ5dRYzQTyE09yfZSXzGTtuN3D5zr9OHM/h8LPdt1gE4aaYqJHlTDFRAHDc8uuKnBHuOXbUqO7BqDQ9qjIAqqRD0uySQ4AIV54l5s7OacJBBkoJQqvYk3fY14gkHhdaXzQMhzqBAGfi6hFrQr3rBB9eEq0XTZCjzcYR2HsJG4epF5S7X8Nzjv+xMzCkGDz3EtM+CwWhh1mO9MFqgxvSPeDdU6Lg9QVg+FREKneo9DW6j5NeImlEhXjuFIavREvsVR681G5KKqnEceVWUjdFVEvTgf0LBDx3i+FExdoC5gwa0X72dcfkQni1opI0NsHhnmIBPKjFuGwBI2a8facLmJWrVZMteogW7kxztAtWnVQJ0dF5DbRtgB1KjG44PyGkAvW4BBretUR5zDIApSaLOjCQcNGJbFiKHBZQOGK1lpYueSFczpuAingOHF1jwL3pGI0NDnRC0SRi9YachWi4FBWqmuDgzSuKx0R7R/FPh1H4UwrysdNiYrWCgdvdCRZHFPCrmki8C5IbY911Ok5IcynmletCH7pfwZ9FRTDw/VV5x+HWLc+c/Yi530F6aq44hwioXegI/uKHID7zWpFec9/i2x3gLsRB/YLKw2kqEsVQy2zqhXlrbCLuoUY1MEe2vLvpSD0tOIs5kHVNtCBtzmHcSeqXcQlEISeBDnsu9eQMINF3ulNCscVIXXNkCCDg97m7DgQ0X+1TJk9rcZcSQAAAABJRU5ErkJggg=="
+                      />
+                    </defs>
+                  </svg>
+                  구독</label
+                >
+              </div>
+            </div>
+            <div class="shopbox">
+              <label class="filtermb">회원구분</label>
+              <div class="mbbox">
+                <label
+                  ><input type="radio" value="all" v-model="shopFilter" />
+                  전체</label
+                >
+                <label
+                  ><input type="radio" value="personal" v-model="shopFilter" />
+                  개인회원</label
+                >
+                <label
+                  ><input type="radio" value="business" v-model="shopFilter" />
+                  사업자회원</label
+                >
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="searchbt profile-h4">
+            <div class="statusbox">
+              <label class="filtermb">예약상태</label>
+              <label
+                ><input type="radio" value="all" v-model="statusFilter" />
+                전체</label
+              >
+              <div class="mbbox">
+                <label
+                  ><input type="radio" value="waiting" v-model="statusFilter" />
+                  배정대기</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    value="assigned"
+                    v-model="statusFilter"
+                  />
+                  청소대기</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    value="confirmed"
+                    v-model="statusFilter"
+                  />
+                  청소완료</label
+                >
+                <label
+                  ><input type="radio" value="done" v-model="statusFilter" />
+                  확정완료</label
+                >
+              </div>
+            </div>
+            <div class="searchdate">
+              <div class="datepicker-box">
+                <label class="filtermb">예약일시</label>
+                <div class="mbbox">
+                  <input
+                    type="date"
+                    v-model="fromDateInput"
+                    @change="
+                      () => {
+                        dateFilter = 'custom';
+                        applyFilters();
+                      }
+                    "
+                  />
+                  ~
+                  <input
+                    type="date"
+                    v-model="toDateInput"
+                    @change="
+                      () => {
+                        dateFilter = 'custom';
+                        applyFilters();
+                      }
+                    "
+                  />
+                </div>
+              </div>
+              <ul class="date-filter">
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'all' }"
+                  @click="dateFilter = 'all'"
+                >
+                  전체
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'today' }"
+                  @click="dateFilter = 'today'"
+                >
+                  오늘
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus7d' }"
+                  @click="dateFilter = 'plus7d'"
+                >
+                  7일
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus15d' }"
+                  @click="dateFilter = 'plus15d'"
+                >
+                  15일
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus1m' }"
+                  @click="dateFilter = 'plus1m'"
+                >
+                  1개월
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus3m' }"
+                  @click="dateFilter = 'plus3m'"
+                >
+                  3개월
+                </li>
+              </ul>
+            </div>
+          </div>
+          <hr />
+        </div>
+        <div class="search-action" style="margin-top: 12px">
+          <button class="search-button" @click="applyFilters">검색</button>
+        </div>
+      </div>
       <div class="tablelist">
         <h2 class="profile-h2">예약 목록</h2>
         <table class="table">
@@ -459,17 +685,16 @@ const statusCards = [
               <th>예약일자</th>
               <th>청소일자</th>
               <th>담당기사</th>
-              <th>담당 기사 연락처</th>
+              <th>담당기사 연락처</th>
               <th>상태</th>
               <th>액션</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="item in paginatedList" :key="item.id">
-              <td>{{ item.number }}</td>
-              <td class="customername">
+              <td data-label="예약번호">{{ item.number }}</td>
+              <td class="customername" data-label="고객명">
                 <template v-if="item.primemember">
-                  <!-- 파란 북마크 아이콘 -->
                   <svg
                     width="15"
                     height="15"
@@ -524,12 +749,16 @@ const statusCards = [
                   {{ item.customer.name }}
                 </template>
               </td>
-              <td>{{ item.customer.mobile }}</td>
-              <td>{{ item.reservdate }}</td>
-              <td>{{ item.reservinfo.date }} {{ item.reservinfo.time }}</td>
-              <td>{{ item.worker.name || "-" }}</td>
-              <td>{{ item.worker.mobile || "-" }}</td>
-              <td>
+              <td data-label="고객연락처">{{ item.customer.mobile }}</td>
+              <td data-label="예약일자">{{ item.reservdate }}</td>
+              <td data-label="청소일자">
+                {{ item.reservinfo.date }} {{ item.reservinfo.time }}
+              </td>
+              <td data-label="담당기사">{{ item.worker.name || "-" }}</td>
+              <td data-label="담당기사 연락처">
+                {{ item.worker.mobile || "-" }}
+              </td>
+              <td data-label="상태">
                 <span :class="`statusbox-${item.status}`">
                   {{
                     item.status === "waiting"
@@ -544,7 +773,7 @@ const statusCards = [
                   }}
                 </span>
               </td>
-              <td class="btnbox">
+              <td class="btnbox" data-label="액션">
                 <button class="modal" v-on:click="viewreceipt = true">
                   영수증 보기
                 </button>

@@ -41,7 +41,6 @@ import Board from "@/Pages/Admin/Board.vue";
 import WorkerHome from "@/Pages/Worker/WorkerHome.vue";
 import DDashboard from "@/Pages/Worker/DDashboard.vue";
 import WorkerBoard from "@/Pages/Worker/WorkerBoard.vue";
-import WorkerCustomers from "@/Pages/Worker/WorkerCustomers.vue";
 import WorkerHistory from "@/Pages/Worker/WorkerHistory.vue";
 import WorkerProfile from "@/Pages/Worker/WorkerProfile.vue";
 import WorkerSale from "@/Pages/Worker/WorkerSale.vue";
@@ -74,6 +73,7 @@ const routes = [
   {
     path: "/Admin",
     component: AdminHome,
+    redirect: "/Admin/Dashboard",
     children: [
       { path: "Dashboard", component: Dashboard },
       { path: "AdminReservation", component: AdminReservation },
@@ -93,8 +93,6 @@ const routes = [
     redirect: "/Worker/ddashboard",
     children: [
       { path: "ddashboard", component: DDashboard },
-      { path: "WorkerHome", component: WorkerHome },
-      { path: "WorkerCustomers", component: WorkerCustomers },
       { path: "WorkerHistory", component: WorkerHistory },
       { path: "WorkerBoard", component: WorkerBoard },
       { path: "WorkerSale", component: WorkerSale },

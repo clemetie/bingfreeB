@@ -524,7 +524,7 @@ const swiperBreakpoints = {
                 :freeModeStick="false"
                 class="w-full h-40">
                 <SwiperSlide v-for="(logo, index) in brandLogos1" :key="index" :style="{ width: '200px' }">
-                  <img :src="logo" alt="브랜드 로고" class="h-8 !w-16 object-contain" />
+                  <img :src="logo" alt="브랜드 로고" class="brand-logo" />
                 </SwiperSlide>
               </swiper>
             </div>
@@ -545,7 +545,7 @@ const swiperBreakpoints = {
                 :freeModeStick="false"
                 class="w-full h-40">
                 <SwiperSlide v-for="(logo, index) in brandLogos2" :key="index" :style="{ width: '200px' }">
-                  <img :src="logo" alt="브랜드 로고" class="h-12 !w-14 object-contain" />
+                  <img :src="logo" alt="브랜드 로고" class="brand-logo"  />
                 </SwiperSlide>
               </swiper>
             </div>
