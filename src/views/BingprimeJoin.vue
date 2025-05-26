@@ -265,7 +265,7 @@
     <div
       class="w-28 h-5 left-[926px] top-[429.12px] absolute text-center justify-start"
     >
-      <img src="/prime/Bingprime_just.logo.png" alt="로고" />
+      <img src="/prime/BingPrime_just.logo.png" alt="로고" />
     </div>
     <div
       class="w-48 h-8 left-[865px] top-[478.12px] absolute text-center justify-start text-black text-sm font-normal font-['Pretendard'] whitespace-nowrap"
