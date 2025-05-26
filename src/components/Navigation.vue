@@ -19,7 +19,7 @@ header {
   width: 100%;
   height: 80px;
   position: relative;
-  z-index: 99;
+  z-index: 9999999;
   .inner {
     width: 100%;
     height: 100%;
