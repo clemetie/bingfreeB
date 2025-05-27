@@ -14,37 +14,37 @@ const menuopen = ref(false);
 const links = [
   {
     name: "대시보드",
-    imgUrl: "/prime/dashboard-icon.png",
+    imgUrl: "/public/prime/dashboard-icon.png",
     path: "/Worker/ddashboard",
     icon: "fas fa-chart-line",
   },
   {
     name: "작업내역",
-    imgUrl: "/prime/customer-icon.png",
+    imgUrl: "/public/prime/customer-icon.png",
     path: "/Worker/WorkerHistory",
     icon: "fas fa-users",
   },
   {
     name: "정산내역",
-    imgUrl: "/prime/pay-icon.png",
+    imgUrl: "/public/prime/pay-icon.png",
     path: "/Worker/WorkerSale",
     icon: "fas fa-user-tie",
   },
   {
     name: "프로필",
-    imgUrl: "/prime/profile_icon.png",
+    imgUrl: "/public/prime/profile_icon.png",
     path: "/Worker/WorkerProfile",
     icon: "fas fa-user-tie",
   },
   {
     name: "게시판",
-    imgUrl: "/prime/notice-icon.png",
+    imgUrl: "/public/prime/notice-icon.png",
     path: "/Worker/WorkerBoard",
     icon: "fas fa-user-tie",
   },
   {
     name: "설정",
-    imgUrl: "/prime/settings-icon.png",
+    imgUrl: "/public/prime/settings-icon.png",
     path: "/Worker/WorkerSetting",
     icon: "fas fa-cog",
   },
@@ -65,29 +65,29 @@ const logout = () => {
   <header class="workerHead">
     <div class="logo">
       <router-link to="/Worker/ddashboard"
-        ><img src="/prime/bingfree-logo.png" alt="빙프리로고"
+        ><img src="/public/prime/bingfree-logo.png" alt="빙프리로고"
       /></router-link>
     </div>
     <div class="right webonly">
       <div class="right-icon saerch">
-        <img src="/prime/search-icon.png" alt="돋보기 아이콘" />
+        <img src="/public/prime/search-icon.png" alt="돋보기 아이콘" />
       </div>
       <div class="right-icon bell">
-        <img src="/prime/bell-icon.png" alt="알림 아이콘" />
+        <img src="/public/prime/bell-icon.png" alt="알림 아이콘" />
         <img
           class="redPoint"
-          src="/prime/redPoint-icon.png"
+          src="/public/prime/redPoint-icon.png"
           alt="알림이 있을때 활성화되는 빨간도트 아이콘"
         />
       </div>
       <div class="right-icon darkmode">
-        <img src="/prime/darkmode-icon.png" alt="다크모드 아이콘" />
+        <img src="/public/prime/darkmode-icon.png" alt="다크모드 아이콘" />
       </div>
       <div class="right-icon setting">
-        <img src="/prime/setting-icon.png" alt="설정 아이콘" />
+        <img src="/public/prime/setting-icon.png" alt="설정 아이콘" />
       </div>
       <div class="right-icon profile">
-        <img src="/prime/profile-image-icon.png" alt="프로필 아이콘" />
+        <img src="/public/prime/profile-image-icon.png" alt="프로필 아이콘" />
       </div>
     </div>
     <div class="sidebar mbonly">
@@ -126,24 +126,27 @@ const logout = () => {
       <nav class="side-menu" v-show="menuopen">
         <div class="right mbonly">
           <div class="right-icon saerch">
-            <img src="/prime/search-icon.png" alt="돋보기 아이콘" />
+            <img src="/public/prime/search-icon.png" alt="돋보기 아이콘" />
           </div>
           <div class="right-icon bell">
-            <img src="/prime/bell-icon.png" alt="알림 아이콘" />
+            <img src="/public/prime/bell-icon.png" alt="알림 아이콘" />
             <img
               class="redPoint"
-              src="/prime/redPoint-icon.png"
+              src="/public/prime/redPoint-icon.png"
               alt="알림이 있을때 활성화되는 빨간도트 아이콘"
             />
           </div>
           <div class="right-icon darkmode">
-            <img src="/prime/darkmode-icon.png" alt="다크모드 아이콘" />
+            <img src="/public/prime/darkmode-icon.png" alt="다크모드 아이콘" />
           </div>
           <div class="right-icon setting">
-            <img src="/prime/setting-icon.png" alt="설정 아이콘" />
+            <img src="/public/prime/setting-icon.png" alt="설정 아이콘" />
           </div>
           <div class="right-icon profile">
-            <img src="/prime/profile-image-icon.png" alt="프로필 아이콘" />
+            <img
+              src="/public/prime/profile-image-icon.png"
+              alt="프로필 아이콘"
+            />
           </div>
         </div>
         <router-link
@@ -269,4 +272,5 @@ const logout = () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

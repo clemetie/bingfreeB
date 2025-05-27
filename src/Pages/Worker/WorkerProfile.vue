@@ -657,4 +657,6 @@ const banks = [
     </div>
   </div>
 </template>
-<style></style>
+<style scoped lang="scss">
+@use "@/assets/styles/_worker_profile.scss" as wprofile;
+</style>

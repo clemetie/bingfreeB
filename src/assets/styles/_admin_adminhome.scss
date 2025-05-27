@@ -173,19 +173,19 @@ header.adminHead {
     display: flex;
     align-items: center;
     margin: auto;
-  }
-
-  & span {
-    font-size: 15px;
-    font-weight: 500;
-    color: #424242;
-  }
-  & svg {
-    margin-right: 16px;
-    @include mobile {
-      margin: 0;
+    & span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #424242;
+    }
+    & svg {
+      margin-right: 16px;
+      @include mobile {
+        margin: 0;
+      }
     }
   }
+
   .admin-right {
     width: 84%;
     height: calc(100vh - 70px);

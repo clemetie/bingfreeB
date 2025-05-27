@@ -97,11 +97,11 @@
           <div v-show="activeTab === 0" class="relative w-full min-h-screen">
             <!-- 이름 -->
             <div class="flex flex-row items-center w-full max-w-2xl space-x-4 mb-4">
-              <label for="email" class="w-32 text-base font-bold text-neutral-800"> 이름 </label>
+              <label for="name" class="w-32 text-base font-bold text-neutral-800"> 이름 </label>
               <input
                 id="name"
                 v-model="formData.name"
-                type="email"
+                type="text"
                 placeholder="* 이름을 입력해 주세요."
                 required
                 class="flex-1 h-12 px-3 rounded-lg border border-stone-300 focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)] placeholder:text-stone-300 placeholder:text-base font-['Pretendard']" />
@@ -180,6 +180,7 @@
                 class="w-36 h-12 px-3 rounded-lg border border-stone-300 focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)] placeholder:text-stone-300 placeholder:text-base placeholder:font-bold font-['Pretendard']" />
 
               <select
+                @change="handleEmailSelect"
                 id="emailSelect"
                 name="emailSelect"
                 class="w-36 h-12 px-3 rounded-lg border border-stone-300 focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)] text-base font-bold text-neutral-700 font-['Pretendard']">
@@ -208,6 +209,7 @@
               <select
                 id="mobile1"
                 name="mobile[]"
+                v-model="formData.mobile1"
                 class="w-24 h-12 px-3 rounded-lg border border-stone-300 bg-white text-base font-bold text-neutral-700 font-['Pretendard'] focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)]">
                 <option value="010">010</option>
                 <option value="011">011</option>
@@ -223,6 +225,7 @@
               <input
                 id="mobile2"
                 name="mobile[]"
+                v-model="formData.mobile2"
                 maxlength="4"
                 type="text"
                 class="w-24 h-12 px-3 rounded-lg border border-stone-300 text-center text-base font-bold placeholder:text-stone-300 font-['Pretendard'] focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)]" />
@@ -233,6 +236,7 @@
               <input
                 id="mobile3"
                 name="mobile[]"
+                v-model="formData.mobile3"
                 maxlength="4"
                 type="text"
                 class="w-24 h-12 px-3 rounded-lg border border-stone-300 text-center text-base font-bold placeholder:text-stone-300 font-['Pretendard'] focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)]" />
@@ -1258,16 +1262,20 @@ const tabs = ["개인회원", "비지니스회원"];
 const activeTab = ref(0);
 
 const formData = ref({
-  email: "",
+  name: "",
+  id: "",
   password: "",
-  partnerId: "",
-  partnerPassword: "",
-  managerId: "",
-  managerPassword: "",
+  passwordcheck: "",
+  emailId: "",
+  emailDomain: "",
+  mobile1: "010",
+  mobile2: "",
+  mobile3: "",
   role: "customer",
-  rememberMe: false,
 });
-
+const handleEmailSelect = (event) => {
+  formData.value.emailDomain = event.target.value;
+};
 const showPassword = ref(false);
 const togglePassword = () => {
   showPassword.value = !showPassword.value;

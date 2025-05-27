@@ -3,70 +3,299 @@
 <script setup>
 import { ref, computed } from "vue";
 
-const searchQuery = ref("");
-const statusFilter = ref("all");
-const searchFilter = ref("title");
-const selectAll = ref(false);
-const selected = ref([]);
-const currentPage = ref(1);
-const perPage = 5;
+// 상태 변수 선언
+const searchQuery = ref(""); // 검색어 문자열 (reactive)
+const searchFilter = ref("title"); // 검색 필터 (현재 'title' 고정, 확장 가능)
+const statusFilter = ref("all"); // 상태 필터 (현재 사용 안함)
+const currentPage = ref(1); // 현재 페이지 번호 (1부터 시작)
+const postsPerPage = 2; // 페이지 당 보여줄 게시글 수 (2개)
 
-// 검색 입력 처리기
-function handleInput(event) {
-  searchQuery.value = event.target.value;
-  search(); // 입력 시 검색 실행
+// 체크박스 관련 상태
+const selectAll = ref(false); // 전체 선택 체크박스 상태 (true/false)
+const selected = ref([]); // 선택된 게시글 id 배열
+
+// ---------------------
+// 📌 자유게시판 데이터
+// ---------------------
+const freePosts = ref([
+  {
+    id: 1,
+    number: 1,
+    title: "5월 25일 메가커피(동성로점) 대타 가능하신 분 계실까요?",
+    content:
+      "급한 일정이 생겨서 대신 근무해주실 분을 찾고 있어요! 시간은 오전 10시부터 오후 5시까지입니다. 가능하신 분은 댓글 부탁드려요 🙏",
+    author: "이*현",
+    date: "2025-05-13",
+    views: 53,
+  },
+  {
+    id: 2,
+    number: 2,
+    title: "고객 응대 어려울 때 이렇게 대응합니다 (상황별 스크립트 공유)",
+    content:
+      "고객 불만 응대가 어려울 때, 저는 먼저 경청 후 사과하는 방식을 써요. 예: '불편을 드려 정말 죄송합니다. 바로 확인해보겠습니다.' 등 상황별로 모아봤어요!",
+    author: "김*빈",
+    date: "2025-05-10",
+    views: 102,
+  },
+  {
+    id: 3,
+    number: 3,
+    title: "현장 갔다가 감동받은 일화 공유해요🥺",
+    content:
+      "오늘 방문한 매장에서 사장님이 고생 많다며 따뜻한 커피를 주셨어요. 작은 배려에 너무 감동받았습니다. 이런 순간이 힘이 되네요!",
+    author: "김*수",
+    date: "2025-05-10",
+    views: 68,
+  },
+  {
+    id: 4,
+    number: 4,
+    title: "1일 3매장 돌 때 체력 아끼는 동선 조절하는 꿀팁드림",
+    content:
+      "지도 앱을 이용해서 동선을 미리 짜두고, 중간에 쉬는 시간도 확보하는 게 핵심이에요! 전철/버스 시간도 미리 체크하면 체력 낭비 줄일 수 있어요.",
+    author: "오*연",
+    date: "2025-05-23",
+    views: 221,
+  },
+  {
+    id: 5,
+    number: 5,
+    title: "질문있어요",
+    content: "제빙기 세제는 어디서 사나요? 혹시 본사에서 구매해야 하나요 아니면 개별로도 구매 가능한가요?",
+    author: "김*희",
+    date: "2025-05-23",
+    views: 102,
+  },
+  {
+    id: 6,
+    number: 6,
+    title: "근무복 세탁 꿀팁 공유해요🧼",
+    content:
+      "기름때 잘 안 빠질 때 '베이킹소다 + 식초'로 불린 다음 세탁하면 훨씬 깨끗해져요. 저는 주 1회 몰아서 세탁해요!",
+    author: "세*정",
+    date: "2025-05-24",
+    views: 79,
+  },
+  {
+    id: 7,
+    number: 7,
+    title: "오늘 고객님이 간식 주셨어요~",
+    content:
+      "청소 마무리하니까 감사하다고 바나나우유랑 도넛을 주셨어요. 너무 감동이라 올려봅니다 ㅎㅎ 이런 경험들 공유해봐요~",
+    author: "하*진",
+    date: "2025-05-24",
+    views: 91,
+  },
+  {
+    id: 8,
+    number: 8,
+    title: "제빙기 청소 후기 남겨요",
+    content:
+      "솔직히 처음엔 걱정했는데, 정리도 깔끔하고 고객 반응도 좋아서 뿌듯했어요. 특히 세제 냄새가 안 나서 마음에 들었어요!",
+    author: "현*수",
+    date: "2025-05-24",
+    views: 87,
+  },
+  {
+    id: 9,
+    number: 9,
+    title: "구독 서비스 신청하신 분 계신가요?",
+    content: "정기 구독하면 장비나 세제도 따로 챙겨주시나요? 경험자분들 후기 궁금합니다!",
+    author: "남*정",
+    date: "2025-05-25",
+    views: 62,
+  },
+  {
+    id: 10,
+    number: 10,
+    title: "청소하다가 발생한 에러코드, 이렇게 해결했어요",
+    content:
+      "얼음이 안 나와서 깜짝 놀랐는데, 알고 보니 필터 막힘이 원인이었어요. 필터 분리 후 세척하니까 정상 작동했습니다!",
+    author: "김*호",
+    date: "2025-05-25",
+    views: 115,
+  },
+]);
+const freeSearchQuery = ref("");
+const freeStatusFilter = ref("all");
+const freeCurrentPage = ref(1);
+const freePostsPerPage = 3;
+
+// ---------------------
+// 🔍 필터 + 페이지네이션
+// ---------------------
+const filteredFreePosts = computed(() => {
+  return freePosts.value.filter((post) => {
+    const query = freeSearchQuery.value.toLowerCase();
+
+    switch (freeStatusFilter.value) {
+      case "title":
+        return post.title.toLowerCase().includes(query);
+      case "content":
+        return post.content.toLowerCase().includes(query);
+      case "date":
+        return post.date.includes(query);
+      case "all":
+      default:
+        return (
+          post.title.toLowerCase().includes(query) ||
+          post.content.toLowerCase().includes(query) ||
+          post.date.includes(query)
+        );
+    }
+  });
+});
+
+const paginatedFreePosts = computed(() => {
+  const start = (freeCurrentPage.value - 1) * freePostsPerPage;
+  return filteredFreePosts.value.slice(start, start + freePostsPerPage);
+});
+
+const totalFreePages = computed(() => {
+  return Math.ceil(filteredFreePosts.value.length / freePostsPerPage);
+});
+
+// ---------------------
+// ✅ 검색 및 페이지 함수
+// ---------------------
+function handleFreeInput(event) {
+  freeSearchQuery.value = event.target.value;
+  searchFree();
 }
 
-// 검색 실행 함수 (하나만)
+function searchFree() {
+  freeCurrentPage.value = 1;
+}
+
+function goToFreePage(page) {
+  freeCurrentPage.value = page;
+}
+
+// ---------------------
+// 📌 공지사항 게시글 데이터
+// ---------------------
+const noticePosts = ref([
+  { id: 100, notice: true, title: "[안내] 제빙기 교육 일정 변경", date: "2025-05-26" },
+  { id: 101, number: 1, title: "[안내] 빙프리 소속 기사 청소 소모품 신청 기간(25.06.20~)", date: "2025-05-20" },
+  { id: 102, number: 2, title: "[안내] 빙프리 소속 기사 유니폼 신청 기간 (25.05.21~)", date: "2025-05-18" },
+  { id: 103, number: 3, title: "[안내] 야간 방문 기준 변경 및 사전 연락 의무화", date: "2025-05-18" },
+  { id: 104, number: 4, title: "[필독] 고객 응대 매뉴얼 개정판 배포 안내 (25.05.27 시행)", date: "2025-05-15" },
+  { id: 105, number: 5, title: "[안내] 제빙기 청소 보고서 양식 최신 버전 업로드 (25.05.25)", date: "2025-05-09" },
+  { id: 106, number: 6, title: "[필독] 방문 전 사전 안내톡 전송 필수화 (25.06.01부터)", date: "2025-05-08" },
+  { id: 107, number: 7, title: "[안내] 고객 불만 접수 시 대응 매뉴얼 필독 요청 (상시)", date: "2025-05-05" },
+  { id: 108, number: 8, title: "[주의] 청소 후 실내 정리 상태 점검 강화 (25.06.01부터)", date: "2025-05-01" },
+]);
+
+const noticeSearchQuery = ref("");
+const noticeStatusFilter = ref("all");
+const noticeCurrentPage = ref(1);
+const noticePostsPerPage = 4;
+
+// ---------------------
+// 🔍 공지사항 필터 + 페이지네이션
+// ---------------------
+const filteredNoticePosts = computed(() => {
+  return noticePosts.value.filter((post) => post.title.toLowerCase().includes(noticeSearchQuery.value.toLowerCase()));
+});
+
+const paginatedNoticePosts = computed(() => {
+  const start = (noticeCurrentPage.value - 1) * noticePostsPerPage;
+  return filteredNoticePosts.value.slice(start, start + noticePostsPerPage);
+});
+
+const totalNoticePages = computed(() => {
+  return Math.ceil(filteredNoticePosts.value.length / noticePostsPerPage);
+});
+
+// ---------------------
+// ✅ 검색 및 페이지 함수
+// ---------------------
+function handleNoticeInput(event) {
+  noticeSearchQuery.value = event.target.value;
+  searchNotice();
+}
+
+function searchNotice() {
+  noticeCurrentPage.value = 1;
+}
+
+function goToNoticePage(page) {
+  noticeCurrentPage.value = page;
+}
+
+// 게시글 데이터 (reactive)
+const posts = ref([
+  { id: 0, notice: true, title: "[필독] 제빙기 청소 기사님을 위한 필수 안전교육 안내", date: "2025-05-13" },
+  { id: 1, number: 1, title: "5월 점검 일정 안내", date: "2025-05-10" },
+  { id: 2, number: 2, title: "제빙기 점검 신청 방법", date: "2025-05-08" },
+  { id: 3, number: 3, title: "서비스 구독 시 혜택 안내", date: "2025-05-05" },
+  { id: 4, number: 4, title: "청소 전/후 주의사항", date: "2025-05-01" },
+  { id: 5, number: 5, title: "제빙기 필터 관리법", date: "2025-04-29" },
+]);
+
+// 필터링된 게시글 리스트: 제목에 검색어 포함된 게시글만 반환
+const filteredPosts = computed(() => {
+  return posts.value.filter((post) => post.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
+});
+
+// 페이지네이션 적용된 게시글 리스트: 현재 페이지에 보여줄 게시글만 반환
+const paginatedPosts = computed(() => {
+  const start = (currentPage.value - 1) * postsPerPage;
+  return filteredPosts.value.slice(start, start + postsPerPage);
+});
+
+// 전체 페이지 수 계산
+const totalPages = computed(() => {
+  return Math.ceil(filteredPosts.value.length / postsPerPage);
+});
+
+// 함수: 검색창 입력 이벤트 핸들러
+function handleInput(event) {
+  searchQuery.value = event.target.value; // 검색어 업데이트
+  search(); // 검색 실행 (현재는 페이지 1로 이동)
+}
+
+// 검색 함수: 현재 페이지를 1로 초기화
 function search() {
   currentPage.value = 1;
   console.log("검색 실행됨: ", searchQuery.value);
 }
-const notices = ref([
-  { id: 0, isNotice: true, title: "[필독] 제빙기 청소 기사분들을 위한 필수 인증교육 안내", date: "2025-05-13" },
-  { id: 1, number: 1, title: "[안내] 필프리 소속 기사 청소 스케줄 신청 기간(25.06.20~)", date: "2025-05-10" },
-  { id: 2, number: 2, title: "[안내] 필프리 소속 기사 유니폼 신청 기간 (25.05.21~)", date: "2025-05-10" },
-  { id: 3, number: 3, title: "[안내] 야간 방문 기준 변경 및 사전 연락 의무화", date: "2025-05-08" },
-]);
 
-const filteredNotices = computed(() => {
-  const start = (currentPage.value - 1) * perPage;
-  const end = start + perPage;
-  return notices.value
-    .filter((notice) => notice.title.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    .slice(start, end);
-});
-
-const totalPages = computed(() => {
-  const count = notices.value.filter((notice) =>
-    notice.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-  ).length;
-  return Math.ceil(count / perPage);
-});
-
+// 전체 선택 토글 함수
 function toggleAll() {
   if (selectAll.value) {
-    selected.value = filteredNotices.value.map((n) => n.id);
+    // 현재 페이지 게시글 모두 선택
+    selected.value = paginatedPosts.value.map((post) => post.id);
   } else {
+    // 선택 해제
     selected.value = [];
   }
 }
 
+// 선택된 게시글 삭제 함수
 function deleteSelected() {
-  notices.value = notices.value.filter((n) => !selected.value.includes(n.id));
+  posts.value = posts.value.filter((post) => !selected.value.includes(post.id));
   selected.value = [];
 }
 
+// 특정 페이지로 이동
 function goToPage(page) {
   currentPage.value = page;
 }
 
+// 다음 페이지로 이동 (최대 페이지 넘지 않도록)
 function nextPage() {
-  if (currentPage.value < totalPages.value) currentPage.value++;
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++;
+  }
 }
 
+// 이전 페이지로 이동 (1보다 작아지지 않도록)
 function prevPage() {
-  if (currentPage.value > 1) currentPage.value--;
+  if (currentPage.value > 1) {
+    currentPage.value--;
+  }
 }
 </script>
 
@@ -79,79 +308,297 @@ function prevPage() {
 
     <!-- 게시판 -->
     <div class="board-section">
-      <!-- 게시판 제목 -->
-      <div class="board-section-header">
-        <!-- 큰제목 -->
-        <h2 class="board-subtitle">나에게 필요한 안전교육</h2>
-        &nbsp;
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 18 18"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink">
-          <rect width="18" height="18" fill="url(#pattern0_656_530)" />
-          <defs>
-            <pattern id="pattern0_656_530" patternContentUnits="objectBoundingBox" width="1" height="1">
-              <use xlink:href="#image0_656_530" transform="scale(0.0169492)" />
-            </pattern>
-            <image
-              id="image0_656_530"
-              width="59"
-              height="59"
-              preserveAspectRatio="none"
-              xlink:href="data:image/png;base64,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" />
-          </defs></svg
-        >&nbsp; &nbsp; &nbsp;
-        <!-- 서브 제목 -->
-        <div class="board-subtxtwrap">
-          <div class="board-subtxtbg">
-            <p class="board-subtxt">나와 고객의 안전을 위한 첫걸음,</p>
-          </div>
+      <div class="board-section-1">
+        <!-- 게시판 제목 -->
+        <div class="board-section-header">
+          <!-- 큰제목 -->
+          <h2 class="board-subtitle">나에게 필요한 안전교육</h2>
           &nbsp;
-          <p class="board-subtxt2">지금 바로 안전교육 이수하세요.</p>
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 18 18"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink">
+            <rect width="18" height="18" fill="url(#pattern0_656_530)" />
+            <defs>
+              <pattern id="pattern0_656_530" patternContentUnits="objectBoundingBox" width="1" height="1">
+                <use xlink:href="#image0_656_530" transform="scale(0.0169492)" />
+              </pattern>
+              <image
+                id="image0_656_530"
+                width="59"
+                height="59"
+                preserveAspectRatio="none"
+                xlink:href="data:image/png;base64,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" />
+            </defs></svg
+          >&nbsp; &nbsp; &nbsp;
+          <!-- 서브 제목 -->
+          <div class="board-subtxtwrap">
+            <div class="board-subtxtbg">
+              <p class="board-subtxt">나와 고객의 안전을 위한 첫걸음,</p>
+            </div>
+            &nbsp;
+            <p class="board-subtxt2">지금 바로 안전교육 이수하세요.</p>
+          </div>
+        </div>
+        <!-- 검색 및 필터 -->
+        <div class="board-filter">
+          <div class="board-filter-controls">
+            <!-- 상태 필터 -->
+            <div class="status-select">
+              <select v-model="statusFilter">
+                <option value="all">전체</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="date">등록일</option>
+              </select>
+            </div>
+            <!-- 검색 입력 -->
+            <div class="search-input">
+              <input v-model="searchQuery" @input="handleInput" type="text" placeholder="검색어를 입력하세요." />
+              <svg
+                @click="search"
+                class="cursor-pointer"
+                width="19"
+                height="19"
+                viewBox="0 0 19 19"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.35786 12.6421 1 8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16Z"
+                  stroke="#757575"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M18 18L14 14"
+                  stroke="#757575"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <!-- 글쓰기 -->
+            <button class="write-box">글쓰기</button>
+          </div>
         </div>
       </div>
-      <!-- 검색 및 필터 -->
-      <div class="board-filter">
-        <div class="board-filter-controls">
-          <!-- 상태 필터 -->
-          <div class="status-select">
-            <select v-model="statusFilter">
-              <option value="all">전체</option>
-              <option value="title">제목</option>
-              <option value="content">내용</option>
-              <option value="date">등록일</option>
-            </select>
+      <div class="board-section-2">
+        <div class="board-wrap">
+          <table class="board-table">
+            <thead>
+              <tr>
+                <th style="width: 10%">번호</th>
+                <th style="width: 70%">제목</th>
+                <th style="width: 20%">등록일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(post, index) in paginatedPosts" :key="index">
+                <td>
+                  <span v-if="post.notice" class="notice-label">공지</span>
+                  <span v-else>{{ post.number }}</span>
+                </td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              :class="{ active: currentPage === page }"
+              @click="currentPage = page">
+              {{ page }}
+            </button>
           </div>
-          <!-- 검색 입력 -->
-          <div class="search-input">
-            <input v-model="searchQuery" @input="handleInput" type="text" placeholder="검색어를 입력하세요." />
-            <svg
-              @click="search"
-              class="cursor-pointer"
-              width="19"
-              height="19"
-              viewBox="0 0 19 19"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.35786 12.6421 1 8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16Z"
-                stroke="#757575"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round" />
-              <path
-                d="M18 18L14 14"
-                stroke="#757575"
-                stroke-width="1.8"
-                stroke-linecap="round"
-                stroke-linejoin="round" />
-            </svg>
+        </div>
+      </div>
+    </div>
+    <!-- 게시판2 -->
+    <!-- 공지사항 게시판 영역 -->
+    <div class="board-section">
+      <div class="board-section-1">
+        <!-- 게시판 제목 -->
+        <div class="board-section-header">
+          <h2 class="board-subtitle-2">공지사항</h2>
+        </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="board-filter">
+          <div class="board-filter-controls">
+            <div class="status-select">
+              <select v-model="noticeStatusFilter">
+                <option value="all">전체</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="date">등록일</option>
+              </select>
+            </div>
+            <div class="search-input">
+              <input
+                v-model="noticeSearchQuery"
+                @input="handleNoticeInput"
+                type="text"
+                placeholder="검색어를 입력하세요." />
+              <svg
+                @click="search"
+                class="cursor-pointer"
+                width="19"
+                height="19"
+                viewBox="0 0 19 19"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.35786 12.6421 1 8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16Z"
+                  stroke="#757575"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M18 18L14 14"
+                  stroke="#757575"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+            <button class="write-box">글쓰기</button>
           </div>
-          <!-- 글쓰기 -->
-          <button class="write-box">글쓰기</button>
+        </div>
+      </div>
+
+      <div class="board-section-2">
+        <div class="board-wrap">
+          <table class="board-table">
+            <thead>
+              <tr>
+                <th style="width: 10%">번호</th>
+                <th style="width: 70%">제목</th>
+                <th style="width: 20%">등록일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(post, index) in paginatedNoticePosts" :key="index">
+                <td>
+                  <span v-if="post.notice" class="notice-label-2">공지</span>
+                  <span v-else>{{ post.number }}</span>
+                </td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.date }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button
+              v-for="page in totalNoticePages"
+              :key="page"
+              :class="{ active: noticeCurrentPage === page }"
+              @click="goToNoticePage(page)">
+              {{ page }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 게시판3 -->
+    <!-- 자유게시판 영역 -->
+    <div class="board-section">
+      <div class="board-section-1">
+        <!-- 게시판 제목 -->
+        <div class="board-section-header">
+          <h2 class="board-subtitle-2">자유게시판</h2>
+        </div>
+
+        <!-- 검색 및 필터 -->
+        <div class="board-filter">
+          <div class="board-filter-controls">
+            <!-- 상태 필터 -->
+            <div class="status-select">
+              <select v-model="freeStatusFilter">
+                <option value="all">전체</option>
+                <option value="title">제목</option>
+                <option value="content">내용</option>
+                <option value="date">등록일</option>
+              </select>
+            </div>
+
+            <!-- 검색 입력 -->
+            <div class="search-input">
+              <input
+                v-model="freeSearchQuery"
+                @input="handleFreeInput"
+                type="text"
+                placeholder="검색어를 입력하세요." />
+             <svg
+                @click="search"
+                class="cursor-pointer"
+                width="19"
+                height="19"
+                viewBox="0 0 19 19"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path
+                  d="M8.5 16C12.6421 16 16 12.6421 16 8.5C16 4.35786 12.6421 1 8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16Z"
+                  stroke="#757575"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path
+                  d="M18 18L14 14"
+                  stroke="#757575"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </div>
+
+            <!-- 글쓰기 -->
+            <button class="write-box">글쓰기</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="board-section-2">
+        <div class="board-wrap">
+          <table class="board-table">
+            <thead>
+              <tr>
+                <th style="width: 10%">번호</th>
+                <th style="width: 40%">제목</th>
+                <th style="width: 15%">글쓴이</th>
+                <th style="width: 20%">등록일</th>
+                <th style="width: 15%">조회수</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(post, index) in paginatedFreePosts" :key="index">
+                <td>
+                  <span v-if="post.notice" class="notice-label-2">공지</span>
+                  <span v-else>{{ post.number }}</span>
+                </td>
+                <td>{{ post.title }}</td>
+                <td>{{ post.author }}</td>
+                <td>{{ post.date }}</td>
+                <td>{{ post.views }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="pagination">
+            <button
+              v-for="page in totalFreePages"
+              :key="page"
+              :class="{ active: freeCurrentPage === page }"
+              @click="goToFreePage(page)">
+              {{ page }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -216,8 +663,14 @@ function prevPage() {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     margin-top: 2%;
-    display: flex;
-    justify-content: space-between;
+    .board-section-1 {
+      width: 95%;
+      margin: auto;
+      overflow: hidden;
+      margin: 1% 0 0 2%;
+      display: flex;
+      justify-content: space-between;
+    }
 
     .dark & {
       background-color: #2d3748;
@@ -225,7 +678,6 @@ function prevPage() {
 
     .board-section-header {
       padding: 1rem;
-      border-bottom: 1px solid #e2e8f0;
       display: flex;
       align-items: center;
 
@@ -475,5 +927,75 @@ function prevPage() {
       }
     }
   }
+}
+// 게시판 내용
+.board-wrap {
+  padding: 20px;
+  font-family: "Pretendard", sans-serif;
+}
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.board-table thead {
+  background-color: #f7f7f7;
+}
+
+.board-table th,
+.board-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  text-align: center;
+}
+
+.notice-label {
+  display: inline-block;
+  background-color: #4caf50;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 15px;
+}
+.notice-label-2 {
+  display: inline-block;
+  background-color: #424242;
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 15px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pagination button {
+  border: none;
+  background-color: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #111;
+  color: #fff;
+}
+
+.pagination button:hover {
+  background-color: #ddd;
+}
+// 게시판 2
+.board-subtitle-2 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #424242;
 }
 </style>

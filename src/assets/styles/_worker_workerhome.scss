@@ -173,17 +173,16 @@ header.workerHead {
     display: flex;
     align-items: center;
     margin: auto;
-  }
-
-  & span {
-    font-size: 15px;
-    font-weight: 500;
-    color: #424242;
-  }
-  & svg {
-    margin-right: 16px;
-    @include mobile {
-      margin: 0;
+    .logout span {
+      font-size: 15px;
+      font-weight: 500;
+      color: #424242;
+    }
+    .logout svg {
+      margin-right: 16px;
+      @include mobile {
+        margin: 0;
+      }
     }
   }
   .admin-right {

@@ -629,7 +629,7 @@ const handleReSubmit = () => {
               </div>
               <!-- 날짜 선택 후 라디오 -->
               <transition class="selectedDate" name="fade">
-                <div v-if="formData.selectedDate">
+                <div>
                   <p class="main-h4">* 해당 날짜에만 청소가 가능한가요?</p>
                   <div class="label">
                     <label
@@ -665,7 +665,7 @@ const handleReSubmit = () => {
             </div>
             <!-- 희망시간선택 -->
             <transition class="selectTime" name="fade">
-              <div v-if="formData.dateRestricted" class="fade-box">
+              <div>
                 <p class="main-h4">* 희망하시는 청소 시간을 입력해주세요</p>
                 <input
                   type="text"
@@ -676,7 +676,7 @@ const handleReSubmit = () => {
             </transition>
             <!-- 기사님 선택 -->
             <transition name="fade">
-              <div v-if="formData.dateRestricted" class="fade-box">
+              <div>
                 <p class="main-h4">* 희망하시는 기사님 성별을 선택해주세요</p>
                 <div class="gender-group">
                   <label>
@@ -711,7 +711,7 @@ const handleReSubmit = () => {
             </transition>
             <!-- 요청사항 -->
             <transition class="selectTime" name="fade">
-              <div v-if="formData.dateRestricted" class="fade-box">
+              <div>
                 <p class="main-h4">* 요청사항이 있으신가요?</p>
                 <input
                   type="text"
@@ -722,7 +722,7 @@ const handleReSubmit = () => {
             </transition>
             <!-- 서비스 선택 -->
             <transition class="selectTime" name="fade">
-              <div v-if="formData.dateRestricted" class="fade-box">
+              <div>
                 <p class="main-h4">* 추가로 원하시는 서비스가 있나요?</p>
                 <div class="service-options">
                   <label

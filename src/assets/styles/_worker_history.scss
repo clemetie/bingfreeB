@@ -1,7 +1,12 @@
 @use "./admin_table" as *;
 @use "./variables" as *;
+
 .workerreservation {
   position: relative;
+  label,
+  input {
+    cursor: pointer;
+  }
 }
 .dashboard {
   width: 100%;
@@ -36,7 +41,6 @@
 
     &.waiting {
       border-left: 5px solid red;
-      cursor: pointer;
     }
 
     &.assigned {
@@ -80,6 +84,11 @@
   justify-content: space-between;
   @include mobile {
     width: 90%;
+  }
+  .btnbox {
+    margin: auto;
+    display: flex;
+    gap: 20px;
   }
   .reservdetail-title {
     display: flex;
@@ -365,134 +374,8 @@
     gap: 8px;
   }
 }
-.waitinglist {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  background-color: #fff;
-  width: 900px;
-  height: 700px;
-  border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  @include mobile {
-    width: 90%;
-    overflow-y: auto;
-  }
-  .profile-h1.title {
-    padding: 2% 3%;
-    border-bottom: 1px solid #ccc;
-    display: flex;
-    justify-content: space-between;
-  }
-  .list-wrap-been {
-    display: flex;
-    @include mobile {
-      flex-direction: column;
-    }
-    .list-left {
-      width: 50%;
-      background-color: #eeeeee;
-      padding: 10px;
-      height: 100%;
-      @include mobile {
-        width: 100%;
-        height: 25vh;
-      }
-      .leftlist-wrap {
-        height: 80%;
-        overflow-y: auto; // ✅ 리스트만 스크롤
-        padding-right: 4px;
-        margin: 0;
-        padding: 0;
-        @include mobile {
-          height: 100%;
-        }
-        .profile-h1 {
-          padding: 1.5% 0;
-          color: $bingfree-main;
-        }
-        .leftlist {
-          background-color: #fff;
-          border: 2px solid #eeeeee;
-          border-radius: 8px;
-          padding: 3% 3%;
-          margin: 2%;
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          cursor: pointer;
-          &.active {
-            border: 2px solid $bingprime-waiting;
-          }
-        }
-      }
-    }
-    .list-right {
-      .btnbox {
-        width: 100%;
-        text-align: center;
-        button {
-          margin: 0 2%;
-        }
-      }
-      width: 50%;
-      height: 100%;
-      padding: 2%;
-      display: flex;
-      flex-direction: column;
-      gap: 3%;
-      @include mobile {
-        width: 100%;
-        gap: 20px;
-      }
-      .listright {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        .profile-h1 {
-          padding: 1.5% 0;
-          color: $bingfree-main;
-        }
-      }
-      .profile-h3 {
-        font-weight: 600;
-        margin-bottom: -10px;
-        &.customerlist {
-          display: flex;
-          justify-content: space-between;
-        }
-      }
-
-      .customerinfo,
-      .reservdetailinfo {
-        background-color: rgba($color: #1456fd, $alpha: 0.1);
-        padding: 2%;
-        border-radius: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-
-        ul {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          padding: 1%;
-          li {
-            display: flex;
-
-            span {
-              font-size: 14px;
-              width: 20%;
-            }
-          }
-        }
-      }
-    }
-  }
+.tablelist.waitinglist {
+  margin: 0 0 20px 0;
 }
 button {
   &.modal {
@@ -510,7 +393,8 @@ button {
     text-underline-position: from-font;
   }
   &.edit {
-    padding: 1% 2%;
+    width: 70px;
+    height: 30px;
     flex-shrink: 0;
     border-radius: 8px;
     border: 1px solid #ff6b2c;
@@ -529,7 +413,8 @@ button {
     }
   }
   &.cancel {
-    padding: 1% 2%;
+    width: 70px;
+    height: 30px;
     flex-shrink: 0;
     border-radius: 8px;
     text-align: center;
@@ -549,7 +434,8 @@ button {
     }
   }
   &.fix {
-    padding: 1% 3%;
+    width: 70px;
+    height: 30px;
     flex-shrink: 0;
     border-radius: 8px;
     background: #1456fd;
@@ -580,18 +466,55 @@ button {
 .processing-confirmed {
   color: $bingprime-all;
 }
+.status-done {
+  color: $bingprime-done;
+}
+.status-waiting {
+  color: $bingprime-waiting;
+}
+.status-assigned {
+  color: $bingprime-assigned;
+}
+.status-confirmed {
+  color: $bingprime-all;
+}
+// 뱃지 스타일 공통
+%status-badge {
+  display: inline-block;
+  color: #fff;
+  border-radius: 10px;
+  width: 50px;
+  line-height: 17px;
+  text-align: center;
+  font-size: 11px;
+}
 
+// 상태 뱃지
+.statusbox-done {
+  @extend %status-badge;
+  background-color: $bingprime-done;
+}
+.statusbox-waiting {
+  @extend %status-badge;
+  background-color: $bingprime-waiting;
+}
+.statusbox-assigned {
+  @extend %status-badge;
+  background-color: $bingprime-assigned;
+}
+.statusbox-confirmed {
+  @extend %status-badge;
+  background-color: $bingprime-all;
+}
 // 뱃지 스타일 공통
 %processing-badge {
-  width: 62px;
-  height: 28px;
+  width: 70px;
+  height: 30px;
   text-align: center;
-  //   display: block;
   color: #fff !important;
-  border-radius: 3px;
+  border-radius: 8px;
   text-decoration: none !important;
-  font-weight: 300 !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   text-align: center;
   @include mobile {
     height: 24px;

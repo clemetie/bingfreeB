@@ -16,8 +16,8 @@
       text-underline-position: from-font;
     }
     &.edit {
-     width: 70px;
-      height: 40px;
+      width: 70px;
+      height: 30px;
       flex-shrink: 0;
       border-radius: 8px;
       border: 1px solid #ff6b2c;
@@ -37,7 +37,7 @@
     }
     &.cancel {
       width: 70px;
-      height: 40px;
+      height: 30px;
       flex-shrink: 0;
       border-radius: 8px;
       text-align: center;
@@ -58,7 +58,7 @@
     }
     &.fix {
       width: 70px;
-      height: 40px;
+      height: 30px;
       flex-shrink: 0;
       border-radius: 8px;
       background: #1456fd;
@@ -99,7 +99,8 @@
   %status-badge {
     color: #fff;
     border-radius: 10px;
-    padding: 0.4% 1%;
+    width: 50px;
+    line-height: 17px;
     font-size: 11px;
   }
 

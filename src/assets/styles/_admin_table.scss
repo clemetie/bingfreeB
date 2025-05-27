@@ -78,7 +78,7 @@
     }
     &.edit {
       width: 70px;
-      height: 40px;
+      height: 30px;
       flex-shrink: 0;
       border-radius: 8px;
       border: 1px solid #ff6b2c;
@@ -98,7 +98,7 @@
     }
     &.cancel {
       width: 70px;
-      height: 40px;
+      height: 30px;
       flex-shrink: 0;
       border-radius: 8px;
       text-align: center;
@@ -119,7 +119,7 @@
     }
     &.fix {
       width: 70px;
-      height: 40px;
+      height: 30px;
       flex-shrink: 0;
       border-radius: 8px;
       background: #1456fd;
@@ -300,7 +300,8 @@
         justify-content: center;
 
         .search-button {
-          padding: 6px 16px;
+          width: 70px;
+          height: 30px;
           background-color: #333;
           color: white;
           border: none;
@@ -546,11 +547,7 @@
         }
         .btnbox {
           width: 100%;
-          display: flex;
-          flex-direction: row;
-          gap: 8px;
           margin-top: 10px;
-          justify-content: flex-start;
           button {
             text-align: center;
           }
@@ -562,11 +559,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 16px;
-      .customername {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
+
       // 버튼
       button {
         &.download {
@@ -611,7 +604,7 @@
 
     .btnbox {
       text-align: center;
-      display: flex;
+      // display: flex;
       gap: 5px;
       align-items: center;
       justify-content: center;
@@ -646,8 +639,12 @@
     display: block;
     color: #fff;
     border-radius: 10px;
-    padding: 2% 2% 0.5%;
     font-size: 11px;
+    padding: 3%;
+    margin: 0 auto;
+    @include mobile {
+      margin: 0;
+    }
   }
 
   // 상태 뱃지
@@ -668,7 +665,7 @@
     background-color: $bingprime-all;
   }
   .overlay {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -677,7 +674,7 @@
     z-index: 99;
   }
   .reservdetailmodal {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -847,7 +844,7 @@
     }
   }
   .viewreceipt {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);

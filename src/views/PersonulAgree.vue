@@ -1,58 +1,82 @@
 <template>
+  <Header />
   <div class="agree_box max-w-[860px] mx-auto py-20 px-6 bg-white">
     <!-- 제목 -->
-    <h2 class="text-3xl font-bold text-center text-neutral-800 mb-16">약관동의</h2>
+    <h2 class="text-3xl font-bold text-center text-neutral-800 mb-16">
+      약관동의
+    </h2>
 
     <!-- 단계 표시 -->
     <div class="flex justify-center">
       <div class="w-[695px] h-24 relative rounded-[100px]">
         <div
-          class="left-[3px] top-[82px] absolute justify-start text-neutral-800 text-base font-semibold font-['Pretendard']">
+          class="left-[3px] top-[82px] absolute justify-start text-neutral-800 text-base font-semibold font-['Pretendard']"
+        >
           약관동의
         </div>
         <div
-          class="left-[215px] top-[82px] absolute justify-start text-neutral-400 text-base font-semibold font-['Pretendard']">
+          class="left-[215px] top-[82px] absolute justify-start text-neutral-400 text-base font-semibold font-['Pretendard']"
+        >
           회원정보
         </div>
         <div
-          class="left-[424px] top-[82px] absolute justify-start text-neutral-400 text-base font-semibold font-['Pretendard']">
+          class="left-[424px] top-[82px] absolute justify-start text-neutral-400 text-base font-semibold font-['Pretendard']"
+        >
           구독선택
         </div>
         <div
-          class="left-[635px] top-[82px] absolute justify-start text-neutral-400 text-base font-semibold font-['Pretendard']">
+          class="left-[635px] top-[82px] absolute justify-start text-neutral-400 text-base font-semibold font-['Pretendard']"
+        >
           가입완료
         </div>
         <div
-          class="w-36 h-0 left-[65px] top-[33px] absolute outline outline-2 outline-offset-[-1px] outline-blue-700"></div>
+          class="w-36 h-0 left-[65px] top-[33px] absolute outline outline-2 outline-offset-[-1px] outline-blue-700"
+        ></div>
         <div
-          class="w-36 h-0 left-[275px] top-[33px] absolute outline outline-2 outline-offset-[-1px] outline-blue-700"></div>
+          class="w-36 h-0 left-[275px] top-[33px] absolute outline outline-2 outline-offset-[-1px] outline-blue-700"
+        ></div>
         <div
-          class="w-36 h-0 left-[485px] top-[33px] absolute outline outline-2 outline-offset-[-1px] outline-blue-700"></div>
-        <div class="w-16 h-16 left-[210px] top-0 absolute rounded-[100px] border-2 border-blue-700"></div>
+          class="w-36 h-0 left-[485px] top-[33px] absolute outline outline-2 outline-offset-[-1px] outline-blue-700"
+        ></div>
         <div
-          class="left-[233px] top-[15px] absolute justify-start text-blue-700 text-3xl font-semibold font-['Pretendard']">
+          class="w-16 h-16 left-[210px] top-0 absolute rounded-[100px] border-2 border-blue-700"
+        ></div>
+        <div
+          class="left-[233px] top-[15px] absolute justify-start text-blue-700 text-3xl font-semibold font-['Pretendard']"
+        >
           2
         </div>
-        <div class="w-16 h-16 left-[420px] top-0 absolute rounded-[100px] border-2 border-blue-700"></div>
         <div
-          class="left-[443px] top-[15px] absolute justify-start text-blue-700 text-3xl font-semibold font-['Pretendard']">
+          class="w-16 h-16 left-[420px] top-0 absolute rounded-[100px] border-2 border-blue-700"
+        ></div>
+        <div
+          class="left-[443px] top-[15px] absolute justify-start text-blue-700 text-3xl font-semibold font-['Pretendard']"
+        >
           3
         </div>
-        <div class="w-16 h-16 left-[630px] top-0 absolute rounded-[100px] border-2 border-blue-700"></div>
         <div
-          class="left-[653px] top-[15px] absolute justify-start text-blue-700 text-3xl font-semibold font-['Pretendard']">
+          class="w-16 h-16 left-[630px] top-0 absolute rounded-[100px] border-2 border-blue-700"
+        ></div>
+        <div
+          class="left-[653px] top-[15px] absolute justify-start text-blue-700 text-3xl font-semibold font-['Pretendard']"
+        >
           4
         </div>
-        <div class="w-16 h-16 left-0 top-0 absolute bg-blue-700 rounded-[100px]"></div>
         <div
-          class="left-[26px] top-[15px] absolute justify-start text-white text-3xl font-semibold font-['Pretendard']">
+          class="w-16 h-16 left-0 top-0 absolute bg-blue-700 rounded-[100px]"
+        ></div>
+        <div
+          class="left-[26px] top-[15px] absolute justify-start text-white text-3xl font-semibold font-['Pretendard']"
+        >
           1
         </div>
       </div>
     </div>
 
     <!-- 안내 텍스트 -->
-    <div class="mb-8 mt-[70px] text-neutral-400 text-base font-semibold space-y-1 px-5">
+    <div
+      class="mb-8 mt-[70px] text-neutral-400 text-base font-semibold space-y-1 px-5"
+    >
       <p>- 필수 약관에 동의하셔야 빙프리프라임 회원가입이 가능합니다.</p>
       <p>- 선택 약관에 동의하지 않으셔도 회원가입이 가능합니다.</p>
     </div>
@@ -61,20 +85,27 @@
       @click.stop="toggleCheck(index)"
       v-for="(item, index) in terms"
       :key="index"
-      class="big_box mb-4 border border-gray-300 rounded-md">
+      class="big_box mb-4 border border-gray-300 rounded-md"
+    >
       <button
         @click="toggle(index)"
-        class="w-full flex items-center gap-3 px-4 py-3 bg-gray-100 hover:bg-gray-200 focus:outline-none">
+        class="w-full flex items-center gap-3 px-4 py-3 bg-gray-100 hover:bg-gray-200 focus:outline-none"
+      >
         <!-- 체크 버튼 -->
-        <div @click.stop="toggleCheck(index)" class="relative w-7 h-7 flex-shrink-0">
+        <div
+          @click.stop="toggleCheck(index)"
+          class="relative w-7 h-7 flex-shrink-0"
+        >
           <div
             v-if="!item.checked"
-            class="w-5 h-5 rounded-full border border-neutral-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+            class="w-5 h-5 rounded-full border border-neutral-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+          ></div>
           <img
             v-else
             class="w-7 h-7 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
             src="/prime/Personal_check_blue.png"
-            alt="checked" />
+            alt="checked"
+          />
         </div>
 
         <!-- 제목 -->
@@ -87,23 +118,34 @@
           :class="{ 'rotate-180': item.open }"
           class="w-6 h-6 text-gray-600 transition-transform duration-300 ml-2"
           src="/prime/Personal_agree_plus.png"
-          alt="arrow" />
+          alt="arrow"
+        />
       </button>
 
       <!-- 약관 내용 -->
-      <div v-show="item.open" class="px-4 py-3 text-base text-gray-700 bg-white border-t border-gray-300">
+      <div
+        v-show="item.open"
+        class="px-4 py-3 text-base text-gray-700 bg-white border-t border-gray-300"
+      >
         <p>{{ item.content }}</p>
       </div>
     </div>
 
     <!-- 중간 안내 텍스트 -->
-    <div class="mb-12 mt=[15px] text-neutral-400 text-base font-semibold space-y-1 px-5">
-      <p>- 이벤트 수신 동의 시 빙프라임에서 제공하는 다양한 쿠폰 및 할인 이벤트 등을 받아보실 수 있습니다.</p>
+    <div
+      class="mb-12 mt=[15px] text-neutral-400 text-base font-semibold space-y-1 px-5"
+    >
       <p>
-        - 결제, 예약 확인, 일정 안내 등 서비스 제공에 필수적인 거래 관련 정보는 정보 수신 동의 여부와 관계없이
-        발송됩니다.
+        - 이벤트 수신 동의 시 빙프라임에서 제공하는 다양한 쿠폰 및 할인 이벤트
+        등을 받아보실 수 있습니다.
       </p>
-      <p class="text-blue-600">- 마켓팅 정보 수신 동의시 첫 가입 쿠폰 5000원을 드립니다.</p>
+      <p>
+        - 결제, 예약 확인, 일정 안내 등 서비스 제공에 필수적인 거래 관련 정보는
+        정보 수신 동의 여부와 관계없이 발송됩니다.
+      </p>
+      <p class="text-blue-600">
+        - 마켓팅 정보 수신 동의시 첫 가입 쿠폰 5000원을 드립니다.
+      </p>
     </div>
 
     <!-- 체크 항목들은 추후 여기에 동적으로 렌더링 -->
@@ -111,7 +153,10 @@
     <!-- 하단 안내 -->
     <div class="mb-8 text-center text-neutral-400 text-base font-semibold">
       <p>만 14세 미만 아동은 회원가입이 제한됩니다.</p>
-      <p>본인은 만 14세 이상으로 개인정보 및 약관 동의 내용을 확인하였으며, 위 내용에 동의 합니다.</p>
+      <p>
+        본인은 만 14세 이상으로 개인정보 및 약관 동의 내용을 확인하였으며, 위
+        내용에 동의 합니다.
+      </p>
     </div>
 
     <!-- 버튼 -->
@@ -119,12 +164,14 @@
     <div class="flex justify-center mt-10">
       <router-link
         to="/BingprimeJoin"
-        class="w-[430px] h-[60px] rounded-l-lg border border-neutral-400 bg-white text-neutral-400 hover:border-blue-600 hover:text-[#262626] flex items-center justify-center font-semibold transition-colors">
+        class="w-[430px] h-[60px] rounded-l-lg border border-neutral-400 bg-white text-neutral-400 hover:border-blue-600 hover:text-[#262626] flex items-center justify-center font-semibold transition-colors"
+      >
         이전
       </router-link>
       <button
         @click="handleNext"
-        class="w-[430px] h-[60px] rounded-r-lg border border-transparent bg-blue-600 text-white hover:border-blue-600 hover:bg-white hover:text-[#262626] flex items-center justify-center font-semibold transition-colors">
+        class="w-[430px] h-[60px] rounded-r-lg border border-transparent bg-blue-600 text-white hover:border-blue-600 hover:bg-white hover:text-[#262626] flex items-center justify-center font-semibold transition-colors"
+      >
         다음
       </button>
     </div>
@@ -132,12 +179,15 @@
 </template>
 
 <script setup>
+import Header from "@/components/Header.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
 function handleNext() {
   // title에 '(필수)'가 포함된 항목만 필터링
-  const requiredTerms = terms.value.filter((term) => term.title.includes("(필수)"));
+  const requiredTerms = terms.value.filter((term) =>
+    term.title.includes("(필수)")
+  );
   const allChecked = requiredTerms.every((term) => term.checked);
 
   if (!allChecked) {
@@ -229,6 +279,5 @@ function toggleCheck(index) {
 </script>
 
 <style scoped>
-
 /* 토글 아이콘 회전 애니메이션은 SVG transform 속성으로 구현했습니다. */
 </style>

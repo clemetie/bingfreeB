@@ -1,4 +1,9 @@
+<script setup lang="ts">
+import Header from "@/components/Header.vue";
+</script>
+
 <template>
+  <Header />
   <div class="w-[1920px] h-[5875px] relative bg-white overflow-hidden">
     <div
       class="w-[1920px] h-[5875px] left-0 top-0 absolute bg-white rounded-sm overflow-hidden"
@@ -97,13 +102,6 @@
         </div>
       </div>
 
-      <div class="w-[1920px] h-10 left-0 top-0 absolute bg-black"></div>
-      <div class="w-64 h-10 left-[835px] top-0 absolute bg-blue-600"></div>
-      <div
-        class="left-[630px] top-[11px] absolute text-center justify-start text-white text-base font-medium font-['Pretendard']"
-      >
-        빙프리 홈페이지
-      </div>
       <div
         class="left-[932px] top-[11px] absolute text-center justify-start text-white text-base font-medium font-['Pretendard']"
       >

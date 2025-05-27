@@ -16,7 +16,7 @@
 .dashboard.workers {
   width: 100%;
   display: flex;
-  gap: 12px;
+  gap: 25px;
   padding: 1%;
   .allcard {
     display: flex;
@@ -32,22 +32,15 @@
       height: 30px;
     }
     &.total {
-      border-left: 5px solid #0F71F2;
+      border-left: 5px solid #0f71f2;
     }
 
     &.done {
       border-left: 5px solid $bingprime-done;
     }
 
-    &.waiting {
-      border-left: 5px solid $bingprime-waiting;
-    }
-
-    &.assigned {
-      border-left: 5px solid$bingprime-assigned;
-    }
     &.confirmed {
-      border-left: 5px solid$bingprime-assigned;
+      border-left: 5px solid #893bee;
     }
 
     .card-desc {
@@ -55,5 +48,49 @@
       margin-top: 5px;
       color: #6b7280;
     }
+  }
+}
+.mr-4 {
+  margin-right: 4px;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  & .search-select {
+    width: 110px;
+    height: 36px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #424242;
+    padding: 5px;
+  }
+  & .search-input {
+    width: 600px;
+    height: 36px;
+    border: 1px solid #bdbdbd;
+    border-radius: 8px;
+    padding: 5px;
+  }
+  & .search-button {
+    width: 82px;
+    height: 36px;
+    background: #1456fd;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  & .addWorker {
+    width: 82px;
+    height: 32px;
+    background: #1456fd;
+    color: #ffffff;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: auto;
   }
 }

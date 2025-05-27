@@ -293,7 +293,7 @@
                 이전
               </router-link>
               <button
-                @click="openModal"
+                @click="lastModal"
                 class="w-[430px] h-[60px] rounded-r-lg border border-transparent bg-blue-600 text-white hover:border-blue-600 hover:bg-white hover:text-[#262626] flex items-center justify-center font-semibold transition-colors">
                 다음
               </button>
@@ -301,6 +301,10 @@
 
             <!-- // 마지막 결제 창 -->
             <!-- 마지막 결제 모달은 최상단에 위치시킴 -->
+            <!-- 모달 트리거 버튼 -->
+            <button @click="lastModal">모달 열기</button>
+
+            <!-- 마지막 결제 모달 -->
             <div
               v-if="showLastModal"
               class="fixed top-0 left-0 w-full h-full bg-black/50 z-50 flex items-center justify-center">
@@ -309,39 +313,25 @@
                 <!-- 닫기 버튼 -->
                 <img
                   class="w-5 h-5 absolute top-4 right-4 cursor-pointer"
-                  src="/public/prime/Modal_close.png"
+                  src="/prime/Modal_close.png"
                   @click="closeLastModal" />
-
-                <!-- 인사말 -->
-                <div class="text-xl font-bold text-black mt-2">오도라 님, 반갑습니다</div>
-
-                <!-- 이미지 -->
-                <img class="w-10 h-10 my-2" src="/public/prime/SubSelct_check.png" />
-
-                <!-- 메시지 -->
+                <div class="text-xl font-bold text-black mt-2">클리너 {{}}님, 반갑습니다</div>
+                <img class="w-10 h-10 my-2" src="/prime/SubSelct_check.png" />
                 <div class="text-center text-neutral-400 text-base font-normal px-4">
-                  구독 요금제 결제까지 마무리되었어요. <br />
-                  이제 바로 청소 예약을 시작하실 수 있어요!
+                  기사 등록이 완료되었어요!<br />
+                  이제 바로 고객 청소 예약을 확인하고 출동 준비를 시작할 수 있어요.
                 </div>
-
-                <!-- 버튼 그룹 -->
                 <div class="flex w-full justify-center mt-4">
                   <router-link
-                    to="/BingprimeReservation"
-                    class="w-44 h-14 flex items-center justify-center bg-blue-600 text-white text-base font-semibold rounded-l-lg">
-                    예약하러 가기
-                  </router-link>
-                  <router-link
-                    to="/BingPrime"
-                    class="w-44 h-14 flex items-center justify-center border border-neutral-400 text-neutral-400 text-base font-semibold rounded-r-lg">
-                    괜찮아요
+                    to="/Worker/DDashboard"
+                    class="w-48 h-16 flex items-center justify-center bg-blue-600 text-white text-lg font-semibold rounded-xl">
+                    파트너 홈으로 이동
                   </router-link>
                 </div>
               </div>
             </div>
           </div>
           <!-- 탭 1 :클리너 파트너 폼 -->
-         
         </div>
       </form>
     </div>
@@ -484,15 +474,17 @@ const checkHandler = () => {
 
 // 모달
 // 모달 표시 상태
+
 const showLastModal = ref(false);
-// 모달 열기
+
 const lastModal = () => {
+  console.log("모달 열기"); // ✅ 디버깅용
   showLastModal.value = true;
 };
 
-function closeLastModal() {
+const closeLastModal = () => {
   showLastModal.value = false;
-}
+};
 </script>
 <style scoped>
 .active-tab {
