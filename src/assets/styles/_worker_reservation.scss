@@ -386,6 +386,9 @@ button {
     font-style: normal;
     font-weight: 600;
     line-height: normal;
+    &:hover {
+      background-color: #ff6b2c;
+    }
     &.disabled {
       background-color: $bingprime-gray4-bdbdbd;
       color: #fff;

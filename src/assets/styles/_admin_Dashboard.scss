@@ -16,7 +16,7 @@
 .dashboard.dashboard2 {
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   padding: 1%;
   .allcard {
@@ -63,6 +63,10 @@
   display: flex;
   gap: 20px;
   margin-top: 20px;
+  @include mobile {
+    margin-top: 60px;
+    flex-direction: column;
+  }
   & .tablelist:first-child {
     width: 740px;
   }
@@ -82,6 +86,9 @@ canvas {
   display: flex;
   flex-direction: column;
   border-radius: 8px;
+  @include mobile {
+    margin-top: 60px;
+  }
   & .alert-h2 {
     font-size: 16px;
     font-weight: 500;
@@ -123,4 +130,14 @@ canvas {
       background-color: #e6f1ff;
     }
   }
+}
+.reserv-detailModal-closeBtn {
+  width: 70px;
+  height: 30px;
+  background: #1456fd;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 8px;
+  margin: auto;
 }

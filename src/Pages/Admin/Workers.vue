@@ -122,7 +122,7 @@ const dateRange = computed(() => {
   return [fromDate.value, toDate.value];
 });
 // 4개 다 날짜 필터링 관련
-
+// 필터링된 결과를 담을 배열
 const filteredList = ref([]);
 function applyFilters() {
   const result = fullReservationList
@@ -143,11 +143,37 @@ function applyFilters() {
 
       const shopMatched = shopFilter.value === "all" || item.customer.shop === shopFilter.value;
 
-      const searchMatched = searchText.value
-        ? (searchType.value === "customer" ? item.customer.name : item.worker.name || "").includes(searchText.value)
-        : true;
+      // const searchMatched = searchText.value
+      //   ? (searchType.value === "customer" ? item.customer.name : item.worker.name || "").includes(searchText.value)
+      //   : true;
 
-      return statusMatched && memberMatched && shopMatched && searchMatched && isInDateRange;
+      // --- 기사 검색 필터링 (새롭게 추가된 부분) ---
+      let workerMatched = true;
+      if (searchQuery.value) {
+        const q = searchQuery.value.trim();
+        switch (workerSearchType.value) {
+          case "name":
+            // '이름검색' 옵션: worker.name에 검색어 포함 여부
+            workerMatched = item.worker.name?.includes(q);
+            break;
+          case "employeeId":
+            // 사원번호(bingnb) 문자열에 검색어 포함 여부
+            workerMatched = item.worker.bingnb?.toString().includes(q);
+            break;
+          case "phone":
+            // 전화번호(mobile)에 검색어 포함 여부
+            workerMatched = item.worker.mobile?.includes(q);
+            break;
+          default:
+            // all: 이름, 사원번호, 전화번호 중 하나라도 포함되면 true
+            const nameMatch = item.worker.name?.includes(q);
+            const idMatch = item.worker.bingnb?.toString().includes(q);
+            const phoneMatch = item.worker.mobile?.includes(q);
+            workerMatched = nameMatch || idMatch || phoneMatch;
+        }
+      }
+
+      return statusMatched && memberMatched && shopMatched && workerMatched && isInDateRange;
     })
     .sort((a, b) => a.id - b.id);
 
@@ -172,11 +198,7 @@ const goToPage = (page) => {
 // 상태별 개수 계산
 const totalCount = computed(() => fullReservationList.length);
 // 대시보드 전체 예약 보기
-const doneCount = computed(() => fullReservationList.filter((item) => item.status === "done").length);
-// 대시 보드 청소 완료 보기
-const waitingCount = computed(() => fullReservationList.filter((item) => item.status === "waiting").length);
-// 대시 보드 배정 대기 보기
-const assignedCount = computed(() => fullReservationList.filter((item) => item.status === "assigned").length);
+const doneCount = computed(() => fullReservationList.filter((item) => item.status === "confirmed" || item.status === "assigned").length);
 // 대시 보드 청소 진행 보기
 const confirmedCount = computed(() => fullReservationList.filter((item) => item.status === "confirmed").length);
 // 대시보드 확정 완료 보기 (고객-> 확정완료 누르거나 기사-> 완료제출 누르는 거)
@@ -221,12 +243,21 @@ const statusCards = computed(() => [
   },
 ]);
 
-// 기사목록 검색바
-const workerSearchType = ref("all"); // 선택된 필터 타입
+// 기사관리 검색관련
+const workerSearchType = ref("all"); // 선택된 필터 타입(all / employeeId / phone)
 const searchQuery = ref(""); // 입력된 검색어
+
+function handleSearch() {
+  applyFilters();
+
+  // 여기에 검색 필터링 로직 추가 가능
+  // 예: 리스트.filter(item => item.phone.includes(searchQuery.value)) 등
+}
 
 function getPlaceholder(type) {
   switch (type) {
+    case "name":
+      return "이름을 입력하세요";
     case "employeeId":
       return "사원번호를 입력하세요";
     case "phone":
@@ -235,15 +266,6 @@ function getPlaceholder(type) {
       return "검색어를 입력하세요";
   }
 }
-
-function handleSearch() {
-  console.log("검색 조건:", workerSearchType.value);
-  console.log("검색어:", searchQuery.value);
-
-  // 여기에 검색 필터링 로직 추가 가능
-  // 예: 리스트.filter(item => item.phone.includes(searchQuery.value)) 등
-}
-
 // 퇴사일
 function addOneYear(item) {
   if (!item || item.status !== "done") return "-";
@@ -252,7 +274,7 @@ function addOneYear(item) {
   if (!dateStr) return "날짜 없음";
 
   const [year, month, day] = dateStr.split(".").map(Number);
-  if (!year || !month || !day) return "유효하지 않은 날짜";
+  if (!year || !month || !day) return "-";
 
   const newDate = new Date(year + 1, month - 1, day);
   const yyyy = newDate.getFullYear();
@@ -261,9 +283,6 @@ function addOneYear(item) {
 
   return `${yyyy}.${mm}.${dd}`;
 }
-
-
-
 </script>
 <template>
   <div class="workers-wrap">
@@ -301,16 +320,18 @@ function addOneYear(item) {
       <div class="tablelist">
         <h2 class="today-reservation-h2">기사목록</h2>
         <div class="search-bar">
-          <select v-model="workerSearchType" class="search-select mr-4">
+          <select v-model="workerSearchType" class="search-select mr-3">
             <option value="all">전체</option>
+            <option value="name">이름</option>
             <option value="employeeId">사원번호</option>
             <option value="phone">전화번호</option>
           </select>
           <input
             v-model="searchQuery"
             type="text"
-            class="search-input mr-4"
-            :placeholder="getPlaceholder(searchType)" />
+            class="search-input mr-3"
+            :placeholder="getPlaceholder(workerSearchType)"
+            @keyup.enter="handleSearch" />
 
           <button @click="handleSearch" class="search-button">검색하기</button>
           <button class="addWorker">+기사추가</button>
@@ -325,43 +346,42 @@ function addOneYear(item) {
               <th>주소</th>
               <th>입사일</th>
               <th>퇴사일</th>
-              <th>담당 기사 연락처</th>
               <th>상태</th>
-              <th>액션</th>
+              <th>상세보기</th>
             </tr>
           </thead>
           <!-- 여기서 내용 바꾸기 -->
           <tbody>
             <tr v-for="item in paginatedList" :key="item.id">
-              <td>{{ item.worker.bingnb }}</td>
-              <td>{{ item.customer.name }}</td>
+              <td data-label="사원번호" class="profile-h4">{{ item.worker.bingnb }}</td>
+              <td data-label="이름" class="profile-h4">{{ item.worker.name }}</td>
               <!-- 데이터 바꾸려면 data.mjs 참고해서 사용하기
             ex) 고객 주소 사용할 거면 {{ item.customer.mobile }} => {{ item.customer.address }}
             기사 이메일 사용할 거면 {{ item.worker.name || "-" }} => {{ item.worker.email || "-" }}
              -->
-              <td class="profile-h4">{{ item.worker.mobile }}</td>
-              <td class="profile-h4">{{ item.customer.address }}</td>
-              <td class="profile-h4">{{ item.reservinfo.date }}</td>
-              <td class="profile-h4">{{ addOneYear(item) }}</td>
-              <td class="profile-h4">{{ item.worker.mobile || "-" }}</td>
-              <td class="profile-h4">
-                <span :class="`statusbox-${item.status}`">
+              <td data-label="전화번호" class="profile-h4">{{ item.worker.mobile }}</td>
+              <td data-label="주소" class="profile-h4">{{ item.customer.address }}</td>
+              <td data-label="입사일" class="profile-h4">{{ item.reservinfo.date }}</td>
+              <td data-label="퇴사일" class="profile-h4">{{ addOneYear(item) }}</td>
+              <td data-label="상태" class="profile-h4">
+                <span :class="`wkstatusbox-${item.status}`">
                   {{
                     item.status === "waiting"
-                      ? "대기중"
+                      ? "off"
                       : item.status === "assigned"
-                      ? "진행중"
+                      ? "활동중"
                       : item.status === "done"
-                      ? "청소완료"
+                      ? "off"
                       : item.status === "confirmed"
-                      ? "확정완료"
-                      : "알수없음"
+                      ? "활동중"
+                      : "off"
                   }}
                 </span>
               </td>
-              <td class="btnbox">
-                <button class="modal" v-on:click="viewreceipt = true">영수증 보기</button>
-                <button class="modal" @click="openDetailById(item.id)">상세보기</button>
+              <td data-label="상세보기" class="btnbox profile-h4">
+                <button class="workers-detail-btn" @click="openDetailById(item.id)">
+                  <img class="workers-detail-icon" src="/prime/admin-workers-btn-icon.png" alt="상세보기 아이콘" />상세
+                </button>
               </td>
             </tr>
           </tbody>

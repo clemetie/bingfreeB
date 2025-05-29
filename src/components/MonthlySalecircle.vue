@@ -1,7 +1,7 @@
 <template>
   <div class="chart-card">
     <div class="chart-header">
-      <h2 class="monthlyPayChart-h2">월별 정산 완료 비율</h2>
+      <h1 class="monthlyPayChart-h2">월별 정산 완료 비율</h1>
       <span class="unit-label">단위(%)</span>
     </div>
     <Doughnut :data="chartData" :options="chartOptions" />

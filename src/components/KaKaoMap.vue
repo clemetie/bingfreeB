@@ -6,9 +6,17 @@
     <!-- 시 선택 -->
     <div>
       <label class="block font-semibold mb-1">시/도 선택</label>
-      <select v-model="region.city" @change="onCityChange" class="w-full border rounded px-3 py-2">
+      <select
+        v-model="region.city"
+        @change="onCityChange"
+        class="w-full border rounded px-3 py-2"
+      >
         <option value="">선택하세요</option>
-        <option v-for="city in Object.keys(cityDistrictMap)" :key="city" :value="city">
+        <option
+          v-for="city in Object.keys(cityDistrictMap)"
+          :key="city"
+          :value="city"
+        >
           {{ city }}
         </option>
       </select>
@@ -17,9 +25,17 @@
     <!-- 구 선택 -->
     <div v-if="region.city">
       <label class="block font-semibold mb-1">구/군 선택</label>
-      <select v-model="region.district" @change="moveToSelectedRegion" class="w-full border rounded px-3 py-2">
+      <select
+        v-model="region.district"
+        @change="moveToSelectedRegion"
+        class="w-full border rounded px-3 py-2"
+      >
         <option value="">선택하세요</option>
-        <option v-for="district in cityDistrictMap[region.city]" :key="district" :value="district">
+        <option
+          v-for="district in cityDistrictMap[region.city]"
+          :key="district"
+          :value="district"
+        >
           {{ district }}
         </option>
       </select>
@@ -28,7 +44,9 @@
     <!-- 선택 결과 -->
     <div class="text-xl text-gray-800">
       <span class="font-semibold">선택 지역:</span>
-      <span class="ml-2 text-blue-600">{{ region.city || "-" }} {{ region.district || "" }}</span>
+      <span class="ml-2 text-blue-600"
+        >{{ region.city || "-" }} {{ region.district || "" }}</span
+      >
     </div>
   </div>
 </template>

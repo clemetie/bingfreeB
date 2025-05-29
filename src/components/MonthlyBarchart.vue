@@ -1,7 +1,7 @@
 <template>
   <div class="chart-card">
     <div class="chart-header">
-      <h2 class="monthlyPayChart-h2">월간 정산 현황</h2>
+      <h1 class="monthlyPayChart-h2">월간 정산 현황</h1>
       <span class="unit-label">단위(만원)</span>
     </div>
     <Bar :data="chartData" :options="chartOptions" />
@@ -9,13 +9,33 @@
 </template>
 
 <script setup>
-import { Chart as ChartJS, BarElement, Tooltip, Legend, CategoryScale, LinearScale } from "chart.js";
+import {
+  Chart as ChartJS,
+  BarElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+} from "chart.js";
 import { Bar } from "vue-chartjs";
 
 ChartJS.register(BarElement, Tooltip, Legend, CategoryScale, LinearScale);
 
 const chartData = {
-  labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+  labels: [
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월",
+  ],
   datasets: [
     {
       label: "일반",
@@ -144,7 +164,7 @@ const chartOptions = {
     font-weight: 500;
     color: #424242;
   }
-  h2 {
+  h1 {
     font-size: 16px;
     font-weight: 600;
     color: #333;

@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <Navigation />
   <div class="min-h-screen flex flex-col items-center justify-center px-4">
     <!-- 로고 -->
     <div class="mb-10">
@@ -91,15 +91,17 @@
             >
           </div>
 
-          <div class="relative mt-10 flex items-center justify-center">
+          <div class="relative mt-5 flex items-center justify-center">
             <button
-              type="submit"
-              class="w-96 h-12 border border-transparent bg-blue-600 rounded-lg text-white font-semibold hover:border-blue-600 hover:bg-white hover:text-[#262626] transition-colors"
+              type="button"
+              @click="fakeLogin"
+              class="w-96 h-12 border border-transparent bg-blue-600 rounded-lg text-white font-semibold flex items-center justify-center hover:border-blue-600 hover:bg-white hover:text-[#262626] transition-colors"
             >
               로그인
             </button>
           </div>
-          <div class="w-full max-w-md mt-[20px] mx-auto">
+
+          <div class="w-full max-w-md mt-[50px] mx-auto">
             <div class="flex justify-center items-center space-x-6 relative">
               <!-- 비밀번호 찾기 -->
               <span
@@ -120,13 +122,15 @@
 
               <!-- 구분선 2 -->
               <span class="w-px h-4 bg-stone-300"></span>
-
               <!-- 회원가입 -->
               <router-link
                 to="/BingprimeJoin"
-                class="text-neutral-800 text-base font-medium font-['Pretendard'] cursor-pointer transition-colors duration-200"
+                class="mentmom text-neutral-800 text-base font-medium font-['Pretendard'] cursor-pointer transition-colors duration-200"
               >
                 회원가입
+                <span class="ment profile-h4"
+                  >지금 가입하고 혜택 받으세요!</span
+                >
               </router-link>
             </div>
 
@@ -216,12 +220,12 @@
           </div>
 
           <div class="relative mt-10 flex items-center justify-center">
-            <button
-              type="submit"
-              class="w-96 h-12 border border-transparent bg-blue-600 rounded-lg text-white font-semibold hover:border-blue-600 hover:bg-white hover:text-[#262626] transition-colors"
+            <router-link
+              to="/Worker/ddashboard"
+              class="w-96 h-12 border border-transparent bg-blue-600 rounded-lg text-white font-semibold flex items-center justify-center hover:border-blue-600 hover:bg-white hover:text-[#262626] transition-colors"
             >
               로그인
-            </button>
+            </router-link>
           </div>
           <div class="w-full max-w-md mt-[20px] mx-auto">
             <div class="flex justify-center items-center space-x-6 relative">
@@ -237,7 +241,7 @@
 
               <!-- 회원가입 -->
               <router-link
-                to="/BusinessJoin"
+                to="/BingprimeJoin"
                 class="text-neutral-800 text-base font-medium font-['Pretendard'] cursor-pointer transition-colors duration-200"
               >
                 회원가입
@@ -346,7 +350,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";
-import Header from "@/components/Header.vue";
+import Navigation from "@/components/Navigation.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -406,7 +410,7 @@ const handleLogin = () => {
         rememberMe: formData.value.rememberMe,
       })
       .then(() => {
-        router.push("/customer-home");
+        router.push("/BingPrimeReservation");
       })
       .catch(() => {
         alert("로그인 실패");
@@ -443,9 +447,18 @@ const handleLogin = () => {
       });
   }
 };
+
+// 고객 로그인 정보 추가
+
+// 가짜 로그인
+const fakeLogin = () => {
+  localStorage.setItem("isLoggedIn", "true");
+  localStorage.setItem("userRole", "customer");
+  router.push("/BingprimeReservation");
+};
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .active-tab {
   color: black;
   border: 2px solid #292929; /* 전체 보더 */
@@ -456,5 +469,33 @@ const handleLogin = () => {
   color: #9ca3af; /* text-gray-400 */
   border: 1px solid #bdbdbd; /* 전체 보더 밝은 회색 1px */
   border-bottom: 2px solid #292929; /* 젤 아래선 진한 회색 1.5px */
+}
+.mentmom {
+  position: relative;
+  @keyframes ment {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-2px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+  span.ment {
+    width: 200px;
+    position: absolute;
+    top: -140%;
+    left: -100%;
+    display: inline-block;
+    border: 1px solid #f0f0f0;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 1px 1px 5px rgba($color: #000000, $alpha: 0.1);
+    padding: 5% 6%;
+    animation: ment infinite 1.5s;
+    background-color: #fff;
+  }
 }
 </style>

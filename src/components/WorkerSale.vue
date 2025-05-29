@@ -1,7 +1,7 @@
 <template>
   <div class="chart-card">
     <div class="chart-header">
-      <h1 class="monthlyPayChart-h2">클레임 처리 단계별 현황</h1>
+      <h1 class="monthlyPayChart-h2">정산 처리 현황 비율</h1>
       <span class="unit-label">단위(%)</span>
     </div>
     <Doughnut :data="chartData" :options="chartOptions" />
@@ -14,23 +14,22 @@ import { Doughnut } from "vue-chartjs";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// 데이터 정의
+// 실데이터 기반: 15건 중 각각 5건씩 → 33.3%씩 균등 분포
 const chartData = {
-  labels: ["상담 대기 중", "진행 중", "완료"],
+  labels: ["정산 완료", "진행중", "클레임/지연"],
   datasets: [
     {
-      data: [20.8, 29.2, 50],
-      backgroundColor: ["#4CAF50", "#FFA500", "#3B82F6"],
+      data: [33.3, 33.3, 33.3],
+      backgroundColor: ["#5ab21a", "#f99b23", "#f44336"], // 정산 완료, 진행중, 클레임
       borderWidth: 1,
     },
   ],
 };
 
-// 옵션 정의
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: false,
-  cutout: "60%", // 도넛 두께
+  cutout: "60%",
   plugins: {
     tooltip: {
       backgroundColor: "#ffffff",

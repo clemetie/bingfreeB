@@ -214,7 +214,7 @@ const swiperBreakpoints = {
             <img src="/images/popup.gif" alt="뉴스 gif" />
           </div>
           <div class="popup_bt">
-            <router-link to="/Check">👉가격표 보기</router-link>
+            <router-link to="/BingPrime">👉구독혜택 보기</router-link>
             <router-link to="/Reservation">💬 바로 예약하기</router-link>
           </div>
         </div>
@@ -480,15 +480,15 @@ const swiperBreakpoints = {
               </div>
               <!-- 카드위 3D 아이콘 -->
               <div class="icon_content">
-                <span class="icon1"><img src="/public/check/goodemoji.png" alt="" /></span>
-                <span class="icon2"><img src="/public/check/mirror.png" alt="" /></span>
-                <span class="icon3"><img src="/public/check/moneyemoji.png" alt="" /></span>
-                <span class="icon4"><img src="/public/check/presentemoji.png" alt="" /></span>
-                <span class="icon5"><img src="/public/check/dartemoji.png" alt="" /></span>
-                <span class="icon6"><img src="/public/check/arrow_left.png" alt="" /></span>
-                <span class="icon7"><img src="/public/check/arrow_right.png" alt="" /></span>
-                <span class="icon8"><img src="/public/check/pointcircle.png" alt="" /></span>
-                <span class="icon9"><img src="/public/check/pointcircle.png" alt="" /></span>
+                <span class="icon1"><img src="/public/check/goodemoji.png" alt="아이콘" /></span>
+                <span class="icon2"><img src="/public/check/mirror.png" alt="아이콘" /></span>
+                <span class="icon3"><img src="/public/check/moneyemoji.png" alt="아이콘" /></span>
+                <span class="icon4"><img src="/public/check/presentemoji.png" alt="아이콘" /></span>
+                <span class="icon5"><img src="/public/check/dartemoji.png" alt="아이콘" /></span>
+                <span class="icon6"><img src="/public/check/arrow_left.png" alt="아이콘" /></span>
+                <span class="icon7"><img src="/public/check/arrow_right.png" alt="아이콘" /></span>
+                <span class="icon8"><img src="/public/check/pointcircle.png" alt="아이콘" /></span>
+                <span class="icon9"><img src="/public/check/pointcircle.png" alt="아이콘" /></span>
               </div>
             </div>
           </div>

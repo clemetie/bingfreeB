@@ -18,10 +18,10 @@ const fromDate = ref(null);
 const toDate = ref(null);
 const openReservDetail = ref(false);
 const reservdetail = ref(null);
-const isCustomerOpen = ref(true);
-const isMembershipOpen = ref(true);
-const isWorkerOpen = ref(true);
-const isInquiryOpen = ref(true);
+const isCustomerOpen = ref(false);
+const isMembershipOpen = ref(false);
+const isWorkerOpen = ref(false);
+const isInquiryOpen = ref(false);
 const viewreceipt = ref(false);
 function printReceipt() {
   window.print();
@@ -291,6 +291,7 @@ const statusCards = [
             <label
               ><input type="radio" v-model="memberFilter" value="normal" />
               <svg
+                style="display: inline-block"
                 width="14"
                 height="11"
                 viewBox="0 0 14 11"
@@ -307,6 +308,7 @@ const statusCards = [
             <label
               ><input type="radio" v-model="memberFilter" value="prime" />
               <svg
+                style="display: inline-block !important"
                 width="15"
                 height="15"
                 viewBox="0 0 15 15"
@@ -372,11 +374,11 @@ const statusCards = [
               청소대기</label
             >
             <label
-              ><input type="radio" value="confirmed" v-model="statusFilter" />
+              ><input type="radio" value="done" v-model="statusFilter" />
               청소완료</label
             >
             <label
-              ><input type="radio" value="done" v-model="statusFilter" />
+              ><input type="radio" value="confirmed" v-model="statusFilter" />
               확정완료</label
             >
           </div>
@@ -582,15 +584,15 @@ const statusCards = [
                   청소대기</label
                 >
                 <label
+                  ><input type="radio" value="done" v-model="statusFilter" />
+                  청소완료</label
+                >
+                <label
                   ><input
                     type="radio"
                     value="confirmed"
                     v-model="statusFilter"
                   />
-                  청소완료</label
-                >
-                <label
-                  ><input type="radio" value="done" v-model="statusFilter" />
                   확정완료</label
                 >
               </div>
@@ -696,6 +698,7 @@ const statusCards = [
               <td class="customername" data-label="고객명">
                 <template v-if="item.primemember">
                   <svg
+                    style="display: inline-block"
                     width="15"
                     height="15"
                     viewBox="0 0 15 15"
@@ -735,6 +738,7 @@ const statusCards = [
                 <template v-else>
                   <!-- 초록 나뭇잎 아이콘 -->
                   <svg
+                    style="display: inline-block"
                     width="14"
                     height="11"
                     viewBox="0 0 14 11"
@@ -774,7 +778,11 @@ const statusCards = [
                 </span>
               </td>
               <td class="btnbox" data-label="액션">
-                <button class="modal" v-on:click="viewreceipt = true">
+                <button
+                  class="modal"
+                  style="margin-right: 10px"
+                  v-on:click="viewreceipt = true"
+                >
                   영수증 보기
                 </button>
                 <button class="modal" @click="openDetailById(item.id)">
@@ -1168,16 +1176,8 @@ const statusCards = [
     />
 
     <div class="btnbox">
-      <button class="edit" style="padding: 1.5% 3%" @click="printReceipt">
-        출력하기
-      </button>
-      <button
-        class="fix"
-        style="padding: 1.6% 5.5%"
-        @click="viewreceipt = false"
-      >
-        닫기
-      </button>
+      <button class="edit" @click="printReceipt">출력하기</button>
+      <button class="fix" @click="viewreceipt = false">닫기</button>
     </div>
   </div>
 </template>

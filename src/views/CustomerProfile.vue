@@ -525,18 +525,16 @@ const stepStates = computed(() => {
               </thead>
               <tbody class="profile-h4">
                 <tr v-for="(row, index) in TableData" :key="index">
-                  <td>{{ row.item }}</td>
-                  <td>{{ row.amount }}</td>
-                  <td>{{ row.date }}</td>
-                  <td>{{ row.period }}</td>
-                  <td>
-                    <span
-                      class="statusbox-done"
-                      style="font-size: 12px; padding: 4% 8%"
-                      >{{ row.status }}</span
-                    >
+                  <td data-label="결제내역">{{ row.item }}</td>
+                  <td data-label="결제금액">{{ row.amount }}</td>
+                  <td data-label="결제일">{{ row.date }}</td>
+                  <td data-label="이용기간">{{ row.period }}</td>
+                  <td data-label="상태">
+                    <span class="statusbox-done" style="font-size: 11px">{{
+                      row.status
+                    }}</span>
                   </td>
-                  <td>
+                  <td data-label="영수증">
                     <button
                       class="modal"
                       style="font-size: 13px"
@@ -1146,7 +1144,7 @@ const stepStates = computed(() => {
 
         <button
           class="fix"
-          style="width: 8%; margin-left: auto; padding: 1% 1%"
+          style="margin-left: auto"
           @click="reservdetailmodal = false"
         >
           닫기
@@ -1263,16 +1261,8 @@ const stepStates = computed(() => {
         />
 
         <div class="btnbox">
-          <button class="edit" style="padding: 1.5% 3%" @click="printReceipt">
-            출력하기
-          </button>
-          <button
-            class="fix"
-            style="padding: 1.6% 5.5%"
-            @click="viewreceipt = false"
-          >
-            닫기
-          </button>
+          <button class="edit" @click="printReceipt">출력하기</button>
+          <button class="fix" @click="viewreceipt = false">닫기</button>
         </div>
       </div>
     </div>

@@ -561,11 +561,11 @@ const waitingListOnly = computed(() =>
               청소대기</label
             >
             <label
-              ><input type="radio" value="confirmed" v-model="statusFilter" />
+              ><input type="radio" value="done" v-model="statusFilter" />
               청소완료</label
             >
             <label
-              ><input type="radio" value="done" v-model="statusFilter" />
+              ><input type="radio" value="confirmed" v-model="statusFilter" />
               확정완료</label
             >
           </div>
@@ -770,18 +770,14 @@ const waitingListOnly = computed(() =>
                   />
                   청소대기</label
                 >
-                <label
-                  ><input
-                    type="radio"
-                    value="confirmed"
-                    v-model="statusFilter"
-                  />
-                  청소완료</label
-                >
-                <label
-                  ><input type="radio" value="done" v-model="statusFilter" />
-                  확정완료</label
-                >
+                 <label
+              ><input type="radio" value="done" v-model="statusFilter" />
+              청소완료</label
+            >
+            <label
+              ><input type="radio" value="confirmed" v-model="statusFilter" />
+              확정완료</label
+            >
               </div>
             </div>
             <div class="searchdate">
@@ -1422,16 +1418,8 @@ const waitingListOnly = computed(() =>
     />
 
     <div class="btnbox">
-      <button class="edit" style="padding: 1.5% 3%" @click="printReceipt">
-        출력하기
-      </button>
-      <button
-        class="fix"
-        style="padding: 1.6% 5.5%"
-        @click="viewreceipt = false"
-      >
-        닫기
-      </button>
+      <button class="edit" @click="printReceipt">출력하기</button>
+      <button class="fix" @click="viewreceipt = false">닫기</button>
     </div>
   </div>
   <!-- 보고서 제출 모달  -->

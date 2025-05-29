@@ -1,7 +1,7 @@
 <template>
   <div class="chart-card">
     <div class="chart-header">
-      <h2 class="monthlyPayChart-h2">월간 청소 현황</h2>
+      <h1 class="monthlyPayChart-h2">구독자 유형별 클레임 현황</h1>
       <span class="unit-label">단위(만원)</span>
     </div>
     <Bar :data="chartData" :options="chartOptions" />
@@ -144,7 +144,7 @@ const chartOptions = {
     font-weight: 500;
     color: #424242;
   }
-  h2 {
+  h1 {
     font-size: 16px;
     font-weight: 600;
     color: #333;

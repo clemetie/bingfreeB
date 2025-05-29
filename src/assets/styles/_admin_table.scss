@@ -75,6 +75,9 @@
       text-decoration-thickness: auto;
       text-underline-offset: auto;
       text-underline-position: from-font;
+      &:hover {
+        color: #212121;
+      }
     }
     &.edit {
       width: 70px;
@@ -89,6 +92,10 @@
       font-style: normal;
       font-weight: 600;
       line-height: normal;
+      &:hover {
+        background-color: #ff6b2c;
+        color: #fff;
+      }
       &.disabled {
         background-color: $bingprime-gray4-bdbdbd;
         color: #fff;
@@ -506,6 +513,7 @@
     flex-direction: column;
     border-radius: 8px;
     @include mobile {
+      margin-top: 20px;
       .table {
         thead {
           display: none;

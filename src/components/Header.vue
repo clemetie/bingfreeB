@@ -49,7 +49,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <header class="freehead" :class="{ scrolled: isScrolled || isMenuOpen }">
+  <header class="bingfree_hd" :class="{ scrolled: isScrolled || isMenuOpen }">
     <div class="inner">
       <router-link to="/" @click="isMenuOpen = false">
         <img src="/images/main-logo.png" alt="메인 로고" />
@@ -96,11 +96,28 @@ onBeforeUnmount(() => {
 
   <!-- 모바일 햄버거 메뉴 -->
   <nav class="mo-menu" v-show="isMenuOpen">
+    <ul class="mo-sns">
+      <li>
+        <a href="#"
+          ><img src="/public/images/youtube.png" alt="유튜브 로고"
+        /></a>
+      </li>
+      <li>
+        <a href="#"
+          ><img src="/public/images/facebook.png" alt="페이스북 로고"
+        /></a>
+      </li>
+      <li>
+        <a href="#"
+          ><img src="/public/images/linkedin.png" alt="링크드인 로고"
+        /></a>
+      </li>
+    </ul>
     <div class="mo-logo">
-      <p>
+      <h1 class="p">
         청소가 필요한 순간<br />검증된 기술과 경험<br />제빙기 케어, 여기가 정답
-      </p>
-      <img src="/images/main-logo.png" alt="" />
+      </h1>
+      <img src="/images/main-logo.png" alt="메인 로고" />
     </div>
     <ul class="menu-list">
       <li class="first">
@@ -140,7 +157,7 @@ onBeforeUnmount(() => {
           @click.prevent="navigateTo('/Login')"
           :class="{ inactive: route.path !== '/Login' }"
         >
-          <img src="/images/loginicon.png" alt="로그인" />
+          로그인
         </a>
       </li>
     </ul>
@@ -148,13 +165,13 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss" scoped>
-header.freehead {
+header {
   margin-top: 40px;
   margin-bottom: -80px;
   width: 100%;
   height: 80px;
   position: relative;
-  z-index: 99999;
+  z-index: 9999999999999;
   .inner {
     width: 100%;
     height: 100%;
@@ -259,7 +276,7 @@ header.freehead {
     left: 0;
 
     background-color: #1651da;
-    z-index: 99;
+    z-index: 9999999999;
     .mo-sns {
       position: absolute;
       right: 20px;
@@ -276,7 +293,7 @@ header.freehead {
       left: 30px;
       top: calc(12% + -53px);
 
-      p {
+      h1.p {
         font-size: 18px;
         font-weight: 600;
         color: #fff;

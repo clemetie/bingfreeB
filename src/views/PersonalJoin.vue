@@ -117,10 +117,15 @@
                 placeholder="* 한글은 10자 , 영문은 20자 이내로"
                 required
                 class="flex-1 h-12 px-3 rounded-lg border border-stone-300 focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)] placeholder:text-stone-300 placeholder:text-base placeholder:font-bold font-['Pretendard']" />
+              <!-- 중복확인 버튼 -->
               <button
-                type="button"
-                class="w-44 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                중복확인
+                @click="checkDuplicate"
+                :class="[
+                  'px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                  isDuplicateChecked ? 'bg-blue-400 hover:bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isDuplicateChecked">
+                {{ isDuplicateChecked ? "확인 완료" : "중복확인" }}
               </button>
             </div>
 
@@ -190,10 +195,15 @@
                 <option value="daum.net">daum.net</option>
               </select>
 
+              <!-- 중복확인 버튼 -->
               <button
-                type="button"
-                class="w-36 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                중복확인
+                @click="checkDuplicate"
+                :class="[
+                  'px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                  isDuplicateChecked ? 'bg-blue-400 hover:bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isDuplicateChecked">
+                {{ isDuplicateChecked ? "확인 완료" : "중복확인" }}
               </button>
             </div>
 
@@ -243,10 +253,13 @@
 
               <!-- 인증번호 전송 버튼 -->
               <button
-                id="sendnum"
-                type="button"
-                class="w-44 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                인증번호 전송
+                @click="sendVerificationCode"
+                :class="[
+                  'ml-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                  isVerifying ? 'bg-blue-400 hover:bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isVerifying">
+                {{ isVerifying ? "전송 완료" : "인증번호 전송" }}
               </button>
             </div>
 
@@ -567,6 +580,7 @@
               <li id="shippingRegist_zipcode_wrap" class="ec-address-zipcode flex items-center space-x-4">
                 <label for="address_zip1" class="w-32 font-semibold text-gray-700 font-['Pretendard']">우편번호</label>
                 <input
+                  v-model="address"
                   id="address_zip1"
                   name="address_zip1"
                   placeholder="우편번호"
@@ -577,10 +591,9 @@
                   fw-label="우편번호" />
 
                 <button
-                  id="SearchAddress"
-                  type="button"
-                  class="w-44 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                  주소검색
+                  @click="openPostcode"
+                  class="h-12 px-4 rounded-lg text-white font-semibold bg-blue-600 hover:bg-blue-700 transition-colors">
+                  주소 검색
                 </button>
                 <span class="ec-base-label flex items-center space-x-1 text-sm text-gray-500">
                   <input id="nozip" name="nozip" type="checkbox" class="hidden" disabled />
@@ -607,9 +620,9 @@
                   size="60"
                   maxlength="100"
                   readonly
-                  fw-label="기본주소" />
+                  fw-label="기본주소"
+                  v-model="address" />
               </li>
-
               <li id="shippingRegist_detailAddr_wrap">
                 <input
                   id="address_addr2"
@@ -992,9 +1005,11 @@
                   fw-label="우편번호" />
 
                 <button
-                  id="SearchAddress"
-                  type="button"
-                  class="w-40 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
+                  @click="openPostcode"
+                  :class="[
+                    'px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                    'bg-blue-600 hover:bg-blue-700',
+                  ]">
                   주소 찾기
                 </button>
                 <span class="ec-base-label flex items-center space-x-1 text-sm text-gray-500">
@@ -1022,7 +1037,8 @@
                   size="60"
                   maxlength="100"
                   readonly
-                  fw-label="기본주소" />
+                  fw-label="기본주소"
+                  v-model="address" />
               </li>
 
               <li id="shippingRegist_detailAddr_wrap">
@@ -1055,10 +1071,14 @@
                 class="w-[130px] h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition flex items-center justify-center space-x-2">
                 <span>개인/법인선택</span>
               </button>
+              <!-- 중복확인 버튼 -->
               <button
-                type="button"
-                class="w-[130px] h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                중복확인
+                :class="[
+                  'w-[130px] h-11 rounded-lg text-white text-base font-bold font-[Pretendard]',
+                  isDuplicateChecked ? 'bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isDuplicateChecked">
+                {{ isDuplicateChecked ? "확인 완료" : "중복확인" }}
               </button>
             </div>
             <!-- 텍스트 박스 -->
@@ -1102,10 +1122,15 @@
                 placeholder="* 한글은 10자 , 영문은 20자 이내로"
                 required
                 class="flex-1 h-12 px-3 rounded-lg border border-stone-300 focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)] placeholder:text-stone-300 placeholder:text-base placeholder:font-bold font-['Pretendard']" />
+              <!-- 중복확인 버튼 -->
               <button
-                type="button"
-                class="w-44 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                중복확인
+                @click="checkDuplicate"
+                :class="[
+                  'px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                  isDuplicateChecked ? 'bg-blue-400 hover:bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isDuplicateChecked">
+                {{ isDuplicateChecked ? "확인 완료" : "중복확인" }}
               </button>
             </div>
 
@@ -1174,10 +1199,15 @@
                 <option value="daum.net">daum.net</option>
               </select>
 
+              <!-- 중복확인 버튼 -->
               <button
-                type="button"
-                class="w-36 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                중복확인
+                @click="checkDuplicate"
+                :class="[
+                  'px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                  isDuplicateChecked ? 'bg-blue-400 hover:bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isDuplicateChecked">
+                {{ isDuplicateChecked ? "확인 완료" : "중복확인" }}
               </button>
             </div>
 
@@ -1223,11 +1253,15 @@
                 class="w-24 h-12 px-3 rounded-lg border border-stone-300 text-center text-base font-bold placeholder:text-stone-300 font-['Pretendard'] focus:outline-none focus:ring focus:ring-[rgba(20,86,253,1)]" />
 
               <!-- 인증번호 전송 버튼 -->
+              <!-- 인증번호 전송 버튼 -->
               <button
-                id="sendnum"
-                type="button"
-                class="w-44 h-11 bg-blue-600 rounded-lg text-white text-base font-bold font-['Pretendard'] hover:bg-blue-700 transition">
-                인증번호 전송
+                @click="sendVerificationCode"
+                :class="[
+                  'ml-2 px-4 py-2 rounded-lg text-white font-semibold transition-colors duration-300',
+                  isVerifying ? 'bg-blue-400 hover:bg-blue-400 cursor-default' : 'bg-blue-600 hover:bg-blue-700',
+                ]"
+                :disabled="isVerifying">
+                {{ isVerifying ? "전송 완료" : "인증번호 전송" }}
               </button>
             </div>
             <!-- 절취선 -->
@@ -1336,6 +1370,33 @@ const handleLogin = () => {
   } else {
     alert("아이디 또는 비밀번호가 일치하지 않습니다.");
   }
+};
+
+// 버튼들 ui변경
+
+// 상태 변수
+const isDuplicateChecked = ref(false);
+const isVerifying = ref(false);
+
+// 클릭 핸들러
+const checkDuplicate = () => {
+  isDuplicateChecked.value = true;
+};
+
+const sendVerificationCode = () => {
+  isVerifying.value = true;
+};
+
+// 주소검색
+
+const address = ref("");
+
+const openPostcode = () => {
+  new daum.Postcode({
+    oncomplete: function (data) {
+      address.value = data.address;
+    },
+  }).open();
 };
 </script>
 <style scoped>

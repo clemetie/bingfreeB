@@ -1,7 +1,7 @@
 <template>
   <div class="chart-card">
     <div class="chart-header">
-      <h2 class="monthlyPayChart-h2">정기 구독 요금제 비교</h2>
+      <h1 class="monthlyPayChart-h2">정기 구독 요금제 비교</h1>
       <span class="unit-label">단위 (만원)</span>
     </div>
     <Bar :data="chartData" :options="chartOptions" />

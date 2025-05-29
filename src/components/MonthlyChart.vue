@@ -1,7 +1,7 @@
 <template>
   <div class="chart-card">
     <div class="chart-header">
-      <h2 class="monthlyChart-h2">월간 청소 현황</h2>
+      <h1 class="monthlyChart-h2">월간 청소 현황</h1>
       <span class="unit-label">단위(건)</span>
     </div>
     <Line :data="chartData" :options="chartOptions" />
@@ -111,7 +111,7 @@ const chartOptions = {
     font-weight: 500;
     color: #424242;
   }
-  h2 {
+  h1 {
     font-size: 18px;
     font-weight: 500;
     color: #424242;

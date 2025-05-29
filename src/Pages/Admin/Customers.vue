@@ -1,810 +1,1202 @@
+<!-- 수현 관리자 고객 관리 -->
+<script setup>
+import { ref, computed, watch, onMounted } from "vue";
+import { fullReservationList } from "@/data.mjs";
+import dayjs from "dayjs";
 
-<!--  수현 관리자 고객 관리 -->
+const currentPage = ref(1);
+const perPage = 5;
+
+const searchText = ref("");
+const memberFilter = ref("all"); // normal | prime | all
+const statusFilter = ref("all"); // waiting | assigned | confirmed | done | all
+const shopFilter = ref("all"); // personal | business | all
+const dateFilter = ref("all"); // today | plus7d | plus15d | plus1m | plus3m | all | custom
+const today = dayjs();
+const fromDate = ref(null);
+const toDate = ref(null);
+const openReservDetail = ref(false);
+const reservdetail = ref(null);
+const isCustomerOpen = ref(true);
+const isMembershipOpen = ref(true);
+const isWorkerOpen = ref(true);
+const isInquiryOpen = ref(true);
+const viewreceipt = ref(false);
+function printReceipt() {
+  window.print();
+}
+const stepStates = computed(() => {
+  const status = reservdetail.value?.status;
+
+  const labels = ["배정 완료", "작업 시작", "작업 완료", "확정 완료"];
+  const times = {
+    waiting: ["25.03.17 14:00", "-", "-", "-"],
+    assigned: ["25.03.17 14:00", "25.05.15 23:00", "-", "-"],
+    done: ["25.03.17 14:00", "25.05.15 23:00", "25.05.15 00:20", "-"],
+    confirmed: [
+      "25.03.17 14:00",
+      "25.05.15 23:00",
+      "25.05.15 00:20",
+      "25.05.22 14:00",
+    ],
+  };
+
+  const colorPerStatus = {
+    waiting: ["black", "", "", ""],
+    assigned: ["black", "orange", "", ""],
+    done: ["black", "black", "green", ""],
+    confirmed: ["black", "black", "black", "purple"], // 확정 완료
+  };
+
+  const timeList = times[status] || ["-", "-", "-", "-"];
+  const colorList = colorPerStatus[status] || ["", "", "", ""];
+
+  return labels.map((label, i) => ({
+    label,
+    time: timeList[i],
+    class: colorList[i],
+  }));
+});
+function openDetailById(id) {
+  const found = fullReservationList.find((item) => item.id === id);
+  if (found) {
+    reservdetail.value = found;
+    openReservDetail.value = true;
+  }
+}
+
+const fromDateInput = computed({
+  get: () => (fromDate.value ? dayjs(fromDate.value).format("YYYY-MM-DD") : ""),
+  set: (val) => {
+    fromDate.value = val ? dayjs(val).startOf("day") : null;
+  },
+});
+const toDateInput = computed({
+  get: () => (toDate.value ? dayjs(toDate.value).format("YYYY-MM-DD") : ""),
+  set: (val) => {
+    toDate.value = val ? dayjs(val).endOf("day") : null;
+  },
+});
+
+watch(dateFilter, (val) => {
+  if (val === "today") {
+    fromDate.value = today.startOf("day");
+    toDate.value = today.endOf("day");
+  } else if (val === "plus7d") {
+    fromDate.value = today;
+    toDate.value = today.add(7, "day");
+  } else if (val === "plus15d") {
+    fromDate.value = today;
+    toDate.value = today.add(15, "day");
+  } else if (val === "plus1m") {
+    fromDate.value = today;
+    toDate.value = today.add(1, "month");
+  } else if (val === "plus3m") {
+    fromDate.value = today;
+    toDate.value = today.add(3, "month");
+  } else if (val === "all") {
+    fromDate.value = null;
+    toDate.value = null;
+  } else if (val === "custom") {
+    // 날짜 선택 시 별도 초기화 X
+    // 하지만 필터 적용은 수동으로 해야 하니 다음 라인 추가 👇
+  }
+  applyFilters(); // ✅ 날짜 변경 후 즉시 필터 반영
+});
+
+const dateRange = computed(() => {
+  if (!fromDate.value || !toDate.value) return null;
+  return [fromDate.value, toDate.value];
+});
+
+const filteredList = ref([]);
+
+function applyFilters() {
+  const result = fullReservationList
+    .filter((item) => {
+      const reservDate = dayjs(item.reservinfo.date, "YYYY.MM.DD"); // 이제 date만 사용!
+
+      const isInDateRange =
+        !fromDate.value || !toDate.value
+          ? true
+          : reservDate.isAfter(fromDate.value.subtract(1, "day")) &&
+            reservDate.isBefore(toDate.value.add(1, "day"));
+
+      const statusMatched =
+        statusFilter.value === "all" || item.status === statusFilter.value;
+
+      const memberMatched =
+        memberFilter.value === "all" ||
+        (memberFilter.value === "normal" && !item.primemember) ||
+        (memberFilter.value === "prime" && item.primemember) ||
+        (memberFilter.value === "vip" && item.primemember);
+
+      const shopMatched =
+        shopFilter.value === "all" || item.customer.shop === shopFilter.value;
+
+      const searchMatched = searchText.value
+        ? (searchType.value === "customer"
+            ? item.customer.name
+            : item.worker.name || ""
+          ).includes(searchText.value)
+        : true;
+
+      return (
+        statusMatched &&
+        memberMatched &&
+        shopMatched &&
+        searchMatched &&
+        isInDateRange
+      );
+    })
+    .sort((a, b) => a.id - b.id);
+
+  filteredList.value = result;
+  currentPage.value = 1;
+}
+
+onMounted(() => {
+  applyFilters();
+});
+
+const paginatedList = computed(() => {
+  const start = (currentPage.value - 1) * perPage;
+  return filteredList.value.slice(start, start + perPage);
+});
+
+const totalPages = computed(() =>
+  Math.ceil(filteredList.value.length / perPage)
+);
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value) currentPage.value = page;
+};
+
+// 상태별 개수 계산
+const totalCount = fullReservationList.length;
+const doneCount = fullReservationList.filter(
+  (item) => item.status === "done"
+).length;
+const waitingCount = fullReservationList.filter(
+  (item) => item.status === "waiting"
+).length;
+const assignedCount = fullReservationList.filter(
+  (item) => item.status === "assigned"
+).length;
+// const confirmedCount = fullReservationList.filter(
+//   (item) => item.status === "confirmed"
+// ).length;
+
+// 카드에 쓸 데이터
+const statusCards = [
+  {
+    status: "total",
+    title: "전체 고객",
+    count: totalCount,
+    desc: `이 달 신규 고객 수 ${totalCount}명 증가 했습니다.`,
+    icon: `<svg width="27" height="20" viewBox="0 0 27 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M25.4349 10H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4349 1.99414H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4349 18.0059H1.41992" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+  {
+    status: "done",
+    title: "활성 고객",
+    count: doneCount,
+    desc: `이 달 청소 서비스 이용 고객 수는 ${doneCount}명 입니다.`,
+    icon: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.9352 26.0072C20.5668 26.0072 25.9427 20.6313 25.9427 13.9997C25.9427 7.36813 20.5668 1.99219 13.9352 1.99219C7.30368 1.99219 1.92773 7.36813 1.92773 13.9997C1.92773 20.6313 7.30368 26.0072 13.9352 26.0072Z" stroke="#5AB21A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M13.9355 6.79688V14.0014L18.7385 16.4029" stroke="#5AB21A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+  {
+    status: "assigned",
+    title: "신규 고객",
+    count: assignedCount,
+    desc: `지난 달 대비 신규 고객 수 ${assignedCount}명 증가 했습니다.`,
+    icon: `<svg width="27" height="28" viewBox="0 0 27 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M25.4504 12.902V14.0067C25.4489 16.596 24.6104 19.1155 23.0601 21.1894C21.5097 23.2633 19.3305 24.7805 16.8475 25.5146C14.3644 26.2488 11.7106 26.1606 9.28175 25.2633C6.85291 24.3659 4.77919 22.7075 3.36989 20.5353C1.96059 18.3631 1.29121 15.7935 1.46158 13.2097C1.63194 10.626 2.63293 8.16656 4.31526 6.19821C5.99758 4.22986 8.27111 2.85806 10.7967 2.28742C13.3224 1.71677 15.9648 1.97785 18.33 3.03171" stroke="#F99B23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M25.4514 4.40039L13.444 16.42L9.8418 12.8177" stroke="#F99B23" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+`,
+  },
+  {
+    status: "waiting",
+    title: "평균 예약",
+    count: waitingCount,
+    desc: `이달 평균 예약 건 수 ${waitingCount}건 입니다.`,
+    icon: `<svg width="27" height="26" viewBox="0 0 27 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.062 1.9005C13.2454 1.52892 13.7753 1.52892 13.9587 1.9005L17.2773 8.62368C17.3501 8.7711 17.4907 8.87333 17.6534 8.89711L25.0755 9.98196C25.4854 10.0419 25.6488 10.5458 25.352 10.8349L19.9823 16.065C19.8643 16.1799 19.8105 16.3455 19.8383 16.5077L21.1055 23.8959C21.1755 24.3044 20.7468 24.6159 20.38 24.423L13.7431 20.9327C13.5974 20.8561 13.4233 20.8561 13.2776 20.9327L6.64077 24.423C6.27396 24.6159 5.84518 24.3044 5.91524 23.8959L7.1824 16.5077C7.21024 16.3455 7.1564 16.1799 7.03847 16.065L1.6687 10.8349C1.3719 10.5458 1.53529 10.0419 1.94525 9.98196L9.36734 8.89711C9.53002 8.87333 9.67061 8.7711 9.74338 8.62368L13.062 1.9005Z" stroke="#F20F0F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+`,
+  },
+];
+</script>
 <template>
-  <div class="space-y-6 p-6 text-gray-800 dark:bg-gray-900 dark:text-gray-200">
-    <!-- 페이지 헤더 -->
-    <div class="flex justify-between items-center">
-      <div>
-        <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-          고객 관리
-        </h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-          고객 정보를 관리하고 상태를 확인할 수 있습니다.
+  <!-- 전체 -->
+  <div class="adminreservation">
+    <div class="dash">
+      <p class="dash-name">고객 관리</p>
+      <p class="dash-desc">전체고객을 관리할 수 있습니다.</p>
+    </div>
+    <div class="dashboard">
+      <div
+        class="allcard"
+        v-for="(item, index) in statusCards"
+        :key="index"
+        :class="item.status"
+      >
+        <p class="profile-h3">
+          {{ item.title }}
+          <span
+            class="card-icon"
+            v-html="item.icon"
+            style="margin-left: auto; display: inline"
+          ></span>
         </p>
+        <p class="profile-h1">
+          {{ item.count }} <span class="profile-h3 mbonly">개</span>
+        </p>
+        <p class="card-desc" v-html="item.desc"></p>
       </div>
     </div>
-
-    <!-- 통계 카드 -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center">
-          <div
-            class="p-3 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
-            <i class="fas fa-users text-2xl"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-              전체 고객
-            </h3>
-            <p class="text-2xl font-semibold text-gray-800 dark:text-white">
-              {{ totalCustomers }}명
-            </p>
-            <span class="text-sm text-green-600 dark:text-green-400">+2명</span>
-          </div>
+    <div class="table-wrap">
+      <div class="searchbox websearchbox">
+        <p class="profile-h2">회원 검색</p>
+        <div class="namesearchbox profile-h4">
+          <label>검색어</label>
+          <select>
+            <option>전체</option>
+            <option>예약번호</option>
+            <option>아이디</option>
+            <option>이름</option>
+            <option>주소</option>
+            <option>연락처</option>
+          </select>
+          <input
+            v-model="searchText"
+            type="text"
+            placeholder="이름을 입력하세요"
+            @keydown.enter="applyFilters"
+          />
         </div>
-      </div>
+        <hr />
+        <div class="searchtop profile-h4">
+          <div class="memberbox">
+            <label>회원등급</label>
 
-      <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center">
-          <div
-            class="p-3 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-300">
-            <i class="fas fa-check-circle text-2xl"></i>
-          </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-              활성 고객
-            </h3>
-            <p class="text-2xl font-semibold text-gray-800 dark:text-white">
-              {{ activeCustomers }}명
-            </p>
-            <span class="text-sm text-green-600 dark:text-green-400">+1명</span>
-          </div>
-        </div>
-      </div>
+            <label
+              ><input type="radio" v-model="memberFilter" value="all" />
+              전체</label
+            >
+            <label
+              ><input type="radio" v-model="memberFilter" value="normal" />
+              <svg
+                width="14"
+                height="11"
+                viewBox="0 0 14 11"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
+                  fill="#4ECF50"
+                />
+              </svg>
+              일반</label
+            >
+            <label
+              ><input type="radio" v-model="memberFilter" value="prime" />
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 15 15"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <rect width="15" height="15" fill="url(#pattern0_273_887)" />
+                <defs>
+                  <pattern
+                    id="pattern0_273_887"
+                    patternContentUnits="objectBoundingBox"
+                    width="1"
+                    height="1"
+                  >
+                    <use
+                      xlink:href="#image0_273_887"
+                      transform="scale(0.0185185)"
+                    />
+                  </pattern>
+                  <image
+                    id="image0_273_887"
+                    width="54"
+                    height="54"
+                    preserveAspectRatio="none"
+                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAACXBIWXMAAAsSAAALEgHS3X78AAAEXUlEQVRogd1aPUwUQRR+u6HCxKNZO/QSO8BISGig4OproNAsNgKNJgYSGmjhEis0EaPBaAPRAi5SYHOUHgU2GIMJ0pkc0rmFnImUu+bbn9u9vdmfmb29H76EAHO7c++b7817b96uZBgGJYGi6lkiyiaaJBzHWlG+4L2Jm5ii6n1ENEtEU0Q00RTTo1ElojIR7eEnDtHYxGxC60Q0kzqNcFRtO9bDCMYipqj6rD1ZpmXmRwMEp7SiXGZdKUfdrqj6FhFtdhgpsu35bC96A0KJ2aTa7XpR2FRUfdF/TSAxRdVXu4CUgxd+5Zh7TFH1HGRusXFJgT03rBXlCoUott41dFxkvHY3ELMlvdse2xJjUlH1YQpQjBllugiLDcTs8ihRNTE+ING31zJ9WpGpX2nLaqAialAsJzobSIDM3opk/j02QPQgJ0Xe83PTWgQsCOtzjHMuUAbu6CfGXcxmrhG9emKpBDI8uKlIdL3XWgQsSH7UJbd835oT41ELxEADsWHeGZ7OSDQ9wf3FTAzZy4rfS/fcOU8q3FNl/cT6eGdIQqp6ya5TM731c1b/8c8dWSumCSgxVTDo72U9gf4b7peea0S/NP4zY087iQGHpwbllg1zT5WOLALnvy1COwcGrX0UOwj7ibXq4FgHkFjYcAmA7Mh8PSFn/8Xdby1RbDon0fgA0Z2sRIO33HG4IAyFUlDHv5cQcR/nreDkhPyFNwbtlKNVrCuCFVXn1l0rBm/TL6dWLoqbh96VDFrbdQki3LPuHZnXTZVDUKhZ5dRYzQTyE09yfZSXzGTtuN3D5zr9OHM/h8LPdt1gE4aaYqJHlTDFRAHDc8uuKnBHuOXbUqO7BqDQ9qjIAqqRD0uySQ4AIV54l5s7OacJBBkoJQqvYk3fY14gkHhdaXzQMhzqBAGfi6hFrQr3rBB9eEq0XTZCjzcYR2HsJG4epF5S7X8Nzjv+xMzCkGDz3EtM+CwWhh1mO9MFqgxvSPeDdU6Lg9QVg+FREKneo9DW6j5NeImlEhXjuFIavREvsVR681G5KKqnEceVWUjdFVEvTgf0LBDx3i+FExdoC5gwa0X72dcfkQni1opI0NsHhnmIBPKjFuGwBI2a8facLmJWrVZMteogW7kxztAtWnVQJ0dF5DbRtgB1KjG44PyGkAvW4BBretUR5zDIApSaLOjCQcNGJbFiKHBZQOGK1lpYueSFczpuAingOHF1jwL3pGI0NDnRC0SRi9YachWi4FBWqmuDgzSuKx0R7R/FPh1H4UwrysdNiYrWCgdvdCRZHFPCrmki8C5IbY911Ok5IcynmletCH7pfwZ9FRTDw/VV5x+HWLc+c/Yi530F6aq44hwioXegI/uKHID7zWpFec9/i2x3gLsRB/YLKw2kqEsVQy2zqhXlrbCLuoUY1MEe2vLvpSD0tOIs5kHVNtCBtzmHcSeqXcQlEISeBDnsu9eQMINF3ulNCscVIXXNkCCDg97m7DgQ0X+1TJk9rcZcSQAAAABJRU5ErkJggg=="
+                  />
+                </defs>
+              </svg>
+              구독</label
+            >
+            <label
+              ><input type="radio" v-model="memberFilter" value="vip" />
+              <svg
+                width="13"
+                height="11"
+                viewBox="0 0 13 11"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.10981 0.382647L4.62988 3.22683L1.31874 3.68439C0.724961 3.76602 0.486994 4.45988 0.917601 4.85729L3.31313 7.06991L2.74655 10.1955C2.64456 10.7605 3.27234 11.1837 3.79813 10.9194L6.76025 9.44364L9.72238 10.9194C10.2482 11.1815 10.8759 10.7605 10.774 10.1955L10.2074 7.06991L12.6029 4.85729C13.0335 4.45988 12.7955 3.76602 12.2018 3.68439L8.89062 3.22683L7.4107 0.382647C7.14553 -0.124322 6.37724 -0.130766 6.10981 0.382647Z"
+                  fill="#FFDF0D"
+                />
+              </svg>
 
-      <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-shadow">
-        <div class="flex items-center">
-          <div
-            class="p-3 rounded-full bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-300">
-            <i class="fas fa-calendar-check text-2xl"></i>
+              VIP</label
+            >
           </div>
-          <div class="ml-4">
-            <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400">
-              평균 예약
-            </h3>
-            <p class="text-2xl font-semibold text-gray-800 dark:text-white">
-              3.2건
-            </p>
-            <span class="text-sm text-green-600 dark:text-green-400"
-              >+0.5건</span
+          <div class="shopbox">
+            <label>회원구분</label>
+            <label
+              ><input type="radio" value="all" v-model="shopFilter" />
+              전체</label
+            >
+            <label
+              ><input type="radio" value="personal" v-model="shopFilter" />
+              개인회원</label
+            >
+            <label
+              ><input type="radio" value="business" v-model="shopFilter" />
+              사업자회원</label
             >
           </div>
         </div>
-      </div>
-    </div>
-
-    <!-- 검색 및 필터 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="flex-1">
-          <div class="relative">
-            <input
-              v-model="searchQuery"
-              @input="handleInput"
-              type="text"
-              placeholder="고객명 또는 이메일로 검색"
-              class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white" />
-            <i
-              class="fas fa-search absolute left-3 top-3 text-gray-400 dark:text-gray-500"></i>
+        <hr />
+        <div class="searchbt profile-h4">
+          <div class="statusbox">
+            <label>가입승인</label>
+            <label
+              ><input type="radio" value="all" v-model="statusFilter" />
+              전체</label
+            >
+            <label
+              ><input type="radio" value="waiting" v-model="statusFilter" />
+              승인</label
+            >
+            <label
+              ><input type="radio" value="assigned" v-model="statusFilter" />
+              미승인</label
+            >
+          </div>
+          <div class="searchdate">
+            <div class="datepicker-box">
+              <label>예약일시</label>
+              <input
+                type="date"
+                v-model="fromDateInput"
+                @change="
+                  () => {
+                    dateFilter = 'custom';
+                    applyFilters();
+                  }
+                "
+              />
+              ~
+              <input
+                type="date"
+                v-model="toDateInput"
+                @change="
+                  () => {
+                    dateFilter = 'custom';
+                    applyFilters();
+                  }
+                "
+              />
+            </div>
+            <ul class="date-filter">
+              <li
+                style="font-size: 12px"
+                :class="{ active: dateFilter === 'all' }"
+                @click="dateFilter = 'all'"
+              >
+                전체
+              </li>
+              <li
+                style="font-size: 12px"
+                :class="{ active: dateFilter === 'today' }"
+                @click="dateFilter = 'today'"
+              >
+                오늘
+              </li>
+              <li
+                style="font-size: 12px"
+                :class="{ active: dateFilter === 'plus7d' }"
+                @click="dateFilter = 'plus7d'"
+              >
+                7일
+              </li>
+              <li
+                style="font-size: 12px"
+                :class="{ active: dateFilter === 'plus15d' }"
+                @click="dateFilter = 'plus15d'"
+              >
+                15일
+              </li>
+              <li
+                style="font-size: 12px"
+                :class="{ active: dateFilter === 'plus1m' }"
+                @click="dateFilter = 'plus1m'"
+              >
+                1개월
+              </li>
+              <li
+                style="font-size: 12px"
+                :class="{ active: dateFilter === 'plus3m' }"
+                @click="dateFilter = 'plus3m'"
+              >
+                3개월
+              </li>
+            </ul>
           </div>
         </div>
-        <div class="flex gap-2">
-          <select
-            v-model="statusFilter"
-            class="border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-            <option value="all">전체 상태</option>
-            <option value="active">활성</option>
-            <option value="inactive">비활성</option>
-            <option value="blocked">차단</option>
-          </select>
+        <hr />
+        <div class="search-action" style="margin-top: 12px">
+          <button class="search-button" @click="applyFilters">검색</button>
         </div>
       </div>
-    </div>
-
-    <!-- 고객 목록 -->
-    <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
-      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-white">
-          고객 목록
-        </h2>
+      <div class="searchbox mbsearchbox">
+        <p class="profile-h2">
+          회원 검색
+          <button class="modal profile-h4" v-on:click="clickadd = !clickadd">
+            상세검색
+          </button>
+        </p>
+        <div class="namesearchbox profile-h4">
+          <label>검색어</label>
+          <select>
+            <option>전체</option>
+            <option>예약번호</option>
+            <option>아이디</option>
+            <option>이름</option>
+            <option>주소</option>
+            <option>연락처</option>
+          </select>
+          <input
+            v-model="searchText"
+            type="text"
+            placeholder="이름을 입력하세요"
+            @keydown.enter="applyFilters"
+          />
+        </div>
+        <hr />
+        <div class="clickadd" v-show="clickadd">
+          <div class="searchtop profile-h4">
+            <div class="memberbox">
+              <label class="filtermb">회원등급</label>
+              <div class="mbbox">
+                <label
+                  ><input type="radio" v-model="memberFilter" value="all" />
+                  전체</label
+                >
+                <label
+                  ><input type="radio" v-model="memberFilter" value="normal" />
+                  <svg
+                    width="14"
+                    height="11"
+                    viewBox="0 0 14 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
+                      fill="#4ECF50"
+                    />
+                  </svg>
+                  일반</label
+                >
+                <label
+                  ><input type="radio" v-model="memberFilter" value="prime" />
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                  >
+                    <rect
+                      width="15"
+                      height="15"
+                      fill="url(#pattern0_273_887)"
+                    />
+                    <defs>
+                      <pattern
+                        id="pattern0_273_887"
+                        patternContentUnits="objectBoundingBox"
+                        width="1"
+                        height="1"
+                      >
+                        <use
+                          xlink:href="#image0_273_887"
+                          transform="scale(0.0185185)"
+                        />
+                      </pattern>
+                      <image
+                        id="image0_273_887"
+                        width="54"
+                        height="54"
+                        preserveAspectRatio="none"
+                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAACXBIWXMAAAsSAAALEgHS3X78AAAEXUlEQVRogd1aPUwUQRR+u6HCxKNZO/QSO8BISGig4OproNAsNgKNJgYSGmjhEis0EaPBaAPRAi5SYHOUHgU2GIMJ0pkc0rmFnImUu+bbn9u9vdmfmb29H76EAHO7c++b7817b96uZBgGJYGi6lkiyiaaJBzHWlG+4L2Jm5ii6n1ENEtEU0Q00RTTo1ElojIR7eEnDtHYxGxC60Q0kzqNcFRtO9bDCMYipqj6rD1ZpmXmRwMEp7SiXGZdKUfdrqj6FhFtdhgpsu35bC96A0KJ2aTa7XpR2FRUfdF/TSAxRdVXu4CUgxd+5Zh7TFH1HGRusXFJgT03rBXlCoUott41dFxkvHY3ELMlvdse2xJjUlH1YQpQjBllugiLDcTs8ihRNTE+ING31zJ9WpGpX2nLaqAialAsJzobSIDM3opk/j02QPQgJ0Xe83PTWgQsCOtzjHMuUAbu6CfGXcxmrhG9emKpBDI8uKlIdL3XWgQsSH7UJbd835oT41ELxEADsWHeGZ7OSDQ9wf3FTAzZy4rfS/fcOU8q3FNl/cT6eGdIQqp6ya5TM731c1b/8c8dWSumCSgxVTDo72U9gf4b7peea0S/NP4zY087iQGHpwbllg1zT5WOLALnvy1COwcGrX0UOwj7ibXq4FgHkFjYcAmA7Mh8PSFn/8Xdby1RbDon0fgA0Z2sRIO33HG4IAyFUlDHv5cQcR/nreDkhPyFNwbtlKNVrCuCFVXn1l0rBm/TL6dWLoqbh96VDFrbdQki3LPuHZnXTZVDUKhZ5dRYzQTyE09yfZSXzGTtuN3D5zr9OHM/h8LPdt1gE4aaYqJHlTDFRAHDc8uuKnBHuOXbUqO7BqDQ9qjIAqqRD0uySQ4AIV54l5s7OacJBBkoJQqvYk3fY14gkHhdaXzQMhzqBAGfi6hFrQr3rBB9eEq0XTZCjzcYR2HsJG4epF5S7X8Nzjv+xMzCkGDz3EtM+CwWhh1mO9MFqgxvSPeDdU6Lg9QVg+FREKneo9DW6j5NeImlEhXjuFIavREvsVR681G5KKqnEceVWUjdFVEvTgf0LBDx3i+FExdoC5gwa0X72dcfkQni1opI0NsHhnmIBPKjFuGwBI2a8facLmJWrVZMteogW7kxztAtWnVQJ0dF5DbRtgB1KjG44PyGkAvW4BBretUR5zDIApSaLOjCQcNGJbFiKHBZQOGK1lpYueSFczpuAingOHF1jwL3pGI0NDnRC0SRi9YachWi4FBWqmuDgzSuKx0R7R/FPh1H4UwrysdNiYrWCgdvdCRZHFPCrmki8C5IbY911Ok5IcynmletCH7pfwZ9FRTDw/VV5x+HWLc+c/Yi530F6aq44hwioXegI/uKHID7zWpFec9/i2x3gLsRB/YLKw2kqEsVQy2zqhXlrbCLuoUY1MEe2vLvpSD0tOIs5kHVNtCBtzmHcSeqXcQlEISeBDnsu9eQMINF3ulNCscVIXXNkCCDg97m7DgQ0X+1TJk9rcZcSQAAAABJRU5ErkJggg=="
+                      />
+                    </defs>
+                  </svg>
+                  구독</label
+                >
+              </div>
+            </div>
+            <div class="shopbox">
+              <label class="filtermb">회원구분</label>
+              <div class="mbbox">
+                <label
+                  ><input type="radio" value="all" v-model="shopFilter" />
+                  전체</label
+                >
+                <label
+                  ><input type="radio" value="personal" v-model="shopFilter" />
+                  개인회원</label
+                >
+                <label
+                  ><input type="radio" value="business" v-model="shopFilter" />
+                  사업자회원</label
+                >
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="searchbt profile-h4">
+            <div class="statusbox">
+              <label class="filtermb">예약상태</label>
+              <label
+                ><input type="radio" value="all" v-model="statusFilter" />
+                전체</label
+              >
+              <div class="mbbox">
+                <label
+                  ><input type="radio" value="waiting" v-model="statusFilter" />
+                  배정대기</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    value="assigned"
+                    v-model="statusFilter"
+                  />
+                  청소대기</label
+                >
+                <label
+                  ><input type="radio" value="done" v-model="statusFilter" />
+                  청소완료</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    value="confirmed"
+                    v-model="statusFilter"
+                  />
+                  확정완료</label
+                >
+              </div>
+            </div>
+            <div class="searchdate">
+              <div class="datepicker-box">
+                <label class="filtermb">예약일시</label>
+                <div class="mbbox">
+                  <input
+                    type="date"
+                    v-model="fromDateInput"
+                    @change="
+                      () => {
+                        dateFilter = 'custom';
+                        applyFilters();
+                      }
+                    "
+                  />
+                  ~
+                  <input
+                    type="date"
+                    v-model="toDateInput"
+                    @change="
+                      () => {
+                        dateFilter = 'custom';
+                        applyFilters();
+                      }
+                    "
+                  />
+                </div>
+              </div>
+              <ul class="date-filter">
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'all' }"
+                  @click="dateFilter = 'all'"
+                >
+                  전체
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'today' }"
+                  @click="dateFilter = 'today'"
+                >
+                  오늘
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus7d' }"
+                  @click="dateFilter = 'plus7d'"
+                >
+                  7일
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus15d' }"
+                  @click="dateFilter = 'plus15d'"
+                >
+                  15일
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus1m' }"
+                  @click="dateFilter = 'plus1m'"
+                >
+                  1개월
+                </li>
+                <li
+                  style="font-size: 12px"
+                  :class="{ active: dateFilter === 'plus3m' }"
+                  @click="dateFilter = 'plus3m'"
+                >
+                  3개월
+                </li>
+              </ul>
+            </div>
+          </div>
+          <hr />
+        </div>
+        <div class="search-action" style="margin-top: 12px">
+          <button class="search-button" @click="applyFilters">검색</button>
+        </div>
       </div>
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead class="bg-gray-50 dark:bg-gray-700">
+      <div class="tablelist">
+        <h2 class="profile-h2">예약 목록</h2>
+        <table class="table">
+          <thead>
             <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                고객
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                연락처
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                예약
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                상태
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                액션
-              </th>
+              <th>예약번호</th>
+              <th>고객명</th>
+              <th>고객 연락처</th>
+              <th>예약일자</th>
+              <th>청소일자</th>
+              <th>담당기사</th>
+              <th>담당기사 연락처</th>
+              <th>상태</th>
+              <th>액션</th>
             </tr>
           </thead>
-          <tbody
-            v-for="customer in paginatedCustomers"
-            :key="customer.id"
-            class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            <tr
-              class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-150">
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="relative">
-                    <img
-                      :src="customer.avatar"
-                      :alt="customer.name"
-                      class="h-10 w-10 rounded-full object-cover" />
-                    <span
-                      :class="getStatusDotClass(customer.status)"
-                      class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800"></span>
-                  </div>
-                  <div class="ml-4">
-                    <div
-                      class="text-sm font-medium text-gray-900 dark:text-white flex items-center">
-                      {{ customer.name }}
-                      <!--v-if="customer.tags.includes('VIP')" tags 배열 안에 "VIP"라는 문자열이 포함되어 있는지 확인. -->
-                      <span
-                        v-if="customer.tags.includes('VIP')"
-                        class="ml-2 px-2 py-0.5 text-xs font-medium bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-300 rounded-full"
-                        >VIP</span
+          <tbody>
+            <tr v-for="item in paginatedList" :key="item.id">
+              <td data-label="예약번호">{{ item.number }}</td>
+              <td class="customername" data-label="고객명">
+                <template v-if="item.primemember">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                  >
+                    <rect
+                      width="15"
+                      height="15"
+                      fill="url(#pattern0_273_889)"
+                    />
+                    <defs>
+                      <pattern
+                        id="pattern0_273_889"
+                        patternContentUnits="objectBoundingBox"
+                        width="1"
+                        height="1"
                       >
-                    </div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                      {{ customer.email }}
-                    </div>
-                    <div class="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                      가입일: {{ customer.joinDate }}
-                    </div>
-                  </div>
-                </div>
+                        <use
+                          xlink:href="#image0_273_889"
+                          transform="scale(0.0185185)"
+                        />
+                      </pattern>
+                      <image
+                        id="image0_273_889"
+                        width="54"
+                        height="54"
+                        preserveAspectRatio="none"
+                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAACXBIWXMAAAsSAAALEgHS3X78AAAEXUlEQVRogd1aPUwUQRR+u6HCxKNZO/QSO8BISGig4OproNAsNgKNJgYSGmjhEis0EaPBaAPRAi5SYHOUHgU2GIMJ0pkc0rmFnImUu+bbn9u9vdmfmb29H76EAHO7c++b7817b96uZBgGJYGi6lkiyiaaJBzHWlG+4L2Jm5ii6n1ENEtEU0Q00RTTo1ElojIR7eEnDtHYxGxC60Q0kzqNcFRtO9bDCMYipqj6rD1ZpmXmRwMEp7SiXGZdKUfdrqj6FhFtdhgpsu35bC96A0KJ2aTa7XpR2FRUfdF/TSAxRdVXu4CUgxd+5Zh7TFH1HGRusXFJgT03rBXlCoUott41dFxkvHY3ELMlvdse2xJjUlH1YQpQjBllugiLDcTs8ihRNTE+ING31zJ9WpGpX2nLaqAialAsJzobSIDM3opk/j02QPQgJ0Xe83PTWgQsCOtzjHMuUAbu6CfGXcxmrhG9emKpBDI8uKlIdL3XWgQsSH7UJbd835oT41ELxEADsWHeGZ7OSDQ9wf3FTAzZy4rfS/fcOU8q3FNl/cT6eGdIQqp6ya5TM731c1b/8c8dWSumCSgxVTDo72U9gf4b7peea0S/NP4zY087iQGHpwbllg1zT5WOLALnvy1COwcGrX0UOwj7ibXq4FgHkFjYcAmA7Mh8PSFn/8Xdby1RbDon0fgA0Z2sRIO33HG4IAyFUlDHv5cQcR/nreDkhPyFNwbtlKNVrCuCFVXn1l0rBm/TL6dWLoqbh96VDFrbdQki3LPuHZnXTZVDUKhZ5dRYzQTyE09yfZSXzGTtuN3D5zr9OHM/h8LPdt1gE4aaYqJHlTDFRAHDc8uuKnBHuOXbUqO7BqDQ9qjIAqqRD0uySQ4AIV54l5s7OacJBBkoJQqvYk3fY14gkHhdaXzQMhzqBAGfi6hFrQr3rBB9eEq0XTZCjzcYR2HsJG4epF5S7X8Nzjv+xMzCkGDz3EtM+CwWhh1mO9MFqgxvSPeDdU6Lg9QVg+FREKneo9DW6j5NeImlEhXjuFIavREvsVR681G5KKqnEceVWUjdFVEvTgf0LBDx3i+FExdoC5gwa0X72dcfkQni1opI0NsHhnmIBPKjFuGwBI2a8facLmJWrVZMteogW7kxztAtWnVQJ0dF5DbRtgB1KjG44PyGkAvW4BBretUR5zDIApSaLOjCQcNGJbFiKHBZQOGK1lpYueSFczpuAingOHF1jwL3pGI0NDnRC0SRi9YachWi4FBWqmuDgzSuKx0R7R/FPh1H4UwrysdNiYrWCgdvdCRZHFPCrmki8C5IbY911Ok5IcynmletCH7pfwZ9FRTDw/VV5x+HWLc+c/Yi530F6aq44hwioXegI/uKHID7zWpFec9/i2x3gLsRB/YLKw2kqEsVQy2zqhXlrbCLuoUY1MEe2vLvpSD0tOIs5kHVNtCBtzmHcSeqXcQlEISeBDnsu9eQMINF3ulNCscVIXXNkCCDg97m7DgQ0X+1TJk9rcZcSQAAAABJRU5ErkJggg=="
+                      />
+                    </defs>
+                  </svg>
+
+                  {{ item.customer.name }}
+                </template>
+                <template v-else>
+                  <!-- 초록 나뭇잎 아이콘 -->
+                  <svg
+                    width="14"
+                    height="11"
+                    viewBox="0 0 14 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
+                      fill="#4ECF50"
+                    />
+                  </svg>
+                  {{ item.customer.name }}
+                </template>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="text-sm text-gray-900 dark:text-white">
-                  {{ customer.phone }}
-                </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  마지막 방문: {{ customer.lastVisit }}
-                </div>
+              <td data-label="고객연락처">{{ item.customer.mobile }}</td>
+              <td data-label="예약일자">{{ item.reservdate }}</td>
+              <td data-label="청소일자">
+                {{ item.reservinfo.date }} {{ item.reservinfo.time }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div
-                  class="flex items-center text-indigo-600 dark:text-indigo-400">
-                  <i class="fas fa-calendar mr-1"></i>
-                  {{ customer.reservationCount }}건
-                </div>
-                <div class="text-sm text-gray-900 dark:text-white mt-1">
-                  총 이용금액: {{ formatCurrency(customer.totalSpent) }}
-                </div>
+              <td data-label="담당기사">{{ item.worker.name || "-" }}</td>
+              <td data-label="담당기사 연락처">
+                {{ item.worker.mobile || "-" }}
               </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  :class="getStatusClass(customer.status)"
-                  class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">
-                  {{ getStatusText(customer.status) }}
+              <td data-label="상태">
+                <span :class="`statusbox-${item.status}`">
+                  {{
+                    item.status === "waiting"
+                      ? "대기중"
+                      : item.status === "assigned"
+                      ? "진행중"
+                      : item.status === "done"
+                      ? "청소완료"
+                      : item.status === "confirmed"
+                      ? "확정완료"
+                      : "알수없음"
+                  }}
                 </span>
-                <div class="mt-2 flex flex-wrap gap-1">
-                  <span
-                    v-for="tag in customer.tags"
-                    :key="tag"
-                    class="px-2 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 rounded-full">
-                    {{ tag }}
-                  </span>
-                </div>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <div class="flex flex-col space-y-2">
-                  <button
-                    @click="showCustomerDetails(customer)"
-                    class="text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 flex items-center">
-                    <i class="fas fa-eye mr-1"></i>상세
-                  </button>
-                  <button
-                    @click="confirmDelete(customer)"
-                    class="text-red-600 dark:text-red-400 hover:text-red-900 dark:hover:text-red-300 flex items-center">
-                    <i class="fas fa-trash mr-1"></i>삭제
-                  </button>
-                </div>
+              <td class="btnbox" data-label="액션">
+                <button class="modal" v-on:click="viewreceipt = true">
+                  영수증 보기
+                </button>
+                <button class="modal" @click="openDetailById(item.id)">
+                  상세보기
+                </button>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-    </div>
 
-    <!-- 페이지네이션 -->
-    <div
-      class="flex justify-between items-center bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-      <div class="text-sm text-gray-700 dark:text-gray-300">
-        총 <span class="font-medium">{{ filteredCustomers.length }}</span
-        >명의 고객
-      </div>
-      <div class="flex gap-2">
-        <button
-          @click="prevPage"
-          :disabled="currentPage === 1"
-          class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-        <button
-          v-for="page in totalPages"
-          :key="page"
-          @click="goToPage(page)"
-          :class="[
-            currentPage === page
-              ? 'bg-indigo-600 text-white border-indigo-600'
-              : 'border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300',
-          ]"
-          class="px-3 py-1 border rounded transition-colors">
-          {{ page }}
-        </button>
-        <button
-          @click="nextPage"
-          :disabled="currentPage === totalPages"
-          class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-gray-700 dark:text-gray-300">
-          <i class="fas fa-chevron-right"></i>
-        </button>
-      </div>
-    </div>
-    <!-- 삭제 확인 모달 -->
-    <div
-      v-if="showDeleteModal"
-      class="modal fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-              고객 삭제
-            </h3>
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+          <span>총 {{ filteredList.length }}건의 예약</span>
+          <div class="pagebox">
+            <button @click="goToPage(currentPage - 1)">←</button>
             <button
-              @click="closeDeletModal"
-              class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-              <i class="fas fa-times"></i>
+              v-for="page in totalPages"
+              :key="page"
+              :class="{ active: currentPage === page }"
+              @click="goToPage(page)"
+            >
+              {{ page }}
             </button>
+            <button @click="goToPage(currentPage + 1)">→</button>
           </div>
-        </div>
-        <div class="p-6">
-          <!-- customerToDelete?.name 구문에서 ?.는 Optional Chaining(옵셔널 체이닝) 문법입니다. 
-             이 문법은 customerToDelete가 null 또는 undefined여도 오류 없이 안전하게 접근 -->
-          <!-- customerToDelete가 존재하면 → customerToDelete.name 값을 출력
-  
-  customerToDelete가 null 또는 undefined이면 → 아무것도 출력하지 않음 (에러 발생하지 않음) -->
-          <p class="text-sm text-gray-900 dark:text-white">
-            정말로 {{ customerToDelete?.name }} 고객을 삭제하시겠습니까?
-          </p>
-          <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            삭제된 고객 정보는 복구할 수 없습니다.
-          </p>
-        </div>
-        <div
-          class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-3">
-          <button
-            @click="closeDeletModal"
-            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
-            취소
-          </button>
-          <button
-            @click="deleteCustomer"
-            class="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-red-600 hover:bg-red-700">
-            삭제
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- 고객 상세 보기 모달 -->
-    <div
-      v-if="showCustomerDetailsModal"
-      class="modal fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
-      <div
-        class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
-        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div class="flex justify-between items-center">
-            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
-              고객 상세
-            </h3>
-            <button
-              @click="closeCustomerDetailsModal"
-              class="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
-        </div>
-        <div class="p-6">
-          <div class="space-y-6">
-            <!-- 프로필 섹션 -->
-            <div class="flex items-center space-x-4">
-              <img
-                :src="selectedCustomer.avatar"
-                :alt="selectedCustomer.name"
-                class="h-20 w-20 rounded-full object-cover border-4 border-indigo-100 dark:border-indigo-900" />
-              <div>
-                <h4 class="text-xl font-bold text-gray-900 dark:text-white">
-                  {{ selectedCustomer.name }}
-                </h4>
-                <p class="text-sm text-gray-500 dark:text-gray-400">
-                  {{ selectedCustomer.email }}
-                </p>
-                <div class="mt-2 flex flex-wrap gap-2">
-                  <span
-                    v-for="tag in selectedCustomer.tags"
-                    :key="tag"
-                    class="px-2 py-1 text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 rounded-full">
-                    {{ tag }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 기본 정보 섹션 -->
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h5
-                  class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  연락처
-                </h5>
-                <input
-                  v-model="selectedCustomer.phone"
-                  type="tel"
-                  class="w-full bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-0 text-gray-900 dark:text-white" />
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h5
-                  class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  가입일
-                </h5>
-                <p class="text-gray-900 dark:text-white">
-                  {{ selectedCustomer.joinDate }}
-                </p>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h5
-                  class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  마지막 방문
-                </h5>
-                <p class="text-gray-900 dark:text-white">
-                  {{ selectedCustomer.lastVisit }}
-                </p>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h5
-                  class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  상태
-                </h5>
-                <select
-                  v-model="selectedCustomer.status"
-                  class="w-full bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-indigo-500 focus:ring-0 text-gray-900 dark:text-white">
-                  <option value="active">활성</option>
-                  <option value="inactive">비활성</option>
-                  <option value="blocked">차단</option>
-                </select>
-              </div>
-            </div>
-
-            <!-- 이용 정보 섹션 -->
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h5
-                class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-                이용 정보
-              </h5>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    예약 건수
-                  </p>
-                  <p
-                    class="text-lg font-semibold text-gray-900 dark:text-white">
-                    {{ selectedCustomer.reservationCount }}건
-                  </p>
-                </div>
-                <div>
-                  <p class="text-sm text-gray-500 dark:text-gray-400">
-                    총 이용금액
-                  </p>
-                  <p
-                    class="text-lg font-semibold text-gray-900 dark:text-white">
-                    {{ formatCurrency(selectedCustomer.totalSpent) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- 선호 메뉴 섹션 -->
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h5
-                class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
-                선호 메뉴
-              </h5>
-              <div class="flex flex-wrap gap-2">
-                <div
-                  v-for="(item, index) in selectedCustomer.favoriteItems"
-                  :key="index"
-                  class="flex items-center gap-2">
-                  <input
-                    v-model="selectedCustomer.favoriteItems[index]"
-                    type="text"
-                    class="px-3 py-1 bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-                  <button
-                    @click="removeFavoriteItem(index)"
-                    class="text-red-500 hover:text-red-700">
-                    <i class="fas fa-times"></i>
-                  </button>
-                </div>
-                <button
-                  @click="addFavoriteItem"
-                  class="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 rounded-full text-sm hover:bg-indigo-200 dark:hover:bg-indigo-800">
-                  <i class="fas fa-plus mr-1"></i>메뉴 추가
-                </button>
-              </div>
-            </div>
-
-            <!-- 메모 섹션 -->
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-              <h5
-                class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">
-                메모
-              </h5>
-              <textarea
-                v-model="selectedCustomer.notes"
-                rows="3"
-                class="w-full bg-transparent border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-white"></textarea>
-            </div>
-          </div>
-        </div>
-        <div
-          class="px-6 py-4 bg-gray-50 dark:bg-gray-700 flex justify-end space-x-3">
-          <button
-            @click="closeCustomerDetailsModal"
-            class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600">
-            취소
-          </button>
-          <button
-            @click="saveCustomerDetails"
-            class="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
-            저장
-          </button>
         </div>
       </div>
     </div>
   </div>
-</template>
-<script setup>
-import { ref, computed } from "vue";
-const showCustomerForm = ref(false);
-const showDeleteModal = ref(false);
-const showCustomerDetailsModal = ref(false);
-const searchQuery = ref("");
-const statusFilter = ref("all");
-// 한글이슈
-function handleInput(event) {
-  searchQuery.value = event.target.value;
-}
-// 고객목록
-const customers = ref([
-  {
-    id: 1,
-    name: "김철수",
-    email: "chulsoo@example.com",
-    phone: "010-1234-5678",
-    status: "active",
-    reservationCount: 5,
-    avatar: "/images/default-avatar.png",
-    joinDate: "2024-01-15",
-    lastVisit: "2024-04-10",
-    totalSpent: 1500000,
-    favoriteItems: ["아메리카노", "카페라떼"],
-    notes: "VIP 고객, 생일 쿠폰 제공",
-    tags: ["VIP", "정기방문"],
-  },
-  {
-    id: 2,
-    name: "이영희",
-    email: "younghee@example.com",
-    phone: "010-8765-4321",
-    status: "active",
-    reservationCount: 3,
-    avatar: "/images/people1.png",
-    joinDate: "2024-01-20",
-    lastVisit: "2024-04-09",
-    totalSpent: 800000,
-    favoriteItems: ["카페모카", "티라미수"],
-    notes: "단골 고객, 알레르기 주의",
-    tags: ["단골", "알레르기"],
-  },
-  {
-    id: 3,
-    name: "박민수",
-    email: "minsu@example.com",
-    phone: "010-1111-2222",
-    status: "inactive",
-    reservationCount: 1,
-    avatar: "/images/people2.png",
-    joinDate: "2024-01-25",
-    lastVisit: "2024-03-15",
-    totalSpent: 300000,
-    favoriteItems: ["에스프레소"],
-    notes: "3개월 미방문",
-    tags: ["휴면"],
-  },
-  {
-    id: 4,
-    name: "최지영",
-    email: "jiyoung@example.com",
-    phone: "010-3333-4444",
-    status: "active",
-    reservationCount: 7,
-    avatar: "/images/people3.png",
-    joinDate: "2024-02-01",
-    lastVisit: "2024-04-11",
-    totalSpent: 2100000,
-    favoriteItems: ["바닐라라떼", "치즈케이크"],
-    notes: "VIP 고객, 이벤트 참여 적극적",
-    tags: ["VIP", "이벤트"],
-  },
-  {
-    id: 5,
-    name: "정민호",
-    email: "minho@example.com",
-    phone: "010-5555-6666",
-    status: "blocked",
-    reservationCount: 0,
-    avatar: "/images/people4.png",
-    joinDate: "2024-02-05",
-    lastVisit: "2024-02-20",
-    totalSpent: 0,
-    favoriteItems: [],
-    notes: "불량 고객, 환불 요청 다수",
-    tags: ["차단"],
-  },
-  {
-    id: 6,
-    name: "한수진",
-    email: "sujin@example.com",
-    phone: "010-7777-8888",
-    status: "active",
-    reservationCount: 4,
-    avatar: "/images/people3.png",
-    joinDate: "2024-02-10",
-    lastVisit: "2024-04-08",
-    totalSpent: 1200000,
-    favoriteItems: ["카라멜마끼아또", "초콜릿케이크"],
-    notes: "단골 고객, 친절함",
-    tags: ["단골"],
-  },
-  {
-    id: 7,
-    name: "송지훈",
-    email: "jihun@example.com",
-    phone: "010-9999-0000",
-    status: "active",
-    reservationCount: 2,
-    avatar: "/images/people1.png",
-    joinDate: "2024-02-15",
-    lastVisit: "2024-04-07",
-    totalSpent: 600000,
-    favoriteItems: ["아이스티", "샌드위치"],
-    notes: "새 고객, 온라인 주문 선호",
-    tags: ["신규"],
-  },
-  {
-    id: 8,
-    name: "강미영",
-    email: "miyoung@example.com",
-    phone: "010-2222-3333",
-    status: "active",
-    reservationCount: 6,
-    avatar: "/images/people3.png",
-    joinDate: "2024-02-20",
-    lastVisit: "2024-04-06",
-    totalSpent: 1800000,
-    favoriteItems: ["플랫화이트", "마카롱"],
-    notes: "VIP 고객, 리뷰 작성 적극적",
-    tags: ["VIP", "리뷰어"],
-  },
-  {
-    id: 9,
-    name: "임동현",
-    email: "donghyun@example.com",
-    phone: "010-4444-5555",
-    status: "inactive",
-    reservationCount: 1,
-    avatar: "/images/people4.png",
-    joinDate: "2024-02-25",
-    lastVisit: "2024-03-10",
-    totalSpent: 300000,
-    favoriteItems: ["아메리카노"],
-    notes: "2개월 미방문",
-    tags: ["휴면"],
-  },
-  {
-    id: 10,
-    name: "오서연",
-    email: "seoyeon@example.com",
-    phone: "010-6666-7777",
-    status: "active",
-    reservationCount: 3,
-    avatar: "/images/people5.png",
-    joinDate: "2024-03-01",
-    lastVisit: "2024-04-05",
-    totalSpent: 900000,
-    favoriteItems: ["카페라떼", "크로플"],
-    notes: "단골 고객, 친구 추천",
-    tags: ["단골", "추천"],
-  },
-]);
-// 필터링 관련
-const filteredCustomers = computed(() => {
-  // 고객데이터 복사
-  let result = [...customers.value];
-  // 검색어 필터링
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    result = result.filter(
-      (customer) =>
-        customer.name.toLowerCase().includes(query) || //이름에 포함되어 있으면 통화
-        customer.eamil.toLowerCase().includes(query)
-    );
-  }
-  // 상태필더링
-  if (statusFilter.value !== "all") {
-    result = result.filter(
-      (customer) => customer.status === statusFilter.value //상태가 선택한 값과 일치하는지 확인
-    );
-  }
+  <!-- 모달 오버레이 -->
+  <div
+    class="overlay"
+    v-show="openReservDetail || viewreceipt"
+    @click="
+      () => {
+        openReservDetail = false;
+        viewreceipt = false;
+      }
+    "
+  ></div>
+  <!-- 예약 상세 모달 -->
+  <div class="reservdetailmodal" v-if="openReservDetail && reservdetail">
+    <div class="reservdetail-title">
+      <p class="profile-h2">예약 상세 정보</p>
+      <hr />
+      <div
+        class="title"
+        :class="`status-${reservdetail.status}`"
+        style="font-weight: 600"
+      >
+        예약 번호: {{ reservdetail.number }}
+        <span
+          :class="
+            reservdetail?.status ? `statusbox-${reservdetail.status}` : ''
+          "
+        >
+          {{
+            reservdetail?.status === "waiting"
+              ? "대기중"
+              : reservdetail?.status === "assigned"
+              ? "진행중"
+              : reservdetail?.status === "done"
+              ? "청소완료"
+              : reservdetail?.status === "confirmed"
+              ? "확정완료"
+              : "알수없음"
+          }}</span
+        >
+      </div>
+    </div>
+    <div class="reservdetail-info-box">
+      <div class="reservdetail-left">
+        <p class="profile-h2" style="font-size: 16px; font-weight: 500">
+          기본 정보
+        </p>
+        <div class="customerinfo">
+          <p class="profile-h3" @click="isCustomerOpen = !isCustomerOpen">
+            예약자 정보
+            <span class="icon">
+              <template v-if="isCustomerOpen">
+                <!-- 위쪽 아이콘 (▲) -->
+                <svg
+                  width="15"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+              <template v-else>
+                <!-- 아래쪽 아이콘 (▼) -->
+                <svg
+                  width="15"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+            </span>
+          </p>
 
-  //최종 필터링된 고객 목록 반환
-  return result;
-});
-// 페이네이션
-const currentPage = ref(1);
-const itemsPerPage = ref(5);
-// 전체 페이지수 계산
-const totalPages = computed(() => {
-  return Math.ceil(filteredCustomers.value.length / itemsPerPage.value);
-});
-// 현재 페이지에 보여줄 고객목록 계산
-const paginatedCustomers = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return filteredCustomers.value.slice(start, end);
-});
-// 페이지로 이동하는 함수
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-  }
-};
-// 다음페이지로 이동
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++;
-  }
-};
-// 이전페이지로 이동
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--;
-  }
-};
-// 숫자를 원화 동화 형식으로 포맷
-const formatCurrency = (amount) => {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency", // 통화 형식
-    currency: "KRW", // 원화(KRW)
-    maximumFractionDigits: 0, // 소수점 없음
-  }).format(amount);
-};
-// 상태글자 변환
-const getStatusText = (status) => {
-  const statusMap = {
-    active: "활성",
-    inactive: "비활성",
-    blocked: "차단",
-  };
-  return statusMap[status] || status;
-};
-const getStatusClass = (status) => {
-  const statusClasses = {
-    active: "bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300",
-    inactive:
-      "bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300",
-    blocked: "bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-300",
-  };
-  return (
-    statusClasses[status] ||
-    "bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-300"
-  );
-};
-const getStatusDotClass = (status) => {
-  const statusClasses = {
-    active: "bg-green-400 dark:bg-green-500",
-    inactive: "bg-yellow-400 dark:bg-yellow-500",
-    blocked: "bg-red-400 dark:bg-red-500",
-  };
-  return statusClasses[status] || "bg-gray-400 dark:bg-gray-500";
-};
-// 고객 상세 보기 모달 열기
-const selectedCustomer = ref(null);
-const showCustomerDetails = (customer) => {
-  selectedCustomer.value = customer; //선택된 고객 정보 저장
-  showCustomerDetailsModal.value = true;
-};
-// 고객 상세 보기 모달 닫기
-const closeCustomerDetailsModal = () => {
-  showCustomerDetailsModal.value = false;
-  selectedCustomer.value = null;
-};
-// 특정 인덱스의 선호 메뉴 항목 삭제
-const removeFavoriteItem = (index) => {
-  selectedCustomer.value.favoriteItems.splice(index, 1); //배열에서 제거
-};
-// 선호 메뉴 항목 추가
-const addFavoriteItem = () => {
-  if (!selectedCustomer.value.favoriteItems) {
-    selectedCustomer.value.favoriteItems = []; //배열이 없으면 초기화
-  }
-  selectedCustomer.value.favoriteItems.push("");
-};
-// 고객 상세 정보 저장
-const saveCustomerDetails = () => {
-  // 1.고객 목록에서 현재 선택된 고객의 인덱스를 찾는다
-  const index = customers.value.findIndex(
-    (c) => c.id === selectedCustomer.value.id
-  );
-  if (index !== -1) {
-    // 2.빈 문자열로 된 선호 메뉴 항목은 제거
-    selectedCustomer.value.favoriteItems =
-      selectedCustomer.value.favoriteItems.filter((item) => item.trim() !== "");
-    //   3.수정된 고객 정보를 고객 목록에 반영
-    customers.value[index] = { ...selectedCustomer.value };
-    // 모달 닫기
-    closeCustomerDetailsModal();
-  }
-};
-// 고객 삭제 모달 열기
-// 삭제할 고객 객체를 저장하는 변수
-const customerToDelete = ref(null);
-const confirmDelete = (customer) => {
-  customerToDelete.value = customer; //삭제할 고객 정보 저장
-  showDeleteModal.value = true; //삭제확인 모달 표시
-};
-// 삭제모달 닫기
-const closeDeletModal = () => {
-  customerToDelete.value = null;
-  showDeleteModal.value = false;
-};
-// 실제 고객 삭제 처리
-const deleteCustomer = () => {
-  if (customerToDelete.value) {
-    // 고객 삭제
-    customers.value = customers.value.filter(
-      (c) => c.id !== customerToDelete.value.id
-    );
-    // 삭제후 모달 닫기
-    closeDeletModal();
-  }
-};
-// 전체고객 수를 계산하는 계산 속성
-const totalCustomers = computed(() => customers.value.length);
-// 활성상태인 고객만 필더링하여 그수를 계산하느 계산 속성
-const activeCustomers = computed(
-  () =>
-    customers.value.filter((customer) => customer.status === "active").length
-);
-</script>
+          <ul v-show="isCustomerOpen" class="profile-h4">
+            <li><span>이름</span>{{ reservdetail.customer.name }}</li>
+            <li><span>연락처</span>{{ reservdetail.customer.mobile }}</li>
+            <li><span>이메일</span>{{ reservdetail.customer.email }}</li>
+            <li><span>주소</span>{{ reservdetail.customer.address }}</li>
+          </ul>
+        </div>
+        <div class="membershipinfo">
+          <p class="profile-h3" @click="isMembershipOpen = !isMembershipOpen">
+            구독권 정보
+            <span class="icon">
+              <template v-if="isMembershipOpen">
+                <!-- 위쪽 아이콘 (▲) -->
+                <svg
+                  width="15"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+              <template v-else>
+                <!-- 아래쪽 아이콘 (▼) -->
+                <svg
+                  width="15"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+            </span>
+          </p>
+
+          <ul v-show="isMembershipOpen" class="profile-h4">
+            <li>
+              <span>구독권</span>{{ reservdetail.membership?.name || "-" }}
+            </li>
+            <li>
+              <span>구독일</span>{{ reservdetail.membership?.date || "-" }}
+            </li>
+            <li>
+              <span>회차</span>{{ reservdetail.membership?.count || "-" }}
+            </li>
+            <li>
+              <span>주기</span>{{ reservdetail.membership?.during || "-" }}
+            </li>
+          </ul>
+        </div>
+        <div class="workerinfo">
+          <p class="profile-h3" @click="isWorkerOpen = !isWorkerOpen">
+            담당자 정보
+            <span class="icon">
+              <template v-if="isWorkerOpen">
+                <!-- 위쪽 아이콘 (▲) -->
+                <svg
+                  width="15"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+              <template v-else>
+                <!-- 아래쪽 아이콘 (▼) -->
+                <svg
+                  width="15"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+            </span>
+          </p>
+
+          <ul v-show="isWorkerOpen" class="profile-h4">
+            <li><span>이름</span>{{ reservdetail.worker.name }}</li>
+            <li><span>연락처</span>{{ reservdetail.worker.mobile }}</li>
+            <li><span>이메일</span>{{ reservdetail.worker.email }}</li>
+          </ul>
+        </div>
+        <div class="inquiryinfo">
+          <p class="profile-h3" @click="isInquiryOpen = !isInquiryOpen">
+            문의 정보
+            <span class="icon">
+              <template v-if="isInquiryOpen">
+                <!-- 위쪽 아이콘 (▲) -->
+                <svg
+                  width="18"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+              <template v-else>
+                <!-- 아래쪽 아이콘 (▼) -->
+                <svg
+                  width="18"
+                  height="13"
+                  viewBox="0 0 22 13"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                    stroke="#424242"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </template>
+            </span>
+          </p>
+
+          <ul v-show="isInquiryOpen" class="profile-h4">
+            <li>
+              <span>문의유형</span>{{ reservdetail.inquiry?.type || "-" }}
+            </li>
+            <li><span>제목</span>{{ reservdetail.inquiry?.title || "-" }}</li>
+            <li><span>내용</span>{{ reservdetail.inquiry?.memo || "-" }}</li>
+          </ul>
+        </div>
+      </div>
+      <div class="reservdetail-right">
+        <p class="profile-h3" style="font-weight: 500">예약 정보</p>
+        <div class="reservdetailinfo">
+          <button
+            class="modal profile-h4"
+            style="text-align: right; font-size: 14px"
+          >
+            첨부파일보기
+          </button>
+          <ul class="profile-h4">
+            <li class="firstli">
+              <span>서비스 유형</span>{{ reservdetail.reservinfo?.type || "-" }}
+            </li>
+            <li>
+              <span>제빙기 정보</span
+              >{{ reservdetail.reservinfo?.machine || "-" }}
+            </li>
+            <li>
+              <span>서비스 주소</span
+              >{{ reservdetail.reservinfo?.address || "-" }}
+            </li>
+            <li>
+              <span>서비스 일시</span>{{ reservdetail.reservinfo?.date || "-" }}
+            </li>
+            <li>
+              <span>추가 서비스</span>{{ reservdetail.reservinfo?.plus || "-" }}
+            </li>
+            <li>
+              <span>요청사항</span>{{ reservdetail.reservinfo?.memo || "-" }}
+            </li>
+          </ul>
+        </div>
+        <div class="info-box-bt">
+          <ul class="timeline">
+            <p class="profile-h3">작업 진행 상황</p>
+            <li v-for="(step, index) in stepStates" :key="index">
+              <span class="dot" :class="step.class"></span>
+              <div class="label profile-h4">
+                <p>{{ step.label }}</p>
+                <p>{{ step.time }}</p>
+              </div>
+            </li>
+          </ul>
+          <div class="receipt">
+            <p class="profile-h3">결제 정보</p>
+            <ul class="payment profile-h4">
+              <li>
+                <p style="color: #616161">서비스 금액</p>
+                <p>{{ reservdetail.payment?.service.toLocaleString() }}원</p>
+              </li>
+              <li>
+                <p style="color: #616161">추가 서비스</p>
+                <p>{{ reservdetail.payment?.extra.toLocaleString() }}원</p>
+              </li>
+              <li>
+                <p style="color: #616161">쿠폰 할인</p>
+                <p>{{ reservdetail.payment?.coupon.toLocaleString() }}원</p>
+              </li>
+              <li>
+                <p style="color: #616161">구독권 차감</p>
+                <p>
+                  {{
+                    reservdetail.payment?.membershipDiscount.toLocaleString(
+                      "ko-KR",
+                      {
+                        signDisplay: "always",
+                      }
+                    )
+                  }}원
+                </p>
+              </li>
+              <li>
+                <p style="color: #616161">서비스 차감</p>
+                <p>
+                  {{
+                    reservdetail.payment?.extraDiscount.toLocaleString(
+                      "ko-KR",
+                      {
+                        signDisplay: "always",
+                      }
+                    )
+                  }}원
+                </p>
+              </li>
+              <hr />
+              <li class="profile-h3" style="margin: 0">
+                <p><strong>총 결제 금액</strong></p>
+                <p style="color: red">
+                  {{
+                    (
+                      (reservdetail.payment?.service || 0) +
+                      (reservdetail.payment?.extra || 0) +
+                      (reservdetail.payment?.coupon || 0) +
+                      (reservdetail.payment?.membershipDiscount || 0) +
+                      (reservdetail.payment?.extraDiscount || 0)
+                    ).toLocaleString()
+                  }}원
+                </p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button @click="openReservDetail = false">닫기</button>
+  </div>
+  <!-- 영수증 보기 모달 -->
+  <div class="viewreceipt" v-show="viewreceipt">
+    <img src="/prime/profile_receipt.png" alt="영수증 이미지" />
+    <img
+      src="/prime/profile_receipt.png"
+      class="print-only"
+      alt="영수증 이미지"
+    />
+
+    <div class="btnbox">
+      <button class="edit" style="padding: 1.5% 3%" @click="printReceipt">
+        출력하기
+      </button>
+      <button
+        class="fix"
+        style="padding: 1.6% 5.5%"
+        @click="viewreceipt = false"
+      >
+        닫기
+      </button>
+    </div>
+  </div>
+</template>
+<style lang="scss"></style>

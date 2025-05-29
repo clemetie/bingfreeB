@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 // '구독' 버튼 클릭시 '예약하기'로 이동
 const goToReservation = () => {
-  router.push("/BingprimeReservation"); // 라우터에 등록된 경로 그대로
+  router.push("/Login"); // 라우터에 등록된 경로 그대로
 };
 // 오른쪽 사이드 고탑기능
 const scrollToTop = () => {
@@ -181,6 +181,7 @@ onMounted(() => {
   border-radius: 50%;
   float: right;
   font-size: 30px;
-  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5), inset -3px -1px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.5),
+    inset -3px -1px 10px rgba(0, 0, 0, 0.2);
 }
 </style>

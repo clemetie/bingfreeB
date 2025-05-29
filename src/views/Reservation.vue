@@ -588,7 +588,7 @@ const handleReSubmit = () => {
             <img
               class="infoicon"
               src="/reservation/reservsub/reservation_infoicon.png"
-              alt=""
+              alt="정보 아이콘"
             />
             <router-link
               to="/BingPrime"
@@ -919,7 +919,7 @@ const handleReSubmit = () => {
           <img
             class="infoicon"
             src="/reservation/reservsub/reservation_infoicon.png"
-            alt=""
+            alt="정보 아이콘"
           />
           <router-link
             to="/BingPrime"

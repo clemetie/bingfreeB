@@ -15,7 +15,7 @@
 }
 .dashboard.workers {
   width: 100%;
-  display: flex;
+  display: grid;
   gap: 25px;
   padding: 1%;
   .allcard {
@@ -50,13 +50,18 @@
     }
   }
 }
-.mr-4 {
-  margin-right: 4px;
+.mr-3 {
+  margin-right: 3px;
 }
 .search-bar {
   display: flex;
   align-items: center;
   margin-top: 15px;
+  @include mobile {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
   & .search-select {
     width: 110px;
     height: 36px;
@@ -73,6 +78,9 @@
     border: 1px solid #bdbdbd;
     border-radius: 8px;
     padding: 5px;
+    @include mobile {
+      width: 360px;
+    }
   }
   & .search-button {
     width: 82px;
@@ -93,4 +101,49 @@
     font-weight: 400;
     margin-left: auto;
   }
+}
+.btnbox {
+  & .workers-detail-icon {
+    display: inline-block;
+    margin: 0 3px 2px 0;
+  }
+  & .workers-detail-btn {
+    width: 56px;
+    height: 24px;
+    background: #616161;
+    color: #ffffff;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 400;
+  }
+}
+// 뱃지 스타일 공통
+%status-badge {
+  display: block;
+  color: #fff;
+  border-radius: 10px;
+  font-size: 11px;
+  padding: 3%;
+  margin: 0 auto;
+  @include mobile {
+    margin: 0;
+  }
+}
+
+// 상태 뱃지
+.wkstatusbox-done {
+  @extend %status-badge;
+  background-color: #9e9e9e;
+}
+.wkstatusbox-waiting {
+  @extend %status-badge;
+  background-color: #9e9e9e;
+}
+.wkstatusbox-assigned {
+  @extend %status-badge;
+  background-color: $bingprime-done;
+}
+.wkstatusbox-confirmed {
+  @extend %status-badge;
+  background-color: $bingprime-done;
 }

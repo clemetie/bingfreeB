@@ -1,12 +1,25 @@
 import { ref, reactive } from "vue";
+// 로그인 테스트 유저
+export const dummyUsers = [
+  {
+    email: "A@A.com",
+    password: "1234",
+    name: "김효빈",
+    role: "customer", // 꼭 일치하게
+    phone: "010-0000-0000",
+    address: "서울시",
+    detailAddress: "상세주소",
+    createdAt: "2025-05-01",
+  },
+];
 export const detailList = [
   {
     id: 1,
     customer: {
       name: "고윤정",
-      mobile: "010-1234-1234",
+      mobile: "010-2931-8424",
       email: "yunjung@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 달서구 대명천로 245",
     },
     membership: {
       name: "호시자키",
@@ -17,8 +30,8 @@ export const detailList = [
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "박진만",
+      mobile: "010-5838-0471",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -38,8 +51,8 @@ export const detailList = [
     reservinfo: {
       type: "비정기 청소",
       machine: "[호시자키] 250kg 이상 1대",
-      address: "대구광역시 중구 중앙대로 77길 22 스타벅스 종로점",
-      date: "2025-05-15, 오후 11시 이후",
+      address: "대구 서구 서대구로 152, 원진빌딩 1층 (평리동 1094-6)",
+      date: "2025-05-15, 10:00",
       plus: "자가점검키트",
       memo: "레포트 문자로 보내주세요",
     },
@@ -50,17 +63,23 @@ export const detailList = [
       membershipDiscount: -210000,
       extraDiscount: -4900,
       get total() {
-        return this.service + this.extra + this.coupon + this.membershipDiscount + this.extraDiscount;
+        return (
+          this.service +
+          this.extra +
+          this.coupon +
+          this.membershipDiscount +
+          this.extraDiscount
+        );
       },
     },
   },
   {
     id: 3,
     customer: {
-      name: "김카페",
-      mobile: "010-1245-1534",
-      email: "cafekim@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      name: "김유인",
+      mobile: "010-4922-8744",
+      email: "youin@naver.com",
+      address: "대구 달서구 미리샘길 32 2층",
     },
     membership: {
       name: null,
@@ -70,8 +89,8 @@ export const detailList = [
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이용국",
+      mobile: "010-1751-4307",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -79,7 +98,7 @@ export const detailList = [
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
+      account: "687632-29-034816",
       during: "1개월",
     },
     inquiry: {
@@ -91,7 +110,7 @@ export const detailList = [
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 북구 태전동 1073-1",
       date: "2025-05-22, 오후 2시",
       plus: "자가 점검 키트",
       memo: null,
@@ -103,17 +122,23 @@ export const detailList = [
       membershipDiscount: 0,
       extraDiscount: 0,
       get total() {
-        return this.service + this.extra + this.coupon + this.membershipDiscount + this.extraDiscount;
+        return (
+          this.service +
+          this.extra +
+          this.coupon +
+          this.membershipDiscount +
+          this.extraDiscount
+        );
       },
     },
   },
   {
     id: 2,
     customer: {
-      name: "김카페",
-      mobile: "010-1245-1534",
-      email: "cafekim@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      name: "임창민",
+      mobile: "010-8733-8264",
+      email: "chanmin@naver.com",
+      address: "대구 달서구 진천로2길 32-1",
     },
     membership: {
       name: null,
@@ -123,17 +148,17 @@ export const detailList = [
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이성우",
+      mobile: "010-4075-5861",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "농협은행",
+      account: "624231-74-982816",
+      during: "10개월",
     },
     inquiry: {
       type: null,
@@ -144,7 +169,7 @@ export const detailList = [
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 수성구 동대구로14길 15-6, 1층",
       date: "2025-05-22, 오후 2시",
       plus: null,
       memo: null,
@@ -156,7 +181,13 @@ export const detailList = [
       membershipDiscount: 0,
       extraDiscount: 0,
       get total() {
-        return this.service + this.extra + this.coupon + this.membershipDiscount + this.extraDiscount;
+        return (
+          this.service +
+          this.extra +
+          this.coupon +
+          this.membershipDiscount +
+          this.extraDiscount
+        );
       },
     },
   },
@@ -167,7 +198,7 @@ export const reservList = ref([
     id: 1,
     number: "BING-2025-001",
     status: "confirmed",
-    date: "2025-03-18, 오후 11시 이후",
+    date: "2025-03-18, 10:30",
     memo: "라벨 부착해주세요.",
     price: 0,
     reservdate: "2025.03.17(월) 14:00",
@@ -176,7 +207,7 @@ export const reservList = ref([
     id: 2,
     number: "BING-2025-002",
     status: "assigned",
-    date: "2025-05-15, 오후 11시 이후",
+    date: "2025-05-15, 11:30",
     memo: "레포트 문자로 보내주세요",
     price: 0,
     reservdate: "2025.04.30(수) 16:00",
@@ -186,28 +217,27 @@ export const reservList = ref([
     id: 3,
     number: "BING-2025-003",
     status: "waiting",
-    date: "2025-06-18, 오후 11시 이후",
+    date: "2025-06-18, 12:00",
     memo: "세제 신청했어요 ~ ^^",
     price: 0,
     reservdate: "2025.06.17(화) 14:00",
   },
 ]);
-
 // 전체 테이블 데이터
 export const fullReservationList = reactive([
   {
     id: 1,
     number: "BING-2025-001",
     status: "confirmed",
-    date: "2025-03-18, 오후 11시 이후",
+    date: "2025-03-18, 14:00",
     memo: "라벨 부착해주세요.",
     price: 0,
-    reservdate: "2025.03.17(월) 14:00",
+    reservdate: "2025.03.17(월) 17:00",
     customer: {
       name: "고윤정",
-      mobile: "010-1234-1234",
+      mobile: "010-2931-8424",
       email: "yunjung@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 서구 달성공원로 15-1, 2층 (비산동 156-10)",
       shop: "business",
     },
     membership: {
@@ -220,8 +250,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing01",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "최수빈",
+      mobile: "010-4074-1451",
       email: "mrkim@bingfree.co.kr",
       gender: "female",
       health: false,
@@ -229,8 +259,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "563352-09-422616",
+      during: "3개월",
     },
     inquiry: {
       type: "기타 문의",
@@ -241,9 +271,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "비정기 청소",
       machine: "[호시자키] 250kg 이상 1대",
-      address: "대구광역시 중구 중앙대로 77길 22 스타벅스 종로점",
+      address: "대구 동구 팔공로70길 2",
       date: "2025.05.30",
-      time: "오후 11시 이후",
+      time: "10:00",
       plus: "자가점검키트",
       memo: "레포트 문자로 보내주세요",
     },
@@ -254,21 +284,27 @@ export const fullReservationList = reactive([
       membershipDiscount: -210000,
       extraDiscount: -4900,
     },
+    sh: {
+      webid: "qortjf325",
+      address: "대구광역시 동구",
+      price: 96000,
+      joindate: "2025-06-05",
+    },
     primemember: true,
   },
   {
     id: 2,
     number: "BING-2025-002",
     status: "waiting",
-    date: "2025-06-18, 오후 11시 이후",
+    date: "2025-06-18, 14:00",
     memo: "세제 신청했어요 ~ ^^",
     price: 0,
     reservdate: "2025.06.17(화) 14:00",
     customer: {
-      name: "김카페",
-      mobile: "010-1245-1534",
-      email: "cafekim@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      name: "이나정",
+      mobile: "010-6445-0535",
+      email: "najeong@naver.com",
+      address: "대구 서구 서대구로 152, 원진빌딩 1층 (평리동 1094-6)",
       shop: "personal",
     },
     membership: {
@@ -280,8 +316,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing02",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김민호",
+      mobile: "010-3667-2545",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -289,8 +325,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "843002-14-412814",
+      during: "8개월",
     },
     inquiry: {
       type: null,
@@ -301,9 +337,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[디럭스] 100~200kg 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 수성구 들안로 192-5",
       date: "2025.05.31",
-      time: "오후 11시 이후",
+      time: "11:00",
       plus: "자가 점검 키트",
       memo: null,
     },
@@ -314,21 +350,27 @@ export const fullReservationList = reactive([
       membershipDiscount: 0,
       extraDiscount: 0,
     },
+    sh: {
+      webid: "tngus325",
+      address: "대구광역시 중구",
+      price: 106000,
+      joindate: "2025-06-05",
+    },
     primemember: false,
   },
   {
     id: 3,
     number: "BING-2025-003",
     status: "assigned",
-    date: "2025-05-15, 오후 11시 이후",
+    date: "2025-05-15, 14:00",
     memo: "레포트 문자로 보내주세요",
     price: 0,
     reservdate: "2025.04.30(수) 16:00",
     customer: {
-      name: "김카페",
-      mobile: "010-1245-1534",
-      email: "cafekim@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      name: "유하나",
+      mobile: "010-3912-0448",
+      email: "younumberone@naver.com",
+      address: "대구 서구 달성공원로 5 (비산동 158-22)",
       shop: "personal",
     },
     membership: {
@@ -340,8 +382,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing03",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "임성규",
+      mobile: "010-0891-1523",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -349,8 +391,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "628733-25-211876",
+      during: "11개월",
     },
     inquiry: {
       type: null,
@@ -361,9 +403,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 북구 내곡로 38 1층",
       date: "2025.07.12",
-      time: "오후 2시 이후",
+      time: "11:30",
       plus: null,
       memo: null,
     },
@@ -373,6 +415,12 @@ export const fullReservationList = reactive([
       coupon: 0,
       membershipDiscount: 0,
       extraDiscount: 0,
+    },
+    sh: {
+      webid: "gyqls4655",
+      address: "부산광역시 수영구",
+      price: 106000,
+      joindate: "2025-05-30",
     },
     primemember: false,
   },
@@ -386,9 +434,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-05-28",
     customer: {
       name: "정유진",
-      mobile: "010-1234-1234",
-      email: "정유진@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-3328-6834",
+      email: "youjin@bingfree.co.kr",
+      address: "대구 동구 안심로42길 5",
       shop: "personal",
     },
     membership: {
@@ -401,17 +449,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing04",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김진우",
+      mobile: "010-9871-4530",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
-        서울특별시: ["강남구", "마포구"],
+        서울특별시: ["강서구", "금천구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "하나은행",
+      account: "983402-24-290316",
+      during: "6개월",
     },
     inquiry: {
       type: "기타 문의",
@@ -422,9 +470,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "비정기 청소",
       machine: "[호시자키] 250kg 이상 1대",
-      address: "대구광역시 중구 중앙대로 77길 22 스타벅스 종로점",
+      address: "대구 동구 서촌로21길 11, 2층",
       date: "2025.02.22",
-      time: "13:00",
+      time: "12:00",
       plus: "자가점검키트",
       memo: "레포트 문자로 보내주세요",
     },
@@ -434,6 +482,12 @@ export const fullReservationList = reactive([
       coupon: 0,
       membershipDiscount: -210000,
       extraDiscount: -4900,
+    },
+    sh: {
+      webid: "ralwltn486",
+      address: "대구광역시 수성구",
+      price: 106000,
+      joindate: "2025-06-05",
     },
     primemember: true,
   },
@@ -447,9 +501,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-02-21",
     customer: {
       name: "박서준",
-      mobile: "010-1245-1534",
-      email: "박서준@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-3755-8456",
+      email: "seojun@bingfree.co.kr",
+      address: "대구 동구 범안로 854, 5층",
       shop: "personal",
     },
     membership: {
@@ -461,17 +515,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing05",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "박찬규",
+      mobile: "010-4091-1421",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "하나은행",
+      account: "950402-64-127816",
+      during: "7개월",
     },
     inquiry: {
       type: null,
@@ -482,9 +536,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[프리미엄] 200Kg이상 2대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 북구 복현동 산48-1",
       date: "2025.08.22",
-      time: "오후 4시 이후",
+      time: "12:30",
       plus: "자가 점검 키트",
       memo: null,
     },
@@ -492,8 +546,20 @@ export const fullReservationList = reactive([
       service: 170000,
       extra: 0,
       coupon: 0,
-      membershipDiscount: 0,
+      mebershipDiscount: 0,
       extraDiscount: 0,
+    },
+    sh: {
+      webid: "tngus325",
+      address: "대구광역시 중구",
+      price: 106000,
+      joindate: "2025-06-05",
+    },
+    sh: {
+      webid: "codus12",
+      address: "대구광역시 중구",
+      price: 106000,
+      joindate: "2025-06-05",
     },
     primemember: false,
   },
@@ -507,9 +573,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-03-04",
     customer: {
       name: "최지은",
-      mobile: "010-1245-1534",
-      email: "최지은@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-4635-4954",
+      email: "jijibae@bingfree.co.kr",
+      address: "대구 동구 초례로 6-1",
       shop: "personal",
     },
     membership: {
@@ -521,17 +587,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing06",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김재현",
+      mobile: "010-0891-6521",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "대구은행",
+      account: "873004-02-168816",
+      during: "11개월",
     },
     inquiry: {
       type: null,
@@ -542,9 +608,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 서구 원대로5길 13, 1층",
       date: "2025.05.30",
-      time: "15시",
+      time: "12:30",
       plus: null,
       memo: null,
     },
@@ -554,6 +620,12 @@ export const fullReservationList = reactive([
       coupon: 0,
       membershipDiscount: 0,
       extraDiscount: 0,
+    },
+    sh: {
+      webid: "codus12",
+      address: "대구광역시 중구",
+      price: 106000,
+      joindate: "2025-06-05",
     },
     primemember: false,
   },
@@ -567,9 +639,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-01-20",
     customer: {
       name: "이동건",
-      mobile: "010-1234-1234",
-      email: "이동건@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-6478-2314",
+      email: "movegun@bingfree.co.kr",
+      address: "대구 서구 내당동 31-5, 1층",
       shop: "business",
     },
     membership: {
@@ -582,17 +654,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing07",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "강성윤",
+      mobile: "010-8621-4423",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
-        서울특별시: ["강남구", "마포구"],
+        서울특별시: ["강북구", "강남구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "649322-41-090216",
+      during: "7개월",
     },
     inquiry: {
       type: "기타 문의",
@@ -603,9 +675,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "비정기 청소",
       machine: "[호시자키] 250kg 이상 1대",
-      address: "대구광역시 중구 중앙대로 77길 22 스타벅스 종로점",
+      address: "대구 남구 이천로19길 38, 2층",
       date: "2025.07.12",
-      time: "오전 11시~12시",
+      time: "13:00",
       plus: "자가점검키트",
       memo: "레포트 문자로 보내주세요",
     },
@@ -628,9 +700,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-03-21",
     customer: {
       name: "장민호",
-      mobile: "010-1245-1534",
-      email: "장민호@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-5674-3654",
+      email: "minhoho@bingfree.co.kr",
+      address: "대구 달서구 서당로5길 14-3 2층",
       shop: "business",
     },
     membership: {
@@ -643,17 +715,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing08",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "장현우",
+      mobile: "010-9781-4231",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "농협은행",
+      account: "609872-16-382816",
+      during: "8개월",
     },
     inquiry: {
       type: null,
@@ -664,9 +736,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 달서구 조암남로14길 3",
       date: "2025.09.22",
-      time: "오후 11시 이후",
+      time: "13:30",
       plus: "자가 점검 키트",
       memo: null,
     },
@@ -683,15 +755,15 @@ export const fullReservationList = reactive([
     id: 9,
     number: "BING-2025-009",
     status: "done",
-    date: "2025-02-09, 오후 11시 이후",
+    date: "2025-02-09, 14:00",
     memo: "레포트 문자로 보내주세요",
     price: 0,
     reservdate: "2025-02-19",
     customer: {
       name: "하윤아",
-      mobile: "010-1245-1534",
-      email: "하윤아@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-7542-3922",
+      email: "hahayoun@bingfree.co.kr",
+      address: "대구 서구 서대구로 21-1",
       shop: "personal",
     },
     membership: {
@@ -703,17 +775,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing09",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "신정빈",
+      mobile: "010-2541-0425",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "하나은행",
+      account: "698342-34-211866",
+      during: "4개월",
     },
     inquiry: {
       type: null,
@@ -724,9 +796,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 서구 당산로23동길 3",
       date: "2025.03.22",
-      time: "21시 이후",
+      time: "14:00",
       plus: null,
       memo: null,
     },
@@ -749,9 +821,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-02-11",
     customer: {
       name: "문채원",
-      mobile: "010-1234-1234",
-      email: "문채원@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-5378-6344",
+      email: "doorone@bingfree.co.kr",
+      address: "대구 동구 이노밸리로 322, 비전스퀘어 2",
       shop: "business",
     },
     membership: {
@@ -764,17 +836,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing10",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이승규",
+      mobile: "010-9451-2641",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "하나은행",
+      account: "678342-98-258196",
+      during: "5개월",
     },
     inquiry: {
       type: "기타 문의",
@@ -785,9 +857,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "비정기 청소",
       machine: "[호시자키] 250kg 이상 1대",
-      address: "대구광역시 중구 중앙대로 77길 22 스타벅스 종로점",
+      address: "대구 수성구 화랑로7길 23-5",
       date: "2025.05.24",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: "자가점검키트",
       memo: "레포트 문자로 보내주세요",
     },
@@ -810,9 +882,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-08-13",
     customer: {
       name: "윤도현",
-      mobile: "010-1245-1534",
-      email: "윤도현@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-6343-1486",
+      email: "yoondh@bingfree.co.kr",
+      address: "대구 남구 이천로7길 3, 1층",
       shop: "business",
     },
     membership: {
@@ -825,8 +897,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing11",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김명우",
+      mobile: "010-6566-4431",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -834,8 +906,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "483002-94-873815",
+      during: "11개월",
     },
     inquiry: {
       type: null,
@@ -846,9 +918,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[디럭스] 100~200kg 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 동구 서촌로 89",
       date: "2025.11.22",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: "자가 점검 키트",
       memo: null,
     },
@@ -871,9 +943,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-08-27",
     customer: {
       name: "백예린",
-      mobile: "010-1245-1534",
-      email: "백예린@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-7848-3409",
+      email: "yerin@bingfree.co.kr",
+      address: "대구 남구 안지랑로 21 (대명동 217-6)",
       shop: "personal",
     },
     membership: {
@@ -885,8 +957,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing12",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "박재훈",
+      mobile: "010-7561-5331",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -894,8 +966,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "789302-54-734416",
+      during: "10개월",
     },
     inquiry: {
       type: null,
@@ -906,9 +978,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 북구 학정동 926-1 1층",
       date: "2025.12.21",
-      time: "오후 1시 이후",
+      time: "14:30",
       plus: null,
       memo: null,
     },
@@ -931,9 +1003,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-06-01",
     customer: {
       name: "서지호",
-      mobile: "010-1234-1234",
-      email: "서지호@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-8677-3174",
+      email: "jihoya@bingfree.co.kr",
+      address: "대구 동구 서촌로21길 11",
       shop: "business",
     },
     membership: {
@@ -946,17 +1018,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing13",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이태곤",
+      mobile: "010-4641-1533",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "대구은행",
+      account: "982002-06-352616",
+      during: "2개월",
     },
     inquiry: {
       type: "기타 문의",
@@ -967,9 +1039,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "비정기 청소",
       machine: "[호시자키] 250kg 이상 1대",
-      address: "대구광역시 중구 중앙대로 77길 22 스타벅스 종로점",
+      address: "대구 수성구 수성못길 14",
       date: "2025.08.22",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: "자가점검키트",
       memo: "레포트 문자로 보내주세요",
     },
@@ -986,15 +1058,15 @@ export const fullReservationList = reactive([
     id: 14,
     number: "BING-2025-014",
     status: "waiting",
-    date: "2025-01-18, 오후 11시 이후",
+    date: "2025-01-18, 14:00",
     memo: "세제 신청했어요 ~ ^^",
     price: 0,
     reservdate: "2025-03-06",
     customer: {
       name: "김지수",
-      mobile: "010-1245-1534",
-      email: "김지수@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-7456-3078",
+      email: "jisuu@bingfree.co.kr",
+      address: "대구 달서구 조암남로20길 41",
       shop: "personal",
     },
     membership: {
@@ -1006,8 +1078,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing14",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김재호",
+      mobile: "010-0878-4621",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -1015,8 +1087,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "876752-34-842856",
+      during: "4개월",
     },
     inquiry: {
       type: null,
@@ -1027,9 +1099,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 북구 호국로 300-22",
       date: "2025.05.30",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: "자가 점검 키트",
       memo: null,
     },
@@ -1052,9 +1124,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-02-26",
     customer: {
       name: "강다현",
-      mobile: "010-1245-1534",
-      email: "강다현@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      mobile: "010-8699-1534",
+      email: "dahyunn@bingfree.co.kr",
+      address: "대구 수성구 들안로 176-1",
       shop: "business",
     },
     membership: {
@@ -1067,17 +1139,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing15",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "최현우",
+      mobile: "010-7691-5347",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "대구은행",
+      account: "609432-36-254840",
+      during: "7개월",
     },
     inquiry: {
       type: null,
@@ -1088,9 +1160,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 수성구 들안로4길 35",
       date: "2025-08-22",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: null,
       memo: null,
     },
@@ -1115,7 +1187,7 @@ export const fullReservationList = reactive([
       name: "박소연",
       mobile: "010-7182-3345",
       email: "soyeon.park@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 수성구 국채보상로186길 81, 2층",
       shop: "business",
     },
     membership: {
@@ -1129,17 +1201,17 @@ export const fullReservationList = reactive([
       bingnb: "bing16",
       number: "bing01",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이정후",
+      mobile: "010-3291-4613",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "농협은행",
+      account: "609432-54-241857",
+      during: "11개월",
     },
     inquiry: {
       type: null,
@@ -1150,9 +1222,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
-      date: "2025-08-22",
-      time: "오후 1시 이후",
+      address: "대구 남구 봉덕로 26, 1층",
+      date: "2025-09-22",
+      time: "18:00",
       plus: null,
       memo: null,
     },
@@ -1179,7 +1251,7 @@ export const fullReservationList = reactive([
       name: "이정훈",
       mobile: "010-5923-1108",
       email: "junghoon.lee@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 남구 현충로 54",
       shop: "business",
     },
     membership: {
@@ -1192,8 +1264,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing17",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김혜성",
+      mobile: "010-4237-2081",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -1201,8 +1273,8 @@ export const fullReservationList = reactive([
         서울특별시: ["강남구", "마포구"],
       },
       bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      account: "733003-02-442576",
+      during: "9개월",
     },
     inquiry: {
       type: null,
@@ -1213,9 +1285,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 수성구 국채보상로43길 56, 2층",
       date: "2025-08-22",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: null,
       memo: null,
     },
@@ -1242,7 +1314,7 @@ export const fullReservationList = reactive([
       name: "최민지",
       mobile: "010-8856-4401",
       email: "minji.choi@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 동구 신서로 20 1층",
       shop: "business",
     },
     membership: {
@@ -1255,17 +1327,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing18",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "문동주",
+      mobile: "010-7457-3521",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "대구은행",
+      account: "460032-94-290312",
+      during: "5개월",
     },
     inquiry: {
       type: null,
@@ -1276,9 +1348,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 서구 내당동 134-5, 1층",
       date: "2025-08-22",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: null,
       memo: null,
     },
@@ -1303,9 +1375,9 @@ export const fullReservationList = reactive([
     reservdate: "2025-02-20",
     customer: {
       name: "한지훈",
-      mobile: "010-2334-9902",
+      mobile: "010-2323-9902",
       email: "jihoon.han@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 서구 당산로41동길 37 (내당동 427-16)",
       shop: "business",
     },
     membership: {
@@ -1318,8 +1390,8 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing19",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "임동원",
+      mobile: "010-5381-0861",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -1339,9 +1411,9 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 서구 달성공원로 5 (비산동 158-22)",
       date: "2025-08-22",
-      time: "오후 11시 이후",
+      time: "14:00",
       plus: null,
       memo: null,
     },
@@ -1368,7 +1440,7 @@ export const fullReservationList = reactive([
       name: "윤세영",
       mobile: "010-6667-2223",
       email: "seyoung.yoon@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 달서구 조암남로5길 23-2",
       shop: "business",
     },
     membership: {
@@ -1381,17 +1453,17 @@ export const fullReservationList = reactive([
     worker: {
       bingnb: "bing20",
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "강수호",
+      mobile: "010-3687-2591",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
       location: {
         서울특별시: ["강남구", "마포구"],
       },
-      bank: "국민은행",
-      account: "620002-04-218816",
-      during: "1개월",
+      bank: "하나은행",
+      account: "250402-65-483811",
+      during: "11개월",
     },
     inquiry: {
       type: null,
@@ -1402,9 +1474,71 @@ export const fullReservationList = reactive([
     reservinfo: {
       type: "일회성 청소",
       machine: "[스탠다드] 50kg 미만 1대",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 4층",
+      address: "대구 달서구 상화로5길 22 1층",
       date: "2025-08-22",
-      time: "오후 11시 이후",
+      time: "14:30",
+      plus: null,
+      memo: null,
+    },
+    payment: {
+      service: 99000,
+      extra: 0,
+      coupon: 0,
+      membershipDiscount: 0,
+      extraDiscount: 0,
+    },
+    primemember: false, // (예시: 랜덤)
+  },
+  // id: 21
+  {
+    id: 21,
+    number: "BING-2025-021",
+    status: "waiting", // (예시: 랜덤)
+    date: "2025-02-20, 오후 5시 이후",
+    memo: "세제주세요",
+    price: 0,
+    reservdate: "2025-02-20",
+    customer: {
+      name: "박나린",
+      mobile: "010-4933-2413",
+      email: "narinepark@bingfree.co.kr",
+      address: "대구 서구 달구벌대로375길 23-1 1층",
+      shop: "business",
+    },
+    membership: {
+      name: "스탠다드",
+      package: "6회권",
+      date: "2025-01-04 ~",
+      count: "3회 / 6회",
+      during: "1개월",
+    },
+    worker: {
+      bingnb: "bing21",
+      star: "4.5점(9개 리뷰)",
+      name: "이용국",
+      mobile: "010-4211-6881",
+      email: "yongkuk@bingfree.co.kr",
+      gender: "male",
+      health: true,
+      location: {
+        서울특별시: ["강남구", "마포구"],
+      },
+      bank: "하나은행",
+      account: "621402-36-285096",
+      during: "4개월",
+    },
+    inquiry: {
+      type: null,
+      title: null,
+      memo: null,
+      file: null,
+    },
+    reservinfo: {
+      type: "일회성 청소",
+      machine: "[스탠다드] 50kg 미만 1대",
+      address: "대구 서구 달구벌대로375길 23-1 1층",
+      date: "2025-08-22",
+      time: "17:00",
       plus: null,
       memo: null,
     },
@@ -1418,7 +1552,6 @@ export const fullReservationList = reactive([
     primemember: false, // (예시: 랜덤)
   },
 ]);
-
 // 지역 선택 데이터
 export const koreaLocations = reactive({
   서울특별시: [
@@ -1466,8 +1599,28 @@ export const koreaLocations = reactive({
     "중구",
     "해운대구",
   ],
-  대구광역시: ["남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"],
-  인천광역시: ["강화군", "계양구", "남동구", "동구", "미추홀구", "부평구", "서구", "연수구", "옹진군", "중구"],
+  대구광역시: [
+    "남구",
+    "달서구",
+    "달성군",
+    "동구",
+    "북구",
+    "서구",
+    "수성구",
+    "중구",
+  ],
+  인천광역시: [
+    "강화군",
+    "계양구",
+    "남동구",
+    "동구",
+    "미추홀구",
+    "부평구",
+    "서구",
+    "연수구",
+    "옹진군",
+    "중구",
+  ],
   광주광역시: ["광산구", "남구", "동구", "북구", "서구"],
   대전광역시: ["대덕구", "동구", "서구", "유성구", "중구"],
   울산광역시: ["남구", "동구", "북구", "울주군", "중구"],
@@ -1642,7 +1795,6 @@ export const koreaLocations = reactive({
   ],
   제주특별자치도: ["서귀포시", "제주시"],
 });
-
 // 테이블 헤더 데이터
 export const TableHeaders = [
   { key: "item", label: "결제 내역" },
@@ -1665,8 +1817,8 @@ export const TableData = [
     receiptUrl: "#",
   },
 ];
-
 // 클레임 내용 데이터
+
 export const fullclaimList = reactive([
   {
     id: 1,
@@ -1685,7 +1837,7 @@ export const fullclaimList = reactive([
       mobile: "010-1451-1234",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 서구 원대로13길 1, 1층 (원대동1가 1-1)",
     },
     membership: {
       name: "호시자키",
@@ -1696,8 +1848,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "차승준",
+      mobile: "010-4181-4358",
       email: "mrkim@bingfree.co.kr",
       gender: "female",
       health: false,
@@ -1730,6 +1882,12 @@ export const fullclaimList = reactive([
       membershipDiscount: -210000,
       extraDiscount: -4900,
     },
+    sh: {
+      webid: "qortjf325",
+      address: "대구광역시 동구",
+      price: 96000,
+      joindate: "2025-06-05",
+    },
     primemember: true,
   },
   {
@@ -1742,14 +1900,14 @@ export const fullclaimList = reactive([
     price: 0,
     store: "사업자",
     customer: {
-      name: "김카페",
+      name: "유세은",
       claimId: "CLM250401",
       detailclaim: "시간 관련",
-      email: "cafekim@naver.com",
+      email: "youseeun@naver.com",
       mobile: "010-1431-4141",
       csSencitive: "주의고객",
       avatar: "/prime/cs_second.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 수성구 고모로 188",
       shop: "personal",
       date: "2025-02-04",
     },
@@ -1761,8 +1919,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "최일용",
+      mobile: "010-1121-8571",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -1807,14 +1965,14 @@ export const fullclaimList = reactive([
     price: 0,
     store: "사업자",
     customer: {
-      name: "김카페",
+      name: "이지유",
       claimId: "CLM250515",
       detailclaim: "서비스 품질",
-      mobile: "010-1245-1534",
+      mobile: "010-2747-4634",
       csSencitive: "민감고객",
       avatar: "/prime/cs_third.png",
-      email: "cafekim@naver.com",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "jiyou@naver.com",
+      address: "대구 수성구 고모로 15-1",
       shop: "personal",
     },
     membership: {
@@ -1825,8 +1983,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김일훈",
+      mobile: "010-2751-8851",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -1875,11 +2033,11 @@ export const fullclaimList = reactive([
       name: "정유진",
       claimId: "CLM250328",
       detailclaim: "응대/매너",
-      mobile: "010-1234-1234",
+      mobile: "010-7265-8677",
       csSencitive: "고위험고객",
       avatar: "/prime/cs_fourd.png",
-      email: "정유진@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "youjine@bingfree.co.kr",
+      address: " 대구 수성구 수성못길 20 1층",
       shop: "personal",
     },
     membership: {
@@ -1891,8 +2049,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "박태훈",
+      mobile: "010-4745-1041",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -1941,11 +2099,11 @@ export const fullclaimList = reactive([
       name: "박서준",
       claimId: "CLM250129",
       detailclaim: "요금/결제",
-      mobile: "010-1245-1534",
+      mobile: "010-0876-2534",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      email: "박서준@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "seojun@bingfree.co.kr",
+      address: "대구 수성구 들안로8길 29",
       shop: "personal",
     },
     membership: {
@@ -1956,8 +2114,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "임지용",
+      mobile: "010-2771-1631",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2005,11 +2163,11 @@ export const fullclaimList = reactive([
       name: "최지은",
       claimId: "CLM250222",
       detailclaim: "예약/시스템",
-      mobile: "010-1245-1534",
-      email: "최지은@bingfree.co.kr",
+      mobile: "010-7896-0788",
+      email: "jieuny@bingfree.co.kr",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 수성구 알파시티1로40길 6, 더아르코호텔 2층",
       shop: "personal",
     },
     membership: {
@@ -2020,8 +2178,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이무림",
+      mobile: "010-1831-7794",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2069,11 +2227,11 @@ export const fullclaimList = reactive([
       name: "이동건",
       claimId: "CLM250212",
       detailclaim: "기타",
-      mobile: "010-1234-1234",
-      email: "이동건@bingfree.co.kr",
+      mobile: "010-4850-1694",
+      email: "movegun@bingfree.co.kr",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 수성구 동대구로14길 15-6, 2층",
       shop: "business",
     },
     membership: {
@@ -2085,8 +2243,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "박진만",
+      mobile: "010-1831-4890",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2134,11 +2292,11 @@ export const fullclaimList = reactive([
       name: "장민호",
       claimId: "CLM250105",
       detailclaim: "시간 관련",
-      mobile: "010-1245-1534",
+      mobile: "010-5318-6734",
       csSencitive: "민감고객",
       avatar: "/prime/cs_second.png",
-      email: "장민호@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "minhou@bingfree.co.kr",
+      address: "대구 수성구 용학로 361",
       shop: "business",
     },
     membership: {
@@ -2150,8 +2308,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이승후",
+      mobile: "010-1841-9021",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2200,11 +2358,11 @@ export const fullclaimList = reactive([
       name: "하윤아",
       claimId: "CLM250221",
       detailclaim: "기타",
-      mobile: "010-1245-1534",
+      mobile: "010-3547-9970",
       csSencitive: "민감고객",
       avatar: "/prime/cs_third.png",
-      email: "하윤아@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "hayouna@bingfree.co.kr",
+      address: "대구 동구 팔공로70길 2, 1층",
       shop: "personal",
     },
     membership: {
@@ -2215,8 +2373,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "심태희",
+      mobile: "010-2621-8804",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2264,11 +2422,11 @@ export const fullclaimList = reactive([
       name: "문채원",
       claimId: "CLM250326",
       detailclaim: "응대/매너",
-      mobile: "010-1234-1234",
+      mobile: "010-1310-3124",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      email: "문채원@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "mooncha@bingfree.co.kr",
+      address: "대구 달서구 상화로7길 38 1층",
       shop: "business",
     },
     membership: {
@@ -2280,8 +2438,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "이우빈",
+      mobile: "010-1255-7921",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2329,11 +2487,11 @@ export const fullclaimList = reactive([
       name: "윤도현",
       claimId: "CLM250127",
       detailclaim: "시간 관련",
-      mobile: "010-1245-1534",
+      mobile: "010-2015-0923",
       csSencitive: "민감고객",
       avatar: "/prime/cs_second.png",
-      email: "윤도현@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "yoondo@bingfree.co.kr",
+      address: "대구 달서구 진천로 38",
       shop: "business",
     },
     membership: {
@@ -2345,8 +2503,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "강현규",
+      mobile: "010-0751-7421",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2395,11 +2553,11 @@ export const fullclaimList = reactive([
       name: "백예린",
       claimId: "CLM250120",
       detailclaim: "요금/결제",
-      mobile: "010-1245-1534",
-      email: "백예린@bingfree.co.kr",
+      mobile: "010-1025-9882",
+      email: "yerinn@bingfree.co.kr",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 달서구 상화로 157-1",
       shop: "personal",
     },
     membership: {
@@ -2410,8 +2568,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "김민규",
+      mobile: "010-4521-4101",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2459,11 +2617,11 @@ export const fullclaimList = reactive([
       name: "서지호",
       claimId: "CLM250109",
       detailclaim: "서비스 품질",
-      mobile: "010-1234-1234",
-      email: "서지호@bingfree.co.kr",
+      mobile: "010-1942-1943",
+      email: "jihou@bingfree.co.kr",
       csSencitive: "주의고객",
       avatar: "/prime/cs_third.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 서구 서대구로 3",
       shop: "business",
     },
     membership: {
@@ -2475,8 +2633,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "신현빈",
+      mobile: "010-6741-0231",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2524,11 +2682,11 @@ export const fullclaimList = reactive([
       name: "김지수",
       claimId: "CLM250118",
       detailclaim: "시간 관련",
-      mobile: "010-1245-1534",
+      mobile: "010-3982-1872",
       csSencitive: "신규/초회",
       avatar: "/prime/cs_first.png",
-      email: "김지수@bingfree.co.kr",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      email: "jisuu@bingfree.co.kr",
+      address: "대구 수성구 용학로 361, 1층",
       shop: "personal",
     },
     membership: {
@@ -2539,8 +2697,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "강승빈",
+      mobile: "010-6431-1427",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2586,13 +2744,13 @@ export const fullclaimList = reactive([
     store: "사업자 ",
     customer: {
       name: "강다현",
-      mobile: "010-1245-1534",
+      mobile: "010-9225-8742",
       claimId: "CLM250221",
       detailclaim: "서비스 품질",
-      email: "강다현@bingfree.co.kr",
+      email: "dahyun@bingfree.co.kr",
       csSencitive: "민감고객",
       avatar: "/prime/cs_second.png",
-      address: "대구광역시 중구 동성로 3가 동성로 1길 15 5층",
+      address: "대구 수성구 동대구로14길 15-6, 2층",
       shop: "business",
     },
     membership: {
@@ -2604,8 +2762,8 @@ export const fullclaimList = reactive([
     },
     worker: {
       star: "4.5점(9개 리뷰)",
-      name: "김기사",
-      mobile: "010-4321-4321",
+      name: "장규빈",
+      mobile: "010-1571-0489",
       email: "mrkim@bingfree.co.kr",
       gender: "male",
       health: true,
@@ -2639,5 +2797,398 @@ export const fullclaimList = reactive([
       extraDiscount: 0,
     },
     primemember: true,
+  },
+]);
+// 정산
+export const fullSaleList = reactive([
+  {
+    id: 1,
+    number: "ST202305270001",
+    workername: "김철수",
+    status: "waiting", // 대기중
+    tex: 60000, // 수수료
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "홍길동",
+      saleId: "S20230501",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 4,
+      totalPrice: 240000,
+      plusprice: 0,
+      settledAt: "2025-05-10",
+    },
+    worker: {
+      mobile: "010-1234-5678",
+    },
+  },
+  {
+    id: 2,
+    number: "ST202305270002",
+    workername: "이영희",
+    status: "done", // 청소완료
+    tex: 50000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "박민수",
+      saleId: "S20230502",
+      type: "bonus",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 0,
+      totalPrice: 50000,
+      plusprice: 50000,
+      settledAt: "2025-05-15",
+    },
+    worker: {
+      mobile: "010-9876-5432",
+    },
+  },
+  {
+    id: 3,
+    number: "ST202305270003",
+    workername: "최지훈",
+    status: "confirmed", // 확정완료
+    tex: 40000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "김하늘",
+      saleId: "S20230503",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 3,
+      totalPrice: 180000,
+      plusprice: 0,
+      settledAt: "2025-05-20",
+    },
+    worker: {
+      mobile: "010-1111-2222",
+    },
+  },
+  {
+    id: 4,
+    number: "ST202305270004",
+    workername: "한예진",
+    status: "waiting",
+    tex: 0,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "조민아",
+      saleId: "S20230504",
+      type: "penalty",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 0,
+      totalPrice: -30000,
+      plusprice: 0,
+      settledAt: "2025-05-22",
+    },
+    worker: {
+      mobile: "010-2222-3333",
+    },
+  },
+  {
+    id: 5,
+    number: "ST202305270005",
+    workername: "박지성",
+    status: "done",
+    tex: 70000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "김유진",
+      saleId: "S20230505",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 5,
+      totalPrice: 300000,
+      plusprice: 0,
+      settledAt: "2025-05-18",
+    },
+    worker: {
+      mobile: "010-3333-4444",
+    },
+  },
+  {
+    id: 6,
+    number: "ST202305270006",
+    workername: "이수진",
+    status: "confirmed",
+    tex: 0,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "최민호",
+      saleId: "S20230506",
+      type: "bonus",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 0,
+      totalPrice: 40000,
+      plusprice: 40000,
+      settledAt: "2025-05-23",
+    },
+    worker: {
+      mobile: "010-4444-5555",
+    },
+  },
+  {
+    id: 7,
+    number: "ST202305270007",
+    workername: "김현수",
+    status: "waiting",
+    tex: 30000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "송민정",
+      saleId: "S20230507",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 2,
+      totalPrice: 120000,
+      plusprice: 0,
+      settledAt: "2025-05-19",
+    },
+    worker: {
+      mobile: "010-5555-6666",
+    },
+  },
+  {
+    id: 8,
+    number: "ST202305270008",
+    workername: "오지혜",
+    status: "done",
+    tex: 25000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "한승우",
+      saleId: "S20230508",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 1,
+      totalPrice: 60000,
+      plusprice: 0,
+      settledAt: "2025-05-17",
+    },
+    worker: {
+      mobile: "010-6666-7777",
+    },
+  },
+  {
+    id: 9,
+    number: "ST202305270009",
+    workername: "배수정",
+    status: "confirmed",
+    tex: 60000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "윤재훈",
+      saleId: "S20230509",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 4,
+      totalPrice: 240000,
+      plusprice: 0,
+      settledAt: "2025-05-21",
+    },
+    worker: {
+      mobile: "010-7777-8888",
+    },
+  },
+  {
+    id: 10,
+    number: "ST202305270010",
+    workername: "송지은",
+    status: "waiting",
+    tex: 0,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "김민석",
+      saleId: "S20230510",
+      type: "penalty",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 0,
+      totalPrice: -20000,
+      plusprice: 0,
+      settledAt: "2025-05-24",
+    },
+    worker: {
+      mobile: "010-8888-9999",
+    },
+  },
+  {
+    id: 11,
+    number: "ST202305270011",
+    workername: "윤보라",
+    status: "done",
+    tex: 50000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "최서연",
+      saleId: "S20230511",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 3,
+      totalPrice: 180000,
+      plusprice: 0,
+      settledAt: "2025-05-25",
+    },
+    worker: {
+      mobile: "010-9999-0000",
+    },
+  },
+  {
+    id: 12,
+    number: "ST202305270012",
+    workername: "강민우",
+    status: "confirmed",
+    tex: 0,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "박주희",
+      saleId: "S20230512",
+      type: "bonus",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 0,
+      totalPrice: 30000,
+      plusprice: 30000,
+      settledAt: "2025-05-26",
+    },
+    worker: {
+      mobile: "010-0000-1111",
+    },
+  },
+  {
+    id: 13,
+    number: "ST202305270013",
+    workername: "전지현",
+    status: "waiting",
+    tex: 40000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "김태형",
+      saleId: "S20230513",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 4,
+      totalPrice: 240000,
+      plusprice: 0,
+      settledAt: "2025-05-27",
+    },
+    worker: {
+      mobile: "010-1212-3434",
+    },
+  },
+  {
+    id: 14,
+    number: "ST202305270014",
+    workername: "한소희",
+    status: "done",
+    tex: 35000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: false,
+    customer: {
+      name: "윤서진",
+      saleId: "S20230514",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 2,
+      totalPrice: 120000,
+      plusprice: 0,
+      settledAt: "2025-05-28",
+    },
+    worker: {
+      mobile: "010-3434-5656",
+    },
+  },
+  {
+    id: 15,
+    number: "ST202305270015",
+    workername: "김도현",
+    status: "confirmed",
+    tex: 55000,
+    openModal() {},
+    openDetailById(id) {
+      console.log(id);
+    },
+
+    primemember: true,
+    customer: {
+      name: "이민정",
+      saleId: "S20230515",
+      type: "cleaning",
+      period: "2025-04-01 ~ 2025-04-30",
+      cleannum: 5,
+      totalPrice: 300000,
+      plusprice: 0,
+      settledAt: "2025-05-29",
+    },
+    worker: {
+      mobile: "010-5656-7878",
+    },
   },
 ]);

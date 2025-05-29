@@ -254,35 +254,30 @@
             <div class="flex flex-row items-center w-full max-w-2xl space-x-4 mb-4">
               <label class="w-32 text-base font-bold text-neutral-800 font-['Pretendard']">정산 주기 설정</label>
 
-              <div class="mt-[36px] flex flex-row items-center space-x-6">
-                <!-- 여성 -->
+              <div class="mt-[36px] flex items-center space-x-8">
+                <!-- 주급 -->
                 <label class="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
                     name="paytype"
                     value="week"
                     v-model="formData.paytype"
-                    class="appearance-none w-5 h-5 rounded-full border border-neutral-400 checked:bg-blue-700 relative" />
-                  <span class="text-sm font-semibold text-neutral-400 font-['Pretendard']">주급</span>
+                    class="appearance-none w-5 h-5 rounded-full border border-neutral-400 relative checked:border-blue-600 checked:bg-white checked:after:content-[''] checked:after:block checked:after:w-2.5 checked:after:h-2.5 checked:after:rounded-full checked:after:bg-blue-600 checked:after:mx-auto checked:after:my-auto checked:after:mt-[3px]" />
+                  <span class="text-base font-semibold text-neutral-700 font-['Pretendard']">주급</span>
                 </label>
 
-                <!-- 남성 -->
+                <!-- 월급 -->
                 <label class="flex items-center space-x-2 cursor-pointer">
                   <input
                     type="radio"
                     name="paytype"
                     value="month"
                     v-model="formData.paytype"
-                    class="appearance-none w-5 h-5 rounded-full border border-neutral-400 checked:bg-blue-700 relative" />
-                  <span class="text-sm font-semibold text-neutral-400 font-['Pretendard']">월급</span>
+                    class="appearance-none w-5 h-5 rounded-full border border-neutral-400 relative checked:border-blue-600 checked:bg-white checked:after:content-[''] checked:after:block checked:after:w-2.5 checked:after:h-2.5 checked:after:rounded-full checked:after:bg-blue-600 checked:after:mx-auto checked:after:my-auto checked:after:mt-[3px]" />
+                  <span class="text-base font-semibold text-neutral-700 font-['Pretendard']">월급</span>
                 </label>
               </div>
             </div>
-            <!--  체크 동의 -->
-            <label class="flex items-center">
-              <input type="checkbox" :checked="agreeItem.isChecked" @change="checkHandler" />
-              <span class="ml-2">{{ agreeItem.text }}</span>
-            </label>
 
             <!-- 절취선 -->
             <div class="mt-[70px] w-[860px] border-t-2 border-neutral-800"></div>
@@ -298,11 +293,6 @@
                 다음
               </button>
             </div>
-
-            <!-- // 마지막 결제 창 -->
-            <!-- 마지막 결제 모달은 최상단에 위치시킴 -->
-            <!-- 모달 트리거 버튼 -->
-            <button @click="lastModal">모달 열기</button>
 
             <!-- 마지막 결제 모달 -->
             <div
@@ -323,6 +313,7 @@
                 </div>
                 <div class="flex w-full justify-center mt-4">
                   <router-link
+                    @click="submitForm"
                     to="/Worker/DDashboard"
                     class="w-48 h-16 flex items-center justify-center bg-blue-600 text-white text-lg font-semibold rounded-xl">
                     파트너 홈으로 이동
@@ -461,30 +452,32 @@ const bankList = [
   "제주은행",
 ];
 
-// 체크 함수
-const agreeItem = ref({
-  id: 1,
-  text: "이용약관 동의",
-  isChecked: false,
-});
-
-const checkHandler = () => {
-  agreeItem.value.isChecked = !agreeItem.value.isChecked;
-};
-
 // 모달
 // 모달 표시 상태
 
 const showLastModal = ref(false);
 
 const lastModal = () => {
-  console.log("모달 열기"); // ✅ 디버깅용
   showLastModal.value = true;
 };
 
 const closeLastModal = () => {
   showLastModal.value = false;
 };
+
+// 회원가입 저장
+// eCleanerForm.vue
+function submitForm() {
+  const data = {
+    name: form.name,
+    phone: form.phone,
+    email: form.email,
+    region: form.region,
+  };
+  sessionStorage.setItem("workerInfo", JSON.stringify(data));
+
+  router.push("/worker/home");
+}
 </script>
 <style scoped>
 .active-tab {

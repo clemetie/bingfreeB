@@ -352,11 +352,9 @@ function toggleAlert(index) {
             <tr>
               <th>예약번호</th>
               <th>고객명</th>
-              <th>고객 연락처</th>
-              <th>예약일자</th>
-              <th>청소일자</th>
-              <th>담당기사</th>
-              <th>담당 기사 연락처</th>
+              <th>예약시간</th>
+              <th>주소</th>
+              <th>전화번호</th>
               <th>상태</th>
               <th>액션</th>
             </tr>
@@ -364,11 +362,12 @@ function toggleAlert(index) {
           <!-- 여기서 내용 바꾸기 -->
           <tbody>
             <tr v-for="item in paginatedList" :key="item.id">
-              <td data-label="예약번호">{{ item.number }}</td>
-              <td class="customername">
+              <td data-label="예약번호" class="profile-h4">{{ item.number }}</td>
+              <td data-label="고객명" class="customername profile-h4">
                 <template v-if="item.primemember">
                   <!-- 파란 북마크 아이콘 -->
                   <svg
+                    style="display: inline-block"
                     width="15"
                     height="15"
                     viewBox="0 0 15 15"
@@ -393,7 +392,13 @@ function toggleAlert(index) {
                 </template>
                 <template v-else>
                   <!-- 초록 나뭇잎 아이콘 -->
-                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    style="display: inline-block"
+                    width="14"
+                    height="11"
+                    viewBox="0 0 14 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
                       fill="#4ECF50" />
@@ -406,12 +411,10 @@ function toggleAlert(index) {
             ex) 고객 주소 사용할 거면 {{ item.customer.mobile }} => {{ item.customer.address }}
             기사 이메일 사용할 거면 {{ item.worker.name || "-" }} => {{ item.worker.email || "-" }}
              -->
-              <td class="profile-h4">{{ item.customer.mobile }}</td>
-              <td class="profile-h4">{{ item.reservdate }}</td>
-              <td class="profile-h4">{{ item.reservinfo.date }} {{ item.reservinfo.time }}</td>
-              <td class="profile-h4">{{ item.worker.name || "-" }}</td>
-              <td class="profile-h4">{{ item.worker.mobile || "-" }}</td>
-              <td class="profile-h4">
+              <td data-label="예약시간" class="profile-h4">{{ item.reservinfo.time }}</td>
+              <td data-label="주소" class="profile-h4">{{ item.reservinfo.address }}</td>
+              <td data-label="전화번호" class="profile-h4">{{ item.customer.mobile }}</td>
+              <td data-label="상태" class="profile-h4">
                 <span :class="`statusbox-${item.status}`">
                   {{
                     item.status === "waiting"
@@ -426,8 +429,8 @@ function toggleAlert(index) {
                   }}
                 </span>
               </td>
-              <td class="btnbox">
-                <button class="modal" v-on:click="viewreceipt = true">영수증 보기</button>
+              <td data-label="액션" class="btnbox profile-h4">
+                <button class="modal" style="margin-right: 10px" v-on:click="viewreceipt = true">영수증 보기</button>
                 <button class="modal" @click="openDetailById(item.id)">상세보기</button>
               </td>
             </tr>
@@ -702,7 +705,7 @@ function toggleAlert(index) {
           </div>
         </div>
 
-        <button @click="openReservDetail = false">닫기</button>
+        <button class="reserv-detailModal-closeBtn" @click="openReservDetail = false">닫기</button>
       </div>
       <!-- 영수증 보기 모달 -->
       <div class="viewreceipt" v-show="viewreceipt">
@@ -710,8 +713,8 @@ function toggleAlert(index) {
         <img src="/prime/profile_receipt.png" class="print-only" alt="영수증 이미지" />
 
         <div class="btnbox">
-          <button class="edit" style="padding: 1.5% 3%" @click="printReceipt">출력하기</button>
-          <button class="fix" style="padding: 1.6% 5.5%" @click="viewreceipt = false">닫기</button>
+          <button class="edit" @click="printReceipt">출력하기</button>
+          <button class="fix" @click="viewreceipt = false">닫기</button>
         </div>
       </div>
       <div class="alert">

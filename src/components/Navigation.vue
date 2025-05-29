@@ -1,19 +1,82 @@
-<script setup></script>
+<script setup>
+import { ref, watchEffect } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const isLoggedIn = ref(false);
+const userRole = ref("");
+const isMenuOpen = ref(false);
+
+watchEffect(() => {
+  isLoggedIn.value = localStorage.getItem("isLoggedIn") === "true";
+  userRole.value = localStorage.getItem("userRole") || "";
+});
+
+const logout = () => {
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("userRole");
+  router.push("/BingPrime");
+  isMenuOpen.value = false;
+};
+</script>
+
 <template>
   <header class="primeHead">
     <div class="inner">
-      <router-link to="/"
-        ><img src="/images/main-logo.png" alt=""
-      /></router-link>
-      <nav>
+      <router-link to="/" @click="isMenuOpen = false">
+        <img src="/prime/prime_logo.png" alt="빙프라임 로고" class="logo" />
+      </router-link>
+
+      <button class="hamburger" @click="isMenuOpen = !isMenuOpen">
+        <img
+          :src="
+            isMenuOpen
+              ? '/images/closing_icon.png?v=1.2'
+              : '/images/hambergar_menu_icon.png?v=1.2'
+          "
+          alt="menu toggle"
+        />
+      </button>
+
+      <nav class="pc-nav" v-if="!isMenuOpen">
         <router-link to="/BingprimeReservation">예약하기</router-link>
         <router-link to="/SubBenefit">구독요금</router-link>
         <router-link to="/Faq">FAQ</router-link>
-        <router-link to="/CustomerProfile">프로필</router-link>
+        <router-link
+          v-if="isLoggedIn && userRole === 'customer'"
+          to="/customerprofile"
+        >
+          프로필
+        </router-link>
+        <router-link v-else to="/Login">로그인</router-link>
+        <button v-if="isLoggedIn" @click="logout">로그아웃</button>
+      </nav>
+
+      <nav class="mo-nav" v-if="isMenuOpen">
+        <router-link to="/BingprimeReservation" @click="isMenuOpen = false"
+          >예약하기</router-link
+        >
+        <router-link to="/SubBenefit" @click="isMenuOpen = false"
+          >구독요금</router-link
+        >
+        <router-link to="/Faq" @click="isMenuOpen = false">FAQ</router-link>
+        <router-link
+          v-if="isLoggedIn && userRole === 'customer'"
+          to="/customerprofile"
+          @click="isMenuOpen = false"
+        >
+          프로필
+        </router-link>
+        <router-link v-else to="/Login" @click="isMenuOpen = false"
+          >로그인</router-link
+        >
+        <button v-if="isLoggedIn" @click="logout">로그아웃</button>
       </nav>
     </div>
   </header>
 </template>
+
 <style lang="scss" scoped>
 header.primeHead {
   margin-top: 40px;
@@ -22,68 +85,92 @@ header.primeHead {
   height: 80px;
   position: relative;
   z-index: 99;
+  box-shadow: 0px 0px 10px rgba($color: #616161, $alpha: 0.1);
   .inner {
     width: 100%;
+    max-width: 1200px;
     height: 100%;
+    margin: auto;
+    padding: 0 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    img {
-      width: 170px;
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: 100px;
+
+    .logo {
+      height: 50px;
     }
+
     nav {
       display: flex;
+      align-items: center;
+      gap: 40px;
+
       a {
         color: #111;
         font-weight: 600;
-        margin-left: 70px;
-        position: relative;
-        img {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          width: 40px;
-        }
+        text-decoration: none;
+      }
+
+      button {
+        background: none;
+        border: none;
+        font-weight: 600;
+        color: #111;
+        cursor: pointer;
+        padding-left: 20px;
+      }
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+
+      img {
+        width: 28px;
+        height: 28px;
       }
     }
   }
 }
+
 @media (max-width: 800px) {
-  header {
-    margin-bottom: -80px;
-    position: fixed;
+  .pc-nav {
+    display: none !important;
+  }
+
+  .hamburger {
+    display: block !important;
+  }
+
+  .mo-nav {
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
     background-color: #fff;
-    top: 0;
-    .inner {
-      margin: auto;
-      max-width: 700px;
-      // background-color: rgba($color: #ff0000, $alpha: 0.5);
-      img {
-        width: 120px;
-        left: 8%;
-      }
-      nav {
-        display: flex;
-        margin-right: 5%;
-        a {
-          color: #111;
-          font-weight: 600;
-          margin-left: 40px;
-          position: relative;
-          img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 40px;
-          }
-        }
-      }
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+    a {
+      font-size: 18px;
+      color: #111;
+      font-weight: 600;
+    }
+
+    button {
+      text-align: left;
+      font-size: 16px;
+      font-weight: 600;
+      color: #111;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
     }
   }
 }

@@ -43,7 +43,7 @@
           fill="#ECEBEB"
         ></path>
       </svg>
-      <div
+      <h1
         id="p404-co-ti"
         style="
           font-size: 38px;
@@ -53,7 +53,7 @@
         "
       >
         로딩 중입니다
-      </div>
+      </h1>
       <div class="loading-bar">
         <div class="loading-bar-fill"></div>
       </div>

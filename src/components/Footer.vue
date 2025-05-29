@@ -7,12 +7,16 @@
         <div class="footer-left">
           <!-- 로고 -->
           <div class="footer-logo">
-            <router-link to="/"><img src="/public/images/footer_logo.png" alt="footer_logo" /></router-link>
+            <router-link to="/"
+              ><img src="/public/images/footer_logo.png" alt="footer_logo"
+            /></router-link>
           </div>
           <div class="footer-txt2">
             <!-- 연락처 -->
             <div class="footer-contact">
-              <h3 class="footer-contact-title" style="color: #e9ff54">Contact us</h3>
+              <h3 class="footer-contact-title" style="color: #e9ff54">
+                Contact us
+              </h3>
               <p class="footer-contact-phone">064-739-6155</p>
               <p class="footer-contact-email">bingfree.korea@gmail.com</p>
             </div>
@@ -20,11 +24,15 @@
             <div class="footer-right">
               <div class="footer-address">
                 <h3 style="color: #e9ff54">address</h3>
-                <p class="footer-txt3">대구시 중구 중앙대로 394<br />제일빌딩 4F</p>
+                <h1 class="footer-txt3">
+                  대구시 중구 중앙대로 394<br />제일빌딩 4F
+                </h1>
               </div>
               <div class="footer-hours">
                 <h3 style="color: #e9ff54">cs opening hours</h3>
-                <p class="footer-txt4">We’re Always Here<br />24 Hours a Day!</p>
+                <p class="footer-txt4">
+                  We’re Always Here<br />24 Hours a Day!
+                </p>
               </div>
             </div>
             <div class="footer-copy">

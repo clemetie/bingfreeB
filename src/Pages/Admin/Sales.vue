@@ -1,7 +1,7 @@
 <!-- 효빈 관리자 예약 관리 -->
 <script setup>
 import { ref, computed, watch, onMounted } from "vue";
-import { fullclaimList } from "@/data.mjs";
+import { fullSaleList } from "@/data.mjs";
 import dayjs from "dayjs";
 
 // 모달 에러 관련 선언
@@ -56,7 +56,7 @@ const stepStates = computed(() => {
   }));
 });
 function openDetailById(id) {
-  const found = fullclaimList.find((item) => item.id === id);
+  const found = fullSaleList.find((item) => item.id === id);
   if (found) {
     reservdetail.value = found;
     openReservDetail.value = true;
@@ -110,7 +110,7 @@ const dateRange = computed(() => {
 const filteredList = ref([]);
 
 function applyFilters() {
-  const result = fullclaimList
+  const result = fullSaleList
     .filter((item) => {
       // date 파싱 안전 처리
       const rawDate = item?.reservinfo?.date;
@@ -163,11 +163,11 @@ const goToPage = (page) => {
 };
 
 // 상태별 개수 계산
-const totalCount = fullclaimList.length;
-const doneCount = fullclaimList.filter((item) => item.status === "done").length;
-const waitingCount = fullclaimList.filter((item) => item.status === "waiting").length;
-const assignedCount = fullclaimList.filter((item) => item.status === "assigned").length;
-// const confirmedCount = fullclaimList.filter(
+const totalCount = fullSaleList.length;
+const doneCount = fullSaleList.filter((item) => item.status === "done").length;
+const waitingCount = fullSaleList.filter((item) => item.status === "waiting").length;
+const assignedCount = fullSaleList.filter((item) => item.status === "assigned").length;
+// const confirmedCount = fullSaleList.filter(
 //   (item) => item.status === "confirmed"
 // ).length;
 
@@ -269,7 +269,7 @@ function cancel() {
   <div class="adminreservation">
     <div class="dash">
       <p class="dash-name">정산 내역</p>
-      <p class="dash-desc">클레임 유형을 관리하고 처리 상태를 확인할 수 있습니다.</p>
+      <p class="dash-desc">정산 내역을 관리하고 처리 상태를 확인할 수 있습니다.</p>
     </div>
     <div class="dashboard">
       <div class="allcard" v-for="(item, index) in statusCards" :key="index" :class="item.status">
@@ -281,14 +281,15 @@ function cancel() {
         <p class="card-desc" v-html="item.desc"></p>
       </div>
     </div>
-    <!-- 차트 -->
-      <div class="update">
+
+    <div class="table-wrap">
+      <!-- 차트 -->
+      <div class="update mb-8">
         <MonthlySalechart />
         <!-- 👉 정산 막대 차트 -->
         <MonthlySalecircle />
         <!-- 👉 정산 원형 통계 -->
       </div>
-    <div class="table-wrap">
       <div class="searchbox websearchbox">
         <p class="profile-h2">정산 내역 조회</p>
         <div class="namesearchbox profile-h4">
@@ -409,11 +410,131 @@ function cancel() {
         </div>
         <hr />
         <div class="search-action" style="margin-top: 12px">
-          <button class="search-button" @click="applyFilters">정산 내역 검색</button>
+          <button class="search-button" @click="applyFilters">검색</button>
         </div>
       </div>
+      <div class="tablelist">
+        <h2 class="profile-h2">정산 현황</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>번호</th>
+              <th>이름</th>
+              <th>정산번호</th>
+              <th>기사명</th>
+              <th>정산유형</th>
+              <th>연락처</th>
+              <th>정산기간</th>
+              <th>청소건수</th>
+              <th>총 금액</th>
+              <th>보너스</th>
+              <th>수수료</th>
+              <th>상태</th>
+              <th>처리일자</th>
+              <th>액션</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="item in paginatedList" :key="item.id">
+              <td data-label="예약번호">{{ item.number }}</td>
+              <td class="customername" data-label="고객명">
+                <template v-if="item.primemember">
+                  <svg
+                    width="15"
+                    height="15"
+                    viewBox="0 0 15 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <rect width="15" height="15" fill="url(#pattern0_273_889)" />
+                    <defs>
+                      <pattern id="pattern0_273_889" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <use xlink:href="#image0_273_889" transform="scale(0.0185185)" />
+                      </pattern>
+                      <image
+                        id="image0_273_889"
+                        width="54"
+                        height="54"
+                        preserveAspectRatio="none"
+                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAYAAACMRWrdAAAACXBIWXMAAAsSAAALEgHS3X78AAAEXUlEQVRogd1aPUwUQRR+u6HCxKNZO/QSO8BISGig4OproNAsNgKNJgYSGmjhEis0EaPBaAPRAi5SYHOUHgU2GIMJ0pkc0rmFnImUu+bbn9u9vdmfmb29H76EAHO7c++b7817b96uZBgGJYGi6lkiyiaaJBzHWlG+4L2Jm5ii6n1ENEtEU0Q00RTTo1ElojIR7eEnDtHYxGxC60Q0kzqNcFRtO9bDCMYipqj6rD1ZpmXmRwMEp7SiXGZdKUfdrqj6FhFtdhgpsu35bC96A0KJ2aTa7XpR2FRUfdF/TSAxRdVXu4CUgxd+5Zh7TFH1HGRusXFJgT03rBXlCoUott41dFxkvHY3ELMlvdse2xJjUlH1YQpQjBllugiLDcTs8ihRNTE+ING31zJ9WpGpX2nLaqAialAsJzobSIDM3opk/j02QPQgJ0Xe83PTWgQsCOtzjHMuUAbu6CfGXcxmrhG9emKpBDI8uKlIdL3XWgQsSH7UJbd835oT41ELxEADsWHeGZ7OSDQ9wf3FTAzZy4rfS/fcOU8q3FNl/cT6eGdIQqp6ya5TM731c1b/8c8dWSumCSgxVTDo72U9gf4b7peea0S/NP4zY087iQGHpwbllg1zT5WOLALnvy1COwcGrX0UOwj7ibXq4FgHkFjYcAmA7Mh8PSFn/8Xdby1RbDon0fgA0Z2sRIO33HG4IAyFUlDHv5cQcR/nreDkhPyFNwbtlKNVrCuCFVXn1l0rBm/TL6dWLoqbh96VDFrbdQki3LPuHZnXTZVDUKhZ5dRYzQTyE09yfZSXzGTtuN3D5zr9OHM/h8LPdt1gE4aaYqJHlTDFRAHDc8uuKnBHuOXbUqO7BqDQ9qjIAqqRD0uySQ4AIV54l5s7OacJBBkoJQqvYk3fY14gkHhdaXzQMhzqBAGfi6hFrQr3rBB9eEq0XTZCjzcYR2HsJG4epF5S7X8Nzjv+xMzCkGDz3EtM+CwWhh1mO9MFqgxvSPeDdU6Lg9QVg+FREKneo9DW6j5NeImlEhXjuFIavREvsVR681G5KKqnEceVWUjdFVEvTgf0LBDx3i+FExdoC5gwa0X72dcfkQni1opI0NsHhnmIBPKjFuGwBI2a8facLmJWrVZMteogW7kxztAtWnVQJ0dF5DbRtgB1KjG44PyGkAvW4BBretUR5zDIApSaLOjCQcNGJbFiKHBZQOGK1lpYueSFczpuAingOHF1jwL3pGI0NDnRC0SRi9YachWi4FBWqmuDgzSuKx0R7R/FPh1H4UwrysdNiYrWCgdvdCRZHFPCrmki8C5IbY911Ok5IcynmletCH7pfwZ9FRTDw/VV5x+HWLc+c/Yi530F6aq44hwioXegI/uKHID7zWpFec9/i2x3gLsRB/YLKw2kqEsVQy2zqhXlrbCLuoUY1MEe2vLvpSD0tOIs5kHVNtCBtzmHcSeqXcQlEISeBDnsu9eQMINF3ulNCscVIXXNkCCDg97m7DgQ0X+1TJk9rcZcSQAAAABJRU5ErkJggg==" />
+                    </defs>
+                  </svg>
 
-      
+                  {{ item.customer.name }}
+                </template>
+                <template v-else>
+                  <!-- 초록 나뭇잎 아이콘 -->
+                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
+                      fill="#4ECF50" />
+                  </svg>
+                  {{ item.customer.name }}
+                </template>
+              </td>
+              <td data-label="정산번호">{{ item.customer.saleId }}</td>
+              <td data-label="기사명">{{ item.workername }}</td>
+              <td data-label="정산유형">{{ item.customer.type }}</td>
+              <td data-label="연락처">{{ item.worker.mobile }}</td>
+              <td data-label="정산기간">
+                {{ item.customer.period }}
+              </td>
+              <td data-label="청소건수">
+                {{ item.customer.cleannum }}
+              </td>
+
+              <td class="btnbox" data-label="총금액">
+                {{ item.customer.totalPrice }}
+              </td>
+              <td class="btnbox" data-label="보너스">
+                {{ item.customer.plusp }}
+              </td>
+              <td class="" data-label="수수료">
+                {{ item.tex }}
+              </td>
+
+              <td data-label="상태">
+                <span :class="`statusbox-${item.status}`">
+                  {{
+                    item.status === "waiting"
+                      ? "대기중"
+                      : item.status === "assigned"
+                      ? "진행중"
+                      : item.status === "done"
+                      ? "청소완료"
+                      : item.status === "confirmed"
+                      ? "확정완료"
+                      : "알수없음"
+                  }}
+                </span>
+              </td>
+
+              <td data-label="처리일자">{{ item.customer.settledAt }}</td>
+
+              <td class="btnbox" data-label="액션">
+                <button class="modal" v-on:click="openModal">정산처리</button>
+                <button class="modal" @click="openDetailById(item.id)">정산내역</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+          <span>총 {{ filteredList.length }}건의 예약</span>
+          <div class="pagebox">
+            <button @click="goToPage(currentPage - 1)">←</button>
+            <button
+              v-for="page in totalPages"
+              :key="page"
+              :class="{ active: currentPage === page }"
+              @click="goToPage(page)">
+              {{ page }}
+            </button>
+            <button @click="goToPage(currentPage + 1)">→</button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <!-- 모달 오버레이 -->
