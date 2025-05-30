@@ -528,10 +528,13 @@
               }
 
               &.checkbox {
+                width: 100%;
+                height: auto;
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
                 margin-left: 3%;
+                border: none;
                 cursor: pointer;
                 label {
                   width: 500px;

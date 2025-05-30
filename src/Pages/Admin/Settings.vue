@@ -1,15 +1,21 @@
 <!-- 채연 설정 -->
 <template>
-  <div class="p-8 max-w-7xl dark:bg-gray-900">
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-8">
-      {{ t("settings.title") }}
-    </h1>
+  <div class="max-w-7xl dark:bg-gray-900">
+    <div class="dash">
+      <p class="dash-name">설정</p>
+      <p class="dash-desc" style="margin-bottom: 2%">
+        관리자 화면의 디스플레이 설정을 자유롭게 변경할 수 있습니다.
+      </p>
+    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
       <!-- 알림 설정 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden"
+      >
         <div
-          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4">
+          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4"
+        >
           <i class="fas fa-bell text-xl text-blue-500"></i>
           <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
             {{ t("settings.notifications.title") }}
@@ -26,9 +32,14 @@
               </p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.emailNotifications" class="sr-only peer" />
+              <input
+                type="checkbox"
+                v-model="settings.emailNotifications"
+                class="sr-only peer"
+              />
               <div
-                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"
+              ></div>
             </label>
           </div>
 
@@ -42,9 +53,14 @@
               </p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.pushNotifications" class="sr-only peer" />
+              <input
+                type="checkbox"
+                v-model="settings.pushNotifications"
+                class="sr-only peer"
+              />
               <div
-                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"
+              ></div>
             </label>
           </div>
 
@@ -58,18 +74,26 @@
               </p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.cancelNotifications" class="sr-only peer" />
+              <input
+                type="checkbox"
+                v-model="settings.cancelNotifications"
+                class="sr-only peer"
+              />
               <div
-                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"
+              ></div>
             </label>
           </div>
         </div>
       </div>
 
       <!-- 테마 설정 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden"
+      >
         <div
-          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4">
+          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4"
+        >
           <i class="fas fa-palette text-xl text-blue-500"></i>
           <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
             {{ t("settings.theme.title") }}
@@ -86,9 +110,14 @@
               </p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.darkMode" class="sr-only peer" />
+              <input
+                type="checkbox"
+                v-model="settings.darkMode"
+                class="sr-only peer"
+              />
               <div
-                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+              ></div>
             </label>
           </div>
 
@@ -107,19 +136,24 @@
                 :key="color.value"
                 class="w-8 h-8 rounded-full cursor-pointer transition-transform hover:scale-110"
                 :class="{
-                  'ring-2 ring-offset-2 ring-gray-800 dark:ring-white': settings.colorTheme === color.value,
+                  'ring-2 ring-offset-2 ring-gray-800 dark:ring-white':
+                    settings.colorTheme === color.value,
                 }"
                 :style="{ backgroundColor: color.value }"
-                @click="settings.colorTheme = color.value"></div>
+                @click="settings.colorTheme = color.value"
+              ></div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- 시스템 설정 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden"
+      >
         <div
-          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4">
+          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4"
+        >
           <i class="fas fa-cog text-xl text-blue-500"></i>
           <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
             {{ t("settings.system.title") }}
@@ -136,9 +170,14 @@
               </p>
             </div>
             <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" v-model="settings.autoSave" class="sr-only peer" />
+              <input
+                type="checkbox"
+                v-model="settings.autoSave"
+                class="sr-only peer"
+              />
               <div
-                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                class="w-11 h-6 bg-gray-200 dark:bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"
+              ></div>
             </label>
           </div>
 
@@ -153,7 +192,8 @@
             </div>
             <select
               v-model="settings.language"
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+            >
               <option value="ko">한국어</option>
               <option value="en">English</option>
               <option value="ja">日本語</option>
@@ -163,9 +203,12 @@
       </div>
 
       <!-- 데이터 관리 -->
-      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden">
+      <div
+        class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden"
+      >
         <div
-          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4">
+          class="bg-gray-50 dark:bg-gray-700 p-6 border-b border-gray-200 dark:border-gray-600 flex items-center gap-4"
+        >
           <i class="fas fa-database text-xl text-blue-500"></i>
           <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
             {{ t("settings.data.title") }}
@@ -183,7 +226,8 @@
             </div>
             <button
               @click="backupData"
-              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+              class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
               {{ t("settings.data.backup.button") }}
             </button>
           </div>
@@ -199,7 +243,8 @@
             </div>
             <button
               @click="restoreData"
-              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+            >
               {{ t("settings.data.restore.button") }}
             </button>
           </div>
@@ -210,7 +255,8 @@
     <div class="flex justify-end">
       <button
         @click="saveSettings"
-        class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+        class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+      >
         {{ t("settings.saveButton") }}
       </button>
     </div>
@@ -218,7 +264,8 @@
     <!-- 토스트 메시지 -->
     <div
       v-if="showToast"
-      class="fixed bottom-8 right-8 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg animate-slide-in">
+      class="fixed bottom-8 right-8 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg animate-slide-in"
+    >
       {{ t("settings.savedMessage") }}
     </div>
   </div>
@@ -297,5 +344,18 @@ const saveSettings = () => {
 }
 .animate-slide-in {
   animation: slide-in 0.3s ease-out;
+}
+.dash {
+  padding: 0 1%;
+  .dash-name {
+    font-size: 18px;
+    font-weight: 500;
+    color: #424242;
+  }
+  .dash-desc {
+    font-size: 13px;
+    font-weight: 400;
+    color: #757575;
+  }
 }
 </style>

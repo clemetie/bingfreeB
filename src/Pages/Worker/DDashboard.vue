@@ -188,8 +188,8 @@ const statusCards = computed(() => [
   {
     status: "total",
     title: "총 작업 수",
-    count: totalCount.value,
-    desc: `${totalCount.value}% 증가`,
+    count: "12",
+    desc: `<p style="color: #0F71F2;">2% 증가`,
     icon: `<svg width="28" height="20" viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M26 10H2" stroke="#0F71F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M26 2H2" stroke="#0F71F2" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -200,7 +200,7 @@ const statusCards = computed(() => [
   {
     status: "done",
     title: "완료율",
-    count: doneCount.value + "%",
+    count: "60%",
     desc: ``,
     icon: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M26 12.9029V14.0069C25.9985 16.5946 25.1606 19.1125 23.6112 21.1851C22.0618 23.2576 19.8839 24.7738 17.4024 25.5075C14.9209 26.2412 12.2687 26.1531 9.84136 25.2564C7.41402 24.3596 5.34158 22.7022 3.93315 20.5313C2.52472 18.3605 1.85575 15.7925 2.02601 13.2104C2.19627 10.6283 3.19665 8.17046 4.87793 6.20335C6.55922 4.23625 8.83134 2.86533 11.3554 2.29504C13.8795 1.72476 16.5203 1.98567 18.884 3.03887" stroke="#5AB21A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -211,8 +211,8 @@ const statusCards = computed(() => [
   {
     status: "assigned",
     title: "평균 작업 시간",
-    count: assignedCount.value + "분",
-    desc: `${assignedCount.value}% 감소`,
+    count: "60분",
+    desc: `<p style="color: #FF6C1C;">${assignedCount.value}% 감소`,
     icon: `<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M14 26C20.6274 26 26 20.6274 26 14C26 7.37258 20.6274 2 14 2C7.37258 2 2 7.37258 2 14C2 20.6274 7.37258 26 14 26Z" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M14 6.7998V13.9998L18.8 16.3998" stroke="#893BEE" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -223,7 +223,7 @@ const statusCards = computed(() => [
   {
     status: "confirmed",
     title: "평균 평가",
-    count: confirmedCount.value,
+    count: "4.8",
     desc: `<svg width="65" height="12" viewBox="0 0 65 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M5.87605 1.22694C6.13553 0.716686 6.86446 0.716686 7.12395 1.22694L8.34343 3.62493C8.44689 3.82838 8.64306 3.96862 8.86905 4.00068L11.5621 4.38275C12.1425 4.4651 12.3707 5.18174 11.9447 5.58448L10.024 7.40022C9.85297 7.56195 9.77466 7.79885 9.81562 8.03069L10.2724 10.6155C10.3729 11.1846 9.77953 11.6236 9.26479 11.3608L6.81825 10.112C6.61835 10.0099 6.38165 10.0099 6.18175 10.112L3.73521 11.3608C3.22047 11.6236 2.62707 11.1846 2.72763 10.6155L3.18438 8.03069C3.22534 7.79885 3.14703 7.56195 2.97595 7.40022L1.05534 5.58448C0.629349 5.18174 0.857491 4.4651 1.43791 4.38275L4.13095 4.00068C4.35694 3.96862 4.55311 3.82838 4.65657 3.62493L5.87605 1.22694Z" fill="#F99B23"/>
 <path d="M18.876 1.22694C19.1355 0.716686 19.8645 0.716686 20.124 1.22694L21.3434 3.62493C21.4469 3.82838 21.6431 3.96862 21.8691 4.00068L24.5621 4.38275C25.1425 4.4651 25.3707 5.18174 24.9447 5.58448L23.024 7.40022C22.853 7.56195 22.7747 7.79885 22.8156 8.03069L23.2724 10.6155C23.3729 11.1846 22.7795 11.6236 22.2648 11.3608L19.8183 10.112C19.6184 10.0099 19.3816 10.0099 19.1817 10.112L16.7352 11.3608C16.2205 11.6236 15.6271 11.1846 15.7276 10.6155L16.1844 8.03069C16.2253 7.79885 16.147 7.56195 15.9759 7.40022L14.0553 5.58448C13.6293 5.18174 13.8575 4.4651 14.4379 4.38275L17.1309 4.00068C17.3569 3.96862 17.5531 3.82838 17.6566 3.62493L18.876 1.22694Z" fill="#F99B23"/>
@@ -284,24 +284,31 @@ import { reactive } from "vue";
 
 const alerts = reactive([
   {
+    icon: "/prime/alert-newreview-icon.png",
+    alt: "새로운 리뷰 알림 아이콘",
+    message: "새로운 리뷰가 등록되었습니다.",
+    time: "오전 11:10",
+    active: true,
+  },
+  {
     icon: "/prime/alert-claim-icon.png",
     alt: "클레임 알림 아이콘",
     message: "클레임건이 있습니다.",
-    time: "오전 10:00",
+    time: "오후 13:00",
     active: true,
   },
   {
     icon: "/prime/alert-newres-icon.png",
     alt: "새로운 예약 알림 아이콘",
     message: "새로운 예약이 있습니다.",
-    time: "오전 11:10",
+    time: "오후 14:00",
     active: false,
   },
   {
     icon: "/prime/alert-saftytraining-icon.png",
     alt: "안전교육 알림 아이콘",
     message: "새로운 안전교육 영상을 시청해 주세요.",
-    time: "오후 14:00",
+    time: "오후 16:20",
     active: false,
   },
 ]);

@@ -171,20 +171,64 @@ function searchFree() {
 function goToFreePage(page) {
   freeCurrentPage.value = page;
 }
-
 // ---------------------
 // 📌 공지사항 게시글 데이터
 // ---------------------
 const noticePosts = ref([
-  { id: 100, notice: true, title: "[안내] 제빙기 교육 일정 변경", date: "2025-05-26" },
-  { id: 101, number: 1, title: "[안내] 빙프리 소속 기사 청소 소모품 신청 기간(25.06.20~)", date: "2025-05-20" },
-  { id: 102, number: 2, title: "[안내] 빙프리 소속 기사 유니폼 신청 기간 (25.05.21~)", date: "2025-05-18" },
-  { id: 103, number: 3, title: "[안내] 야간 방문 기준 변경 및 사전 연락 의무화", date: "2025-05-18" },
-  { id: 104, number: 4, title: "[필독] 고객 응대 매뉴얼 개정판 배포 안내 (25.05.27 시행)", date: "2025-05-15" },
-  { id: 105, number: 5, title: "[안내] 제빙기 청소 보고서 양식 최신 버전 업로드 (25.05.25)", date: "2025-05-09" },
-  { id: 106, number: 6, title: "[필독] 방문 전 사전 안내톡 전송 필수화 (25.06.01부터)", date: "2025-05-08" },
-  { id: 107, number: 7, title: "[안내] 고객 불만 접수 시 대응 매뉴얼 필독 요청 (상시)", date: "2025-05-05" },
-  { id: 108, number: 8, title: "[주의] 청소 후 실내 정리 상태 점검 강화 (25.06.01부터)", date: "2025-05-01" },
+  {
+    id: 100,
+    notice: true,
+    title: "[안내] 제빙기 교육 일정 변경",
+    date: "2025-05-26",
+  },
+  {
+    id: 101,
+    number: 1,
+    title: "[안내] 빙프리 소속 기사 청소 소모품 신청 기간(25.06.20~)",
+    date: "2025-05-20",
+  },
+  {
+    id: 102,
+    number: 2,
+    title: "[안내] 빙프리 소속 기사 유니폼 신청 기간 (25.05.21~)",
+    date: "2025-05-18",
+  },
+  {
+    id: 103,
+    number: 3,
+    title: "[안내] 야간 방문 기준 변경 및 사전 연락 의무화",
+    date: "2025-05-18",
+  },
+  {
+    id: 104,
+    number: 4,
+    title: "[필독] 고객 응대 매뉴얼 개정판 배포 안내 (25.05.27 시행)",
+    date: "2025-05-15",
+  },
+  {
+    id: 105,
+    number: 5,
+    title: "[안내] 제빙기 청소 보고서 양식 최신 버전 업로드 (25.05.25)",
+    date: "2025-05-09",
+  },
+  {
+    id: 106,
+    number: 6,
+    title: "[필독] 방문 전 사전 안내톡 전송 필수화 (25.06.01부터)",
+    date: "2025-05-08",
+  },
+  {
+    id: 107,
+    number: 7,
+    title: "[안내] 고객 불만 접수 시 대응 매뉴얼 필독 요청 (상시)",
+    date: "2025-05-05",
+  },
+  {
+    id: 108,
+    number: 8,
+    title: "[주의] 청소 후 실내 정리 상태 점검 강화 (25.06.01부터)",
+    date: "2025-05-01",
+  },
 ]);
 
 const noticeSearchQuery = ref("");
@@ -226,14 +270,55 @@ function goToNoticePage(page) {
 
 // 게시글 데이터 (reactive)
 const posts = ref([
-  { id: 0, notice: true, title: "[필독] 제빙기 청소 기사님을 위한 필수 안전교육 안내", date: "2025-05-13" },
-  { id: 1, number: 1, title: "5월 점검 일정 안내", date: "2025-05-10" },
-  { id: 2, number: 2, title: "제빙기 점검 신청 방법", date: "2025-05-08" },
-  { id: 3, number: 3, title: "서비스 구독 시 혜택 안내", date: "2025-05-05" },
-  { id: 4, number: 4, title: "청소 전/후 주의사항", date: "2025-05-01" },
-  { id: 5, number: 5, title: "제빙기 필터 관리법", date: "2025-04-29" },
+  {
+    id: 0,
+    notice: true,
+    title: "[필독] 제빙기 청소 기사님을 위한 필수 안전·위생 교육 안내",
+    date: "2025-05-13",
+    content:
+      "제빙기 청소 작업자는 위생과 안전이 가장 중요합니다. 본 교육은 화학세제 취급, 전기 감전 방지, 작업 전후 소독 등 현장에서 꼭 알아야 할 내용을 포함하고 있습니다. 모든 기사님은 교육을 이수 후 현장에 투입됩니다.",
+  },
+  {
+    id: 1,
+    number: 1,
+    title: "화학 세제 취급 시 안전 수칙 교육",
+    date: "2025-05-10",
+    content:
+      "세척제 및 살균제는 강한 화학 성분을 포함하고 있어, 피부 접촉 시 화상이나 호흡기 자극을 유발할 수 있습니다. 이 교육에서는 세제 희석 방법, 보호장비 착용법, 응급 대처 방법 등을 안내합니다.",
+  },
+  {
+    id: 2,
+    number: 2,
+    title: "전기·기계 장비 사용 시 감전 및 끼임 사고 예방 교육",
+    date: "2025-05-08",
+    content:
+      "제빙기는 전기와 물이 동시에 존재하는 장비로 감전 위험이 존재합니다. 또한 커버를 열고 청소할 때 손 끼임 사고가 발생할 수 있어요. 본 교육에서는 작업 전 전원 차단, 장갑 착용, 분해 시 주의사항 등을 배웁니다.",
+  },
+  {
+    id: 3,
+    number: 3,
+    title: "고객 현장 방문 시 응대 매뉴얼 및 CS 교육",
+    date: "2025-05-05",
+    content:
+      "현장에서 고객과의 커뮤니케이션은 브랜드 신뢰도에 영향을 줍니다. 교육에서는 방문 인사, 현장 설명 방법, 민원 발생 시 대처법 등 고객 응대 매너를 학습합니다.",
+  },
+  {
+    id: 4,
+    number: 4,
+    title: "작업 전·후 위생관리 및 장비 체크리스트 교육",
+    date: "2025-05-01",
+    content:
+      "청소 시작 전 장비 상태 확인, 손 소독, 장갑·마스크 착용은 기본입니다. 교육에서는 작업 후 도구 세척, 폐수 처리, 청소 리포트 작성 등 전체 프로세스를 정리합니다.",
+  },
+  {
+    id: 5,
+    number: 5,
+    title: "제빙기 내부 오염 방지를 위한 주기 관리 교육",
+    date: "2025-04-29",
+    content:
+      "제빙기는 정기적인 청소가 없으면 세균 번식의 온상이 될 수 있습니다. 이 교육에서는 오염 위험 요소, 청소 주기별 관리법, 고객에 대한 관리 안내 방법까지 배웁니다.",
+  },
 ]);
-
 // 필터링된 게시글 리스트: 제목에 검색어 포함된 게시글만 반환
 const filteredPosts = computed(() => {
   return posts.value.filter((post) => post.title.toLowerCase().includes(searchQuery.value.toLowerCase()));
@@ -249,6 +334,58 @@ const paginatedPosts = computed(() => {
 const totalPages = computed(() => {
   return Math.ceil(filteredPosts.value.length / postsPerPage);
 });
+
+// 글쓰기 모달
+const clamemodal = ref(false);
+const title = ref("");
+const content = ref("");
+const file = ref(null);
+const author = ref("");
+const fileInput = ref(null);
+const handleFileUpload = (e) => {
+  file.value = e.target.files[0];
+};
+
+//글쓰기
+const submitInquiry = () => {
+  if (!title.value || !content.value || !author.value) {
+    alert("모든 필드를 입력해주세요.");
+    return;
+  }
+
+  // 현재 날짜 yyyy-mm-dd 형식
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const formattedDate = `${yyyy}-${mm}-${dd}`;
+
+  // 새 글 객체 생성
+  const newPost = {
+    id: freePosts.value.length + 1,
+    number: freePosts.value.length + 1,
+    title: title.value,
+    content: content.value,
+    author: author.value,
+    date: formattedDate,
+    views: 21,
+  };
+
+  // freePosts 배열에 추가
+  freePosts.value.push(newPost);
+
+  alert("저장 되었습니다");
+
+  // 초기화
+  title.value = "";
+  content.value = "";
+  file.value = null;
+  fileInput.value.value = "";
+  author.value = "";
+
+  // 모달 닫기
+  clamemodal.value = false;
+};
 
 // 함수: 검색창 입력 이벤트 핸들러
 function handleInput(event) {
@@ -380,8 +517,9 @@ function prevPage() {
                   stroke-linejoin="round" />
               </svg>
             </div>
+
             <!-- 글쓰기 -->
-            <button class="write-box">글쓰기</button>
+            <button class="write-box" v-on:click="clamemodal = true">글쓰기</button>
           </div>
         </div>
       </div>
@@ -397,12 +535,12 @@ function prevPage() {
             </thead>
             <tbody>
               <tr v-for="(post, index) in paginatedPosts" :key="index">
-                <td>
+                <td class="board-table-number">
                   <span v-if="post.notice" class="notice-label">공지</span>
                   <span v-else>{{ post.number }}</span>
                 </td>
                 <td>{{ post.title }}</td>
-                <td>{{ post.date }}</td>
+                <td class="board-table-date">{{ post.date }}</td>
               </tr>
             </tbody>
           </table>
@@ -467,11 +605,12 @@ function prevPage() {
                   stroke-linejoin="round" />
               </svg>
             </div>
-            <button class="write-box">글쓰기</button>
+
+            <!-- 글쓰기 -->
+            <button class="write-box" v-on:click="clamemodal = true">글쓰기</button>
           </div>
         </div>
       </div>
-
       <div class="board-section-2">
         <div class="board-wrap">
           <table class="board-table">
@@ -484,12 +623,12 @@ function prevPage() {
             </thead>
             <tbody>
               <tr v-for="(post, index) in paginatedNoticePosts" :key="index">
-                <td>
+                <td class="board-table-number">
                   <span v-if="post.notice" class="notice-label-2">공지</span>
                   <span v-else>{{ post.number }}</span>
                 </td>
-                <td>{{ post.title }}</td>
-                <td>{{ post.date }}</td>
+                <td class="board-table-title">{{ post.title }}</td>
+                <td class="board-table-date">{{ post.date }}</td>
               </tr>
             </tbody>
           </table>
@@ -535,7 +674,7 @@ function prevPage() {
                 @input="handleFreeInput"
                 type="text"
                 placeholder="검색어를 입력하세요." />
-             <svg
+              <svg
                 @click="search"
                 class="cursor-pointer"
                 width="19"
@@ -559,7 +698,7 @@ function prevPage() {
             </div>
 
             <!-- 글쓰기 -->
-            <button class="write-box">글쓰기</button>
+            <button class="write-box" v-on:click="clamemodal = true">글쓰기</button>
           </div>
         </div>
       </div>
@@ -571,21 +710,21 @@ function prevPage() {
               <tr>
                 <th style="width: 10%">번호</th>
                 <th style="width: 40%">제목</th>
-                <th style="width: 15%">글쓴이</th>
-                <th style="width: 20%">등록일</th>
-                <th style="width: 15%">조회수</th>
+                <th style="width: 7%">글쓴이</th>
+                <th style="width: 7%">등록일</th>
+                <th style="width: 7%">조회수</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="(post, index) in paginatedFreePosts" :key="index">
-                <td>
+                <td class="board-table-number">
                   <span v-if="post.notice" class="notice-label-2">공지</span>
                   <span v-else>{{ post.number }}</span>
                 </td>
                 <td>{{ post.title }}</td>
-                <td>{{ post.author }}</td>
-                <td>{{ post.date }}</td>
-                <td>{{ post.views }}</td>
+                <td style="text-align: center">{{ post.author }}</td>
+                <td style="text-align: center">{{ post.date }}</td>
+                <td style="text-align: center">{{ post.views }}</td>
               </tr>
             </tbody>
           </table>
@@ -603,9 +742,157 @@ function prevPage() {
       </div>
     </div>
   </div>
+  <!-- 글쓰기 모달 -->
+  <div class="writemodal" v-show="clamemodal">
+    <h2 class="modal-title profile-h2" style="">게시판 글쓰기</h2>
+    <div class="writemodal-notice">
+      <ul>
+        <p>올바른 게시판 문화 내가 먼저 입니다 !</p>
+        <li>ㆍ악성 게시글의 경우 관리자에 의해 바로 삭제되며, 일정 기간동안 글쓰기 기능이 제한될 수도 있습니다.</li>
+        <li>
+          ㆍ본 게시판은 기사님들의 의견, 소통을 나누는 공간이므로 개인 정보(전화번호, 주소 등)을 기재하지 마시고 필요시
+          회원 정보를 수정해주시기 바랍니다.
+        </li>
+        <li>ㆍ개인정보, 욕설 기재 시 관리자에 의해 해당 게시물이 임의로 삭제 될 수 있습니다.</li>
+      </ul>
+    </div>
+    <ul class="form">
+      <li class="form-line">
+        <span class="label">이름</span>
+        <input type="text" value="관리자" readonly style="background-color: #f5f5f5" class="name-label" />
+      </li>
+
+      <li>
+        <span class="label">제목</span>
+        <input type="text" v-model="title" placeholder="제목을 입력해주세요." />
+      </li>
+      <li>
+        <span class="label memo"
+          >내용<small style="color: #bdbdbd">{{ content.length }}/1,000</small></span
+        >
+
+        <textarea v-model="content" placeholder="함께 나누고 싶은 이야기를 입력해주세요." maxlength="1000"></textarea>
+      </li>
+      <li>
+        <span class="label">파일첨부</span>
+        <input type="file" ref="fileInput" @change="handleFileUpload" />
+      </li>
+    </ul>
+
+    <div class="btn-box">
+      <button class="cancel" @click="clamemodal = false">취소</button>
+      <button class="fix" @click="submitInquiry">저장</button>
+    </div>
+  </div>
+  <div
+    class="overlay"
+    v-show="clamemodal"
+    @click="
+      () => {
+        clamemodal = false;
+      }
+    "></div>
 </template>
 
 <style lang="scss" scoped>
+.writemodal-notice {
+  text-align: left;
+  margin-left: 8%;
+  p {
+    color: #0d71ba;
+    font-family: Pretendard;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-bottom: 1.5%;
+  }
+  li {
+    color: var(--bingprime-gray5-9e9e9e, #9e9e9e);
+    font-family: Pretendard;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 153.846% */
+  }
+}
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba($color: #000000, $alpha: 0.4);
+  z-index: 99;
+}
+.writemodal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: #fff;
+  width: 950px;
+  height: 620px;
+  border-radius: 8px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  .form {
+    list-style: none;
+    li {
+      display: flex;
+      align-items: center;
+      padding: 1.5% 5%;
+      // border-top: 1px solid #e0e0e0;
+
+      .label {
+        display: inline-block;
+        width: 100px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        color: #424242;
+
+        font-family: Pretendard;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
+      .memo {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .value {
+        font-weight: 600;
+      }
+      select,
+      input[type="text"],
+      textarea {
+        width: 70%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      textarea {
+        width: 80%;
+        height: 100px;
+        resize: vertical;
+      }
+    }
+  }
+
+  .btn-box {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
 .board-page {
   padding: 1.5rem;
   color: #2d3748;
@@ -630,6 +917,10 @@ function prevPage() {
         color: #ffffff;
       }
     }
+  }
+  .board-table-number,
+  .board-table-date {
+    text-align: center;
   }
   //  게시판 서브제목
   .board-subtxtwrap {
@@ -949,7 +1240,6 @@ function prevPage() {
   padding: 14px 20px;
   border-bottom: 1px solid #eee;
   font-size: 14px;
-  text-align: center;
 }
 
 .notice-label {

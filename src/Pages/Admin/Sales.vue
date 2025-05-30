@@ -284,12 +284,7 @@ function cancel() {
 
     <div class="table-wrap">
       <!-- 차트 -->
-      <div class="update mb-8">
-        <MonthlySalechart />
-        <!-- 👉 정산 막대 차트 -->
-        <MonthlySalecircle />
-        <!-- 👉 정산 원형 통계 -->
-      </div>
+
       <div class="searchbox websearchbox">
         <p class="profile-h2">정산 내역 조회</p>
         <div class="namesearchbox profile-h4">
@@ -440,6 +435,7 @@ function cancel() {
               <td class="customername" data-label="고객명">
                 <template v-if="item.primemember">
                   <svg
+                    style="display: inline-block"
                     width="15"
                     height="15"
                     viewBox="0 0 15 15"
@@ -464,7 +460,13 @@ function cancel() {
                 </template>
                 <template v-else>
                   <!-- 초록 나뭇잎 아이콘 -->
-                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    style="display: inline-block"
+                    width="14"
+                    height="11"
+                    viewBox="0 0 14 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
                       fill="#4ECF50" />
@@ -487,7 +489,7 @@ function cancel() {
                 {{ item.customer.totalPrice }}
               </td>
               <td class="btnbox" data-label="보너스">
-                {{ item.customer.plusp }}
+                {{ item.customer.plusprice }}
               </td>
               <td class="" data-label="수수료">
                 {{ item.tex }}
@@ -512,7 +514,7 @@ function cancel() {
               <td data-label="처리일자">{{ item.customer.settledAt }}</td>
 
               <td class="btnbox" data-label="액션">
-                <button class="modal" v-on:click="openModal">정산처리</button>
+                <button style="margin-right: 10px" class="modal" v-on:click="openModal">정산처리</button>
                 <button class="modal" @click="openDetailById(item.id)">정산내역</button>
               </td>
             </tr>
@@ -534,6 +536,12 @@ function cancel() {
             <button @click="goToPage(currentPage + 1)">→</button>
           </div>
         </div>
+      </div>
+      <div class="update mb-8">
+        <MonthlySalechart />
+        <!-- 👉 정산 막대 차트 -->
+        <MonthlySalecircle />
+        <!-- 👉 정산 원형 통계 -->
       </div>
     </div>
   </div>

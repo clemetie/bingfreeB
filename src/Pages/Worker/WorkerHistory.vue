@@ -16,7 +16,7 @@ const searchText = ref("");
 const memberFilter = ref("all"); // normal | prime | all
 const statusFilter = ref("all"); // waiting | assigned | confirmed | done | all
 const shopFilter = ref("all"); // personal | business | all
-const dateFilter = ref("all"); // today | plus7d | plus15d | plus1m | plus3m | all | custom
+const dateFilter = ref("plus1m"); // today | plus7d | plus15d | plus1m | plus3m | all | custom
 const today = dayjs();
 const fromDate = ref(null);
 const toDate = ref(null);
@@ -154,7 +154,7 @@ function applyFilters() {
         isInDateRange
       );
     })
-    .sort((a, b) => a.id - b.id);
+    .sort((a, b) => b.id - a.id);
 
   filteredList.value = result;
   currentPage.value = 1;
@@ -770,14 +770,18 @@ const waitingListOnly = computed(() =>
                   />
                   청소대기</label
                 >
-                 <label
-              ><input type="radio" value="done" v-model="statusFilter" />
-              청소완료</label
-            >
-            <label
-              ><input type="radio" value="confirmed" v-model="statusFilter" />
-              확정완료</label
-            >
+                <label
+                  ><input type="radio" value="done" v-model="statusFilter" />
+                  청소완료</label
+                >
+                <label
+                  ><input
+                    type="radio"
+                    value="confirmed"
+                    v-model="statusFilter"
+                  />
+                  확정완료</label
+                >
               </div>
             </div>
             <div class="searchdate">

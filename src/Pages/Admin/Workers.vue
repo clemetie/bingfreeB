@@ -210,6 +210,7 @@ const statusCards = computed(() => [
     title: "전체기사",
     count: totalCount.value + "명",
     desc: `+${totalCount.value}명`,
+    addworker: "+2명",
     icon: `<svg width="34" height="29" viewBox="0 0 34 29" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M23.8182 26.5454V23.8181C23.8182 22.3714 23.2435 20.9841 22.2206 19.9611C21.1976 18.9382 19.8103 18.3635 18.3636 18.3635H7.45454C6.00791 18.3635 4.62052 18.9382 3.5976 19.9611C2.57467 20.9841 2 22.3714 2 23.8181V26.5454" stroke="#0F71F2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <path d="M12.9091 12.9091C15.9215 12.9091 18.3636 10.467 18.3636 7.45456C18.3636 4.44209 15.9215 2 12.9091 2C9.89661 2 7.45453 4.44209 7.45453 7.45456C7.45453 10.467 9.89661 12.9091 12.9091 12.9091Z" stroke="#0F71F2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -312,7 +313,7 @@ function addOneYear(item) {
           <span class="card-icon" v-html="card.icon" style="margin-left: auto; display: inline"></span>
         </p>
         <p class="profile-h1">{{ card.count }}</p>
-        <p class="card-desc" v-html="card.desc"></p>
+        <p class="card-desc" v-html="card.addworker" style="color:#0F71F2;"></p>
       </div>
     </div>
     <div class="table-wrap">

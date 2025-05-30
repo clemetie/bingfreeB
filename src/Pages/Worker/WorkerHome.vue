@@ -89,7 +89,7 @@ function updateTime() {
   <!-- 페이지 헤더 -->
   <header class="workerHead">
     <div class="logo">
-      <router-link to="/Worker/ddashboard"
+      <router-link to="/Bingprime"
         ><img src="/prime/bingfree-logo.png" alt="빙프리로고"
       /></router-link>
     </div>

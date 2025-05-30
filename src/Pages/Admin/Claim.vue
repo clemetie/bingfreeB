@@ -287,16 +287,7 @@ function cancel() {
     </div>
     <div class="table-wrap">
       <!-- 차트 -->
-      <div class="update mb-8">
-        <!-- 왼쪽 박스 -->
-        <!-- <Line :data="chartData" :options="chartOptions" /> -->
-        <MonthlyBarClaimchart />
-        <!-- </div> -->
-        <!-- 오른쪽 박스 -->
-        <!-- <Bar :data="chartData" :options="chartOptions" /> -->
-        <MonthlycircleClaim />
-        <!-- </div> -->
-      </div>
+
       <div class="searchbox websearchbox">
         <p class="profile-h2">클레임 발생 현황</p>
         <div class="namesearchbox profile-h4">
@@ -554,6 +545,7 @@ function cancel() {
               <td class="customername" data-label="고객명">
                 <template v-if="item.primemember">
                   <svg
+                    style="display: inline-block"
                     width="15"
                     height="15"
                     viewBox="0 0 15 15"
@@ -578,7 +570,13 @@ function cancel() {
                 </template>
                 <template v-else>
                   <!-- 초록 나뭇잎 아이콘 -->
-                  <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    style="display: inline-block"
+                    width="14"
+                    height="11"
+                    viewBox="0 0 14 11"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <path
                       d="M1.75 1.57143H0C0 4.60871 2.74258 7.07143 6.125 7.07143V10.6071C6.125 10.8232 6.32188 11 6.5625 11H7.4375C7.67812 11 7.875 10.8232 7.875 10.6071V7.07143C7.875 4.03415 5.13242 1.57143 1.75 1.57143ZM12.25 0C9.94766 0 7.94609 1.14174 6.89883 2.82857C7.65625 3.57009 8.2168 4.47121 8.51211 5.47054C11.5938 5.18326 14 2.84576 14 0H12.25Z"
                       fill="#4ECF50" />
@@ -641,7 +639,7 @@ function cancel() {
               </td>
 
               <td class="btnbox" data-label="액션">
-                <button class="modal" v-on:click="openModal">처리하기</button>
+                <button style="margin-right: 10px" class="modal" v-on:click="openModal">처리하기</button>
                 <button class="modal" @click="openDetailById(item.id)">상세보기</button>
               </td>
             </tr>
@@ -664,6 +662,16 @@ function cancel() {
           </div>
         </div>
       </div>
+      <div class="update mb-8">
+        <!-- 왼쪽 박스 -->
+        <!-- <Line :data="chartData" :options="chartOptions" /> -->
+        <MonthlyBarClaimchart />
+        <!-- </div> -->
+        <!-- 오른쪽 박스 -->
+        <!-- <Bar :data="chartData" :options="chartOptions" /> -->
+        <MonthlycircleClaim />
+        <!-- </div> -->
+      </div>
     </div>
   </div>
   <!-- 모달 오버레이 -->
@@ -677,252 +685,254 @@ function cancel() {
       }
     "></div> -->
   <!-- 예약 상세 모달 -->
-  <div class="reservdetailmodal" v-if="openReservDetail && reservdetail">
-    <div class="reservdetail-title">
-      <p class="profile-h2">클레임 상세 정보</p>
-      <hr />
-      <div class="title" :class="`status-${reservdetail.status}`" style="font-weight: 600">
-        클레임 ID: {{ reservdetail.customer.claimId }}
-        <span :class="reservdetail?.status ? `statusbox-${reservdetail.status}` : ''">
-          {{
-            reservdetail?.status === "waiting"
-              ? "대기중"
-              : reservdetail?.status === "assigned"
-              ? "진행중"
-              : reservdetail?.status === "done"
-              ? "청소완료"
-              : reservdetail?.status === "confirmed"
-              ? "확정완료"
-              : "알수없음"
-          }}</span
-        >
-      </div>
-    </div>
-    <div class="reservdetail-info-box">
-      <div class="reservdetail-left">
-        <p class="profile-h2" style="font-size: 16px; font-weight: 500">기본 정보</p>
-        <div class="customerinfo">
-          <p class="profile-h3" @click="isCustomerOpen = !isCustomerOpen">
-            예약자 정보
-            <span class="icon">
-              <template v-if="isCustomerOpen">
-                <!-- 위쪽 아이콘 (▲) -->
-                <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-              <template v-else>
-                <!-- 아래쪽 아이콘 (▼) -->
-                <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-            </span>
-          </p>
-
-          <ul v-show="isCustomerOpen" class="profile-h4">
-            <li>
-              <span>이름</span>{{ reservdetail.customer.name }}{{ ` (${reservdetail.store})` }}
-              <img
-                :src="reservdetail.customer.avatar"
-                alt="고객 이미지"
-                class="w-8 h-8 rounded-full inline-block ml-2" />
-            </li>
-
-            <li><span>연락처</span>{{ reservdetail.customer.mobile }}</li>
-            <li><span>이메일</span>{{ reservdetail.customer.email }}</li>
-            <li><span>주소</span>{{ reservdetail.customer.address }}</li>
-          </ul>
-        </div>
-        <div class="membershipinfo">
-          <p class="profile-h3" @click="isMembershipOpen = !isMembershipOpen">
-            구독권 정보
-            <span class="icon">
-              <template v-if="isMembershipOpen">
-                <!-- 위쪽 아이콘 (▲) -->
-                <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-              <template v-else>
-                <!-- 아래쪽 아이콘 (▼) -->
-                <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-            </span>
-          </p>
-
-          <ul v-show="isMembershipOpen" class="profile-h4">
-            <li><span>구독권</span>{{ reservdetail.membership?.name || "-" }}</li>
-            <li><span>구독일</span>{{ reservdetail.membership?.date || "-" }}</li>
-            <li><span>회차</span>{{ reservdetail.membership?.count || "-" }}</li>
-            <li><span>주기</span>{{ reservdetail.membership?.during || "-" }}</li>
-          </ul>
-        </div>
-        <div class="workerinfo">
-          <p class="profile-h3" @click="isWorkerOpen = !isWorkerOpen">
-            담당자 정보
-            <span class="icon">
-              <template v-if="isWorkerOpen">
-                <!-- 위쪽 아이콘 (▲) -->
-                <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-              <template v-else>
-                <!-- 아래쪽 아이콘 (▼) -->
-                <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-            </span>
-          </p>
-
-          <ul v-show="isWorkerOpen" class="profile-h4">
-            <li><span>이름</span>{{ reservdetail.worker.name }}</li>
-            <li><span>연락처</span>{{ reservdetail.worker.mobile }}</li>
-            <li><span>이메일</span>{{ reservdetail.worker.email }}</li>
-          </ul>
-        </div>
-        <div class="inquiryinfo">
-          <p class="profile-h3" @click="isInquiryOpen = !isInquiryOpen">
-            문의 정보
-            <span class="icon">
-              <template v-if="isInquiryOpen">
-                <!-- 위쪽 아이콘 (▲) -->
-                <svg width="18" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-              <template v-else>
-                <!-- 아래쪽 아이콘 (▼) -->
-                <svg width="18" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
-                    stroke="#424242"
-                    stroke-width="1.4"
-                    stroke-linecap="round" />
-                </svg>
-              </template>
-            </span>
-          </p>
-
-          <ul v-show="isInquiryOpen" class="profile-h4">
-            <li><span>문의유형</span>{{ reservdetail.inquiry?.type || "-" }}</li>
-            <li><span>제목</span>{{ reservdetail.inquiry?.title || "-" }}</li>
-            <li><span>내용</span>{{ reservdetail.inquiry?.memo || "-" }}</li>
-          </ul>
+  <div v-if="openReservDetail" class="modal-overlay">
+    <div class="reservdetailmodal" v-if="openReservDetail && reservdetail">
+      <div class="reservdetail-title">
+        <p class="profile-h2">클레임 상세 정보</p>
+        <hr />
+        <div class="title" :class="`status-${reservdetail.status}`" style="font-weight: 600">
+          클레임 ID: {{ reservdetail.customer.claimId }}
+          <span :class="reservdetail?.status ? `statusbox-${reservdetail.status}` : ''">
+            {{
+              reservdetail?.status === "waiting"
+                ? "대기중"
+                : reservdetail?.status === "assigned"
+                ? "진행중"
+                : reservdetail?.status === "done"
+                ? "청소완료"
+                : reservdetail?.status === "confirmed"
+                ? "확정완료"
+                : "알수없음"
+            }}</span
+          >
         </div>
       </div>
-      <div class="reservdetail-right">
-        <p class="profile-h3" style="font-weight: 500">클레임 정보</p>
-        <div class="reservdetailinfo">
-          <button class="modal profile-h4" style="text-align: right; font-size: 14px">첨부파일보기</button>
-          <ul class="profile-h4">
-            <li class="firstli"><span>클레임 유형</span>{{ reservdetail.reservinfo?.type || "-" }}</li>
-            <li><span>C/S 고객민감도</span>{{ reservdetail.reservinfo?.machine || "-" }}</li>
-            <li><span>클레임 이력</span>{{ reservdetail.reservinfo?.address || "-" }}</li>
-            <li><span>최근 클레임일</span>{{ reservdetail.reservinfo?.date || "-" }}</li>
-            <li><span>클레임 메모</span>{{ reservdetail.reservinfo?.memo || "-" }}</li>
-          </ul>
-        </div>
-        <div class="info-box-bt">
-          <ul class="timeline">
-            <p class="profile-h3">클레임 진행 상황</p>
-            <li v-for="(step, index) in stepStates" :key="index">
-              <span class="dot" :class="step.class"></span>
-              <div class="label profile-h4">
-                <p>{{ step.label }}</p>
-                <p>{{ step.time }}</p>
-              </div>
-            </li>
-          </ul>
-          <div class="receipt">
-            <p class="profile-h3">결제 정보</p>
-            <ul class="payment profile-h4">
+      <div class="reservdetail-info-box">
+        <div class="reservdetail-left">
+          <p class="profile-h2" style="font-size: 16px; font-weight: 500">기본 정보</p>
+          <div class="customerinfo">
+            <p class="profile-h3" @click="isCustomerOpen = !isCustomerOpen">
+              예약자 정보
+              <span class="icon">
+                <template v-if="isCustomerOpen">
+                  <!-- 위쪽 아이콘 (▲) -->
+                  <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+                <template v-else>
+                  <!-- 아래쪽 아이콘 (▼) -->
+                  <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+              </span>
+            </p>
+
+            <ul v-show="isCustomerOpen" class="profile-h4">
               <li>
-                <p style="color: #616161">서비스 금액</p>
-                <p>{{ reservdetail.payment?.service.toLocaleString() }}원</p>
+                <span>이름</span>{{ reservdetail.customer.name }}{{ ` (${reservdetail.store})` }}
+                <img
+                  :src="reservdetail.customer.avatar"
+                  alt="고객 이미지"
+                  class="w-8 h-8 rounded-full inline-block ml-2" />
               </li>
-              <li>
-                <p style="color: #616161">추가 서비스</p>
-                <p>{{ reservdetail.payment?.extra.toLocaleString() }}원</p>
-              </li>
-              <li>
-                <p style="color: #616161">쿠폰 할인</p>
-                <p>{{ reservdetail.payment?.coupon.toLocaleString() }}원</p>
-              </li>
-              <li>
-                <p style="color: #616161">구독권 차감</p>
-                <p>
-                  {{
-                    reservdetail.payment?.membershipDiscount.toLocaleString("ko-KR", {
-                      signDisplay: "always",
-                    })
-                  }}원
-                </p>
-              </li>
-              <li>
-                <p style="color: #616161">서비스 차감</p>
-                <p>
-                  {{
-                    reservdetail.payment?.extraDiscount.toLocaleString("ko-KR", {
-                      signDisplay: "always",
-                    })
-                  }}원
-                </p>
-              </li>
-              <hr />
-              <li class="profile-h3" style="margin: 0">
-                <p><strong>총 결제 금액</strong></p>
-                <p style="color: red">
-                  {{
-                    (
-                      (reservdetail.payment?.service || 0) +
-                      (reservdetail.payment?.extra || 0) +
-                      (reservdetail.payment?.coupon || 0) +
-                      (reservdetail.payment?.membershipDiscount || 0) +
-                      (reservdetail.payment?.extraDiscount || 0)
-                    ).toLocaleString()
-                  }}원
-                </p>
-              </li>
+
+              <li><span>연락처</span>{{ reservdetail.customer.mobile }}</li>
+              <li><span>이메일</span>{{ reservdetail.customer.email }}</li>
+              <li><span>주소</span>{{ reservdetail.customer.address }}</li>
+            </ul>
+          </div>
+          <div class="membershipinfo">
+            <p class="profile-h3" @click="isMembershipOpen = !isMembershipOpen">
+              구독권 정보
+              <span class="icon">
+                <template v-if="isMembershipOpen">
+                  <!-- 위쪽 아이콘 (▲) -->
+                  <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+                <template v-else>
+                  <!-- 아래쪽 아이콘 (▼) -->
+                  <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+              </span>
+            </p>
+
+            <ul v-show="isMembershipOpen" class="profile-h4">
+              <li><span>구독권</span>{{ reservdetail.membership?.name || "-" }}</li>
+              <li><span>구독일</span>{{ reservdetail.membership?.date || "-" }}</li>
+              <li><span>회차</span>{{ reservdetail.membership?.count || "-" }}</li>
+              <li><span>주기</span>{{ reservdetail.membership?.during || "-" }}</li>
+            </ul>
+          </div>
+          <div class="workerinfo">
+            <p class="profile-h3" @click="isWorkerOpen = !isWorkerOpen">
+              담당자 정보
+              <span class="icon">
+                <template v-if="isWorkerOpen">
+                  <!-- 위쪽 아이콘 (▲) -->
+                  <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+                <template v-else>
+                  <!-- 아래쪽 아이콘 (▼) -->
+                  <svg width="15" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+              </span>
+            </p>
+
+            <ul v-show="isWorkerOpen" class="profile-h4">
+              <li><span>이름</span>{{ reservdetail.worker.name }}</li>
+              <li><span>연락처</span>{{ reservdetail.worker.mobile }}</li>
+              <li><span>이메일</span>{{ reservdetail.worker.email }}</li>
+            </ul>
+          </div>
+          <div class="inquiryinfo">
+            <p class="profile-h3" @click="isInquiryOpen = !isInquiryOpen">
+              문의 정보
+              <span class="icon">
+                <template v-if="isInquiryOpen">
+                  <!-- 위쪽 아이콘 (▲) -->
+                  <svg width="18" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M1 12L10.63 1.407C10.8284 1.18875 11.1716 1.18875 11.37 1.407L21 12"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+                <template v-else>
+                  <!-- 아래쪽 아이콘 (▼) -->
+                  <svg width="18" height="13" viewBox="0 0 22 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M21 1L11.37 11.593C11.1716 11.8113 10.8284 11.8113 10.63 11.593L1 1"
+                      stroke="#424242"
+                      stroke-width="1.4"
+                      stroke-linecap="round" />
+                  </svg>
+                </template>
+              </span>
+            </p>
+
+            <ul v-show="isInquiryOpen" class="profile-h4">
+              <li><span>문의유형</span>{{ reservdetail.inquiry?.type || "-" }}</li>
+              <li><span>제목</span>{{ reservdetail.inquiry?.title || "-" }}</li>
+              <li><span>내용</span>{{ reservdetail.inquiry?.memo || "-" }}</li>
             </ul>
           </div>
         </div>
+        <div class="reservdetail-right">
+          <p class="profile-h3" style="font-weight: 500">클레임 정보</p>
+          <div class="reservdetailinfo">
+            <button class="modal profile-h4" style="text-align: right; font-size: 14px">첨부파일보기</button>
+            <ul class="profile-h4">
+              <li class="firstli"><span>클레임 유형</span>{{ reservdetail.reservinfo?.type || "-" }}</li>
+              <li><span>C/S 고객민감도</span>{{ reservdetail.reservinfo?.machine || "-" }}</li>
+              <li><span>클레임 이력</span>{{ reservdetail.reservinfo?.address || "-" }}</li>
+              <li><span>최근 클레임일</span>{{ reservdetail.reservinfo?.date || "-" }}</li>
+              <li><span>클레임 메모</span>{{ reservdetail.reservinfo?.memo || "-" }}</li>
+            </ul>
+          </div>
+          <div class="info-box-bt">
+            <ul class="timeline">
+              <p class="profile-h3">클레임 진행 상황</p>
+              <li v-for="(step, index) in stepStates" :key="index">
+                <span class="dot" :class="step.class"></span>
+                <div class="label profile-h4">
+                  <p>{{ step.label }}</p>
+                  <p>{{ step.time }}</p>
+                </div>
+              </li>
+            </ul>
+            <div class="receipt">
+              <p class="profile-h3">결제 정보</p>
+              <ul class="payment profile-h4">
+                <li>
+                  <p style="color: #616161">서비스 금액</p>
+                  <p>{{ reservdetail.payment?.service.toLocaleString() }}원</p>
+                </li>
+                <li>
+                  <p style="color: #616161">추가 서비스</p>
+                  <p>{{ reservdetail.payment?.extra.toLocaleString() }}원</p>
+                </li>
+                <li>
+                  <p style="color: #616161">쿠폰 할인</p>
+                  <p>{{ reservdetail.payment?.coupon.toLocaleString() }}원</p>
+                </li>
+                <li>
+                  <p style="color: #616161">구독권 차감</p>
+                  <p>
+                    {{
+                      reservdetail.payment?.membershipDiscount.toLocaleString("ko-KR", {
+                        signDisplay: "always",
+                      })
+                    }}원
+                  </p>
+                </li>
+                <li>
+                  <p style="color: #616161">서비스 차감</p>
+                  <p>
+                    {{
+                      reservdetail.payment?.extraDiscount.toLocaleString("ko-KR", {
+                        signDisplay: "always",
+                      })
+                    }}원
+                  </p>
+                </li>
+                <hr />
+                <li class="profile-h3" style="margin: 0">
+                  <p><strong>총 결제 금액</strong></p>
+                  <p style="color: red">
+                    {{
+                      (
+                        (reservdetail.payment?.service || 0) +
+                        (reservdetail.payment?.extra || 0) +
+                        (reservdetail.payment?.coupon || 0) +
+                        (reservdetail.payment?.membershipDiscount || 0) +
+                        (reservdetail.payment?.extraDiscount || 0)
+                      ).toLocaleString()
+                    }}원
+                  </p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <button @click="openReservDetail = false">닫기</button>
+      <button @click="openReservDetail = false">닫기</button>
+    </div>
   </div>
   <!-- 영수증 보기 모달 -->
   <!-- <div class="viewreceipt" v-show="viewreceipt">
@@ -1035,4 +1045,25 @@ function cancel() {
 </template>
 <style scoped>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css");
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* 반투명한 검정 배경 */
+  z-index: 999; /* 모달보다 뒤에 있어야 하지만, 다른 요소보다는 위에 */
+}
+.reservdetailmodal {
+  position: fixed;
+  z-index: 1000; /* 오버레이보다 위에 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 10px;
+  padding: 20px;
+}
 </style>

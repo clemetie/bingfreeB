@@ -194,10 +194,43 @@ watch(reservTab, async (newTab) => {
 });
 
 // 페이지 첫 로드시도 달력 초기화 (탭이 이미 reservation일 경우)
-onMounted(async () => {
-  if (reservTab.value === "reserv") {
-    await nextTick();
-    initCalendar();
+onMounted(() => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+  if (isLoggedIn) {
+    const data = detailList.find((item) => item.id === 1);
+    if (data) {
+      formData.value.name = data.customer.name;
+      formData.value.phone = data.customer.mobile;
+      formData.value.roadAddress = data.customer.address;
+      formData.value.detailAddress = "506호";
+
+      formData.value.selectedDate = data.reservinfo.date?.split(",")[0] || "";
+      formData.value.desiredTime =
+        data.reservinfo.date?.split(",")[1]?.trim() || "";
+      formData.value.notes = data.reservinfo.memo || "";
+    }
+  } else {
+    // 로그인 상태 아니면 폼 초기화
+    formData.value = {
+      name: "",
+      phone: "",
+      type: "business",
+      roadAddress: "",
+      detailAddress: "",
+      selectedDate: null,
+      dateRestricted: null,
+      desiredTime: "",
+      gender: "anything",
+      notes: "",
+    };
+  }
+
+  if (reservTab.value === "reservConfirm") {
+    const savedData = Cookies.get("reservationData");
+    if (savedData) {
+      formData.value = JSON.parse(savedData);
+    }
   }
 });
 const minDate = computed(() => {
@@ -390,7 +423,7 @@ const handleReSubmit = () => {
   <Navigation />
   <!-- 오른쪽 사이드 (예약, 챗봇 등) -->
   <div class="side">
-    <div>
+    <!-- <div>
       <router-link
         to="/reservation"
         class="sideBtn reservBtn main-icon-drop compact"
@@ -402,7 +435,7 @@ const handleReSubmit = () => {
     <div class="sideBtn main-icon-drop compact">
       <img src="/images/chabot.png" alt="챗봇이미지" />
       <span class="text">챗봇&nbsp;&nbsp;</span>
-    </div>
+    </div> -->
 
     <div class="goTop main-icon-drop compact" @click="scrollToTop">↑</div>
   </div>
@@ -898,188 +931,6 @@ const handleReSubmit = () => {
             </div>
           </div>
         </transition>
-      </div>
-      <div class="reservConfirm inner" v-if="reservTab === 'reservConfirm'">
-        <!-- 예약조회 정보 -->
-        <fieldset class="confirm_info">
-          <input
-            type="text"
-            v-model="confirmformData.name"
-            name="name"
-            class="confirmname"
-            placeholder="이름"
-            required
-          />
-          <input
-            type="tel"
-            v-model="confirmformData.phone"
-            name="phone"
-            class="confirmphone"
-            placeholder="연락처"
-            required
-          />
-          <button
-            type="button"
-            class="reservBtn main-h4"
-            @click="showReservationInfo"
-          >
-            예약조회하기
-          </button>
-        </fieldset>
-        <!-- 쿠폰 배너 -->
-        <div class="coupon">
-          <img src="/reservation/reservsub/reservation_coupon.png" alt="쿠폰" />
-
-          <img
-            class="infoicon"
-            src="/reservation/reservsub/reservation_infoicon.png"
-            alt="정보 아이콘"
-          />
-          <router-link
-            to="/BingPrime"
-            class="main-h3 coupon_ment"
-            style="color: #1456fd; font-weight: bold"
-          >
-            가입하기 ></router-link
-          >
-        </div>
-        <!-- 진행 중인 예약 -->
-        <fieldset v-if="isReservationMatched" class="result_info">
-          <p class="main-h3 info-title" style="color: #9abae3">
-            <img
-              class="calendar"
-              src="/reservation/reservsub/calendar-check.png"
-              alt="달력"
-            />
-            진행 중인 예약
-          </p>
-          <hr />
-          <div class="reservation-info-box">
-            <p class="main-h4">
-              <b>{{ matchedReservation.name }} </b>님
-            </p>
-            <span
-              v-if="selectedIceMakers.length > 0"
-              class="main-h5"
-              style="font-size: 24px; font-weight: 800; color: #1456fd"
-            >
-              [{{ selectedIceMakers[0].type }}] {{ selectedIceMakers[0].label }}
-              <template v-if="selectedIceMakers.length > 1">
-                외 {{ selectedIceMakers.length - 1 }}개
-              </template>
-            </span>
-            <ul class="reservation-info-list" style="list-style: none">
-              <li>
-                <p class="main-h4">
-                  <strong>일정</strong>
-                  {{ matchedReservation.selectedDate }}
-                  {{ matchedReservation.desiredTime }}
-                </p>
-              </li>
-              <li>
-                <p class="main-h4">
-                  <strong>요청</strong> {{ matchedReservation.notes }}
-                </p>
-              </li>
-              <li>
-                <p class="main-h4">
-                  <strong style="font-weight: bold">금액</strong>
-                  {{ finalPrice.toLocaleString() }}
-                  원
-                </p>
-              </li>
-            </ul>
-          </div>
-          <button
-            v-on:click="handleReSubmit"
-            type="button"
-            class="main-h4 retryreservationBtn"
-          >
-            예약수정하기
-          </button>
-        </fieldset>
-        <!-- 자주 묻는 질문 -->
-        <fieldset class="faq-box" v-if="isReservationMatched">
-          <p class="main-h3" style="color: #424242">
-            자주 묻는 질문
-            <span style="color: #424242" v-on:click="showFAQ = !showFAQ">{{
-              showFAQ ? "접기 ▲" : "펼치기 ▼"
-            }}</span>
-          </p>
-          <hr style="margin: 10px 0" />
-          <div
-            class="faq-list"
-            v-if="showFAQ"
-            v-for="faq in faqs"
-            :key="faq.id"
-          >
-            <p class="main-h4" style="font-weight: 800; color: #424242">
-              Q. {{ faq.question }}
-            </p>
-            <p
-              class="main-h5"
-              style="color: #888; font-weight: 500; line-height: 1.5 !important"
-            >
-              A. {{ faq.answer }}
-            </p>
-          </div>
-        </fieldset>
-        <!-- 지난 예약 내역 -->
-        <fieldset v-if="isReservationMatched" class="result_info past">
-          <p class="main-h3 info-title" style="color: #888">
-            <img
-              class="calendar"
-              src="/reservation/reservsub/calendar-check.png"
-              alt="달력"
-            />
-            지난 예약 내역
-          </p>
-          <hr />
-          <div class="reservation-info-box">
-            <p class="main-h4">
-              <b>{{ matchedReservation.name }} </b>님
-            </p>
-            <span
-              v-if="selectedIceMakers.length > 0"
-              class="main-h5"
-              style="font-size: 24px; font-weight: 800; color: #1456fd"
-            >
-              [{{ selectedIceMakers[0].type }}] {{ selectedIceMakers[0].label }}
-              <template v-if="selectedIceMakers.length > 1">
-                외 {{ selectedIceMakers.length - 1 }}개
-              </template>
-            </span>
-            <ul class="reservation-info-list" style="list-style: none">
-              <li>
-                <p class="main-h4">
-                  <strong>일정</strong>
-                  {{ matchedReservation.selectedDate }}
-                  {{ matchedReservation.desiredTime }}
-                </p>
-              </li>
-              <li>
-                <p class="main-h4">
-                  <strong>요청</strong> {{ matchedReservation.notes }}
-                </p>
-              </li>
-              <li>
-                <p class="main-h4">
-                  <strong style="font-weight: bold">금액</strong>
-                  {{ finalPrice.toLocaleString() }}
-                  원
-                </p>
-              </li>
-            </ul>
-          </div>
-          <div class="reservBtn_box">
-            <button v-on:click="handleReSubmit" class="pastBtn">
-              다시 예약하기
-            </button>
-            <router-link to="/review"
-              ><button class="pastBtn">리뷰 쓰기</button></router-link
-            >
-          </div>
-        </fieldset>
       </div>
     </main>
   </div>

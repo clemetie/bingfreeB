@@ -167,7 +167,7 @@ function applyFilters() {
         isInDateRange
       );
     })
-    .sort((a, b) => a.id - b.id);
+    .sort((a, b) => b.id - a.id);
 
   filteredList.value = result;
   currentPage.value = 1;
@@ -270,7 +270,6 @@ const statusCards = computed(() => [
 ]);
 
 // 대시 보드 관련
-
 </script>
 <template>
   <div class="dashboard">
@@ -414,13 +413,13 @@ const statusCards = computed(() => [
             청소대기</label
           >
           <label
-              ><input type="radio" value="done" v-model="statusFilter" />
-              청소완료</label
-            >
-            <label
-              ><input type="radio" value="confirmed" v-model="statusFilter" />
-              확정완료</label
-            >
+            ><input type="radio" value="done" v-model="statusFilter" />
+            청소완료</label
+          >
+          <label
+            ><input type="radio" value="confirmed" v-model="statusFilter" />
+            확정완료</label
+          >
         </div>
         <div class="searchdate">
           <div class="datepicker-box">
@@ -615,14 +614,14 @@ const statusCards = computed(() => [
                 ><input type="radio" value="assigned" v-model="statusFilter" />
                 청소대기</label
               >
-               <label
-              ><input type="radio" value="done" v-model="statusFilter" />
-              청소완료</label
-            >
-            <label
-              ><input type="radio" value="confirmed" v-model="statusFilter" />
-              확정완료</label
-            >
+              <label
+                ><input type="radio" value="done" v-model="statusFilter" />
+                청소완료</label
+              >
+              <label
+                ><input type="radio" value="confirmed" v-model="statusFilter" />
+                확정완료</label
+              >
             </div>
           </div>
           <div class="searchdate">
@@ -1157,15 +1156,8 @@ const statusCards = computed(() => [
       />
 
       <div class="btnbox">
-        <button class="edit" @click="printReceipt">
-          출력하기
-        </button>
-        <button
-          class="fix"
-          @click="viewreceipt = false"
-        >
-          닫기
-        </button>
+        <button class="edit" @click="printReceipt">출력하기</button>
+        <button class="fix" @click="viewreceipt = false">닫기</button>
       </div>
     </div>
   </div>

@@ -56,6 +56,9 @@ const reviews = ref([
 const currentPage = ref(1);
 const perPage = 3;
 
+const dbcheck = () => {
+  alert("확인되었습니다");
+};
 const paginatedReviews = computed(() => {
   const start = (currentPage.value - 1) * perPage;
   const end = start + perPage;
@@ -507,9 +510,7 @@ const banks = [
           <hr style="color: #bdbdbd; height: 1px" />
           <div class="btnbox">
             <button class="cancel" v-on:click="cancelBtn">취소</button>
-            <button class="fix" style="padding: 1% 2%" v-on:click="submitFix">
-              저장
-            </button>
+            <button class="fix" v-on:click="submitFix">저장</button>
           </div>
         </form>
       </div>
@@ -648,9 +649,7 @@ const banks = [
           <hr style="color: #bdbdbd; height: 1px" />
           <div class="btnbox">
             <button class="cancel" v-on:click="cancelBtn">취소</button>
-            <button class="fix" style="padding: 1% 2%" v-on:click="submitFix">
-              저장
-            </button>
+            <button class="fix" v-on:click="submitFix">저장</button>
           </div>
         </form>
       </div>

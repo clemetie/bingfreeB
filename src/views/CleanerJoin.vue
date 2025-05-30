@@ -1,4 +1,5 @@
 <template>
+  <Navigation />
   <div class="agree_box max-w-[860px] mx-auto py-20 px-6 bg-white">
     <!-- 제목 -->
     <h2 class="text-3xl font-bold text-center text-neutral-800 mb-16">정보입력</h2>
@@ -329,6 +330,7 @@
   </div>
 </template>
 <script setup>
+import Navigation from "@/components/Navigation.vue";
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/auth";

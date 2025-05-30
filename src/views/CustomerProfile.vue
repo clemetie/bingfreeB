@@ -654,7 +654,6 @@ const stepStates = computed(() => {
                   <button class="cancel" v-on:click="cancelBtn">취소</button>
                   <button
                     class="fix"
-                    style="padding: 1% 2%"
                     v-on:click="submitFix"
                   >
                     저장
@@ -743,7 +742,6 @@ const stepStates = computed(() => {
                   <button class="cancel" v-on:click="cancelBtn">취소</button>
                   <button
                     class="fix"
-                    style="padding: 1% 2%"
                     v-on:click="submitFix"
                   >
                     저장
@@ -805,7 +803,7 @@ const stepStates = computed(() => {
           </div>
         </div>
         <div class="btnbox">
-          <button class="cancel" style="padding: 1% 3%" v-on:click="cancelBtn">
+          <button class="cancel" v-on:click="cancelBtn">
             취소
           </button>
           <button class="fix" v-on:click="submitFix">저장</button>
@@ -1190,12 +1188,11 @@ const stepStates = computed(() => {
         <div class="btnbox">
           <button
             class="cancel"
-            style="padding: 2% 2.5%"
             @click="cancelnextBtn"
           >
             다음에
           </button>
-          <button class="fix" style="padding: 2% 2.5%" v-on:click="submitFix">
+          <button class="fix" v-on:click="submitFix">
             저장
           </button>
         </div>
@@ -1242,7 +1239,6 @@ const stepStates = computed(() => {
 
         <div class="btn-box">
           <button
-            style="padding: 1.5% 2.8%"
             class="cancel"
             @click="clamemodal = false"
           >

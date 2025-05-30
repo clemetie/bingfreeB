@@ -91,10 +91,13 @@
     width: 0%;
   }
   50% {
-    width: 100%;
+    width: 50%;
+  }
+  80% {
+    width: 80%;
   }
   100% {
     width: 100%;
   }
 }
-</style>
+</style> 

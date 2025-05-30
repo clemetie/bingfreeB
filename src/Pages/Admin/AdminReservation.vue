@@ -12,7 +12,7 @@ const searchText = ref("");
 const memberFilter = ref("all"); // normal | prime | all
 const statusFilter = ref("all"); // waiting | assigned | confirmed | done | all
 const shopFilter = ref("all"); // personal | business | all
-const dateFilter = ref("all"); // today | plus7d | plus15d | plus1m | plus3m | all | custom
+const dateFilter = ref("plus1m"); // today | plus7d | plus15d | plus1m | plus3m | all | custom
 const today = dayjs();
 const fromDate = ref(null);
 const toDate = ref(null);
@@ -149,7 +149,7 @@ function applyFilters() {
         isInDateRange
       );
     })
-    .sort((a, b) => a.id - b.id);
+    .sort((a, b) => b.id - a.id);
 
   filteredList.value = result;
   currentPage.value = 1;

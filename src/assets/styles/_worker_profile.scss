@@ -278,9 +278,12 @@
           }
 
           &.checkbox {
+            width: 100%;
+            height: auto;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            border: none;
             margin-left: 3%;
             cursor: pointer;
             label {
@@ -466,9 +469,12 @@
           }
 
           &.checkbox {
+            width: 100%;
+            height: auto;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            border: none;
             margin-left: 3%;
             cursor: pointer;
             label {

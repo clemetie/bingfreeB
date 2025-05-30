@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Header from "@/components/Header.vue";
+import Navigation from "@/components/Navigation.vue";
 </script>
 
 <template>
-  <Header />
+  <Navigation />
   <div class="w-[1920px] h-[5875px] relative bg-white overflow-hidden">
     <div
       class="w-[1920px] h-[5875px] left-0 top-0 absolute bg-white rounded-sm overflow-hidden"

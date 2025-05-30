@@ -63,13 +63,7 @@ export const detailList = [
       membershipDiscount: -210000,
       extraDiscount: -4900,
       get total() {
-        return (
-          this.service +
-          this.extra +
-          this.coupon +
-          this.membershipDiscount +
-          this.extraDiscount
-        );
+        return this.service + this.extra + this.coupon + this.membershipDiscount + this.extraDiscount;
       },
     },
   },
@@ -122,13 +116,7 @@ export const detailList = [
       membershipDiscount: 0,
       extraDiscount: 0,
       get total() {
-        return (
-          this.service +
-          this.extra +
-          this.coupon +
-          this.membershipDiscount +
-          this.extraDiscount
-        );
+        return this.service + this.extra + this.coupon + this.membershipDiscount + this.extraDiscount;
       },
     },
   },
@@ -181,13 +169,7 @@ export const detailList = [
       membershipDiscount: 0,
       extraDiscount: 0,
       get total() {
-        return (
-          this.service +
-          this.extra +
-          this.coupon +
-          this.membershipDiscount +
-          this.extraDiscount
-        );
+        return this.service + this.extra + this.coupon + this.membershipDiscount + this.extraDiscount;
       },
     },
   },
@@ -256,7 +238,7 @@ export const fullReservationList = reactive([
       gender: "female",
       health: false,
       location: {
-        서울특별시: ["강남구", "마포구"],
+        대구광역시: ["수성구", "북구"],
       },
       bank: "국민은행",
       account: "563352-09-422616",
@@ -289,6 +271,8 @@ export const fullReservationList = reactive([
       address: "대구광역시 동구",
       price: 96000,
       joindate: "2025-06-05",
+      business: "일반",
+      reservation: "26",
     },
     primemember: true,
   },
@@ -353,8 +337,10 @@ export const fullReservationList = reactive([
     sh: {
       webid: "tngus325",
       address: "대구광역시 중구",
-      price: 106000,
-      joindate: "2025-06-05",
+      price: 1206000,
+      joindate: "2020-05-01",
+      business: "사업자",
+       reservation: "50",
     },
     primemember: false,
   },
@@ -419,8 +405,10 @@ export const fullReservationList = reactive([
     sh: {
       webid: "gyqls4655",
       address: "부산광역시 수영구",
-      price: 106000,
+      price: 150000,
       joindate: "2025-05-30",
+      business: "일반",
+       reservation: "26",
     },
     primemember: false,
   },
@@ -488,6 +476,8 @@ export const fullReservationList = reactive([
       address: "대구광역시 수성구",
       price: 106000,
       joindate: "2025-06-05",
+      business: "사업자",
+       reservation: "6",
     },
     primemember: true,
   },
@@ -552,15 +542,20 @@ export const fullReservationList = reactive([
     sh: {
       webid: "tngus325",
       address: "대구광역시 중구",
-      price: 106000,
-      joindate: "2025-06-05",
+      price: 250000,
+      joindate: "2019-07-05",
+      business: "일반",
+       reservation: "45",
     },
     sh: {
       webid: "codus12",
       address: "대구광역시 중구",
-      price: 106000,
-      joindate: "2025-06-05",
+      price: 66000,
+      joindate: "2022-01-05",
+      business: "일반",
+      reservation: "3",
     },
+    
     primemember: false,
   },
   {
@@ -624,8 +619,10 @@ export const fullReservationList = reactive([
     sh: {
       webid: "codus12",
       address: "대구광역시 중구",
-      price: 106000,
-      joindate: "2025-06-05",
+      price: 180000,
+      joindate: "2000-11-05",
+      business: "일반",
+      reservation: "10",
     },
     primemember: false,
   },
@@ -1599,28 +1596,8 @@ export const koreaLocations = reactive({
     "중구",
     "해운대구",
   ],
-  대구광역시: [
-    "남구",
-    "달서구",
-    "달성군",
-    "동구",
-    "북구",
-    "서구",
-    "수성구",
-    "중구",
-  ],
-  인천광역시: [
-    "강화군",
-    "계양구",
-    "남동구",
-    "동구",
-    "미추홀구",
-    "부평구",
-    "서구",
-    "연수구",
-    "옹진군",
-    "중구",
-  ],
+  대구광역시: ["남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구"],
+  인천광역시: ["강화군", "계양구", "남동구", "동구", "미추홀구", "부평구", "서구", "연수구", "옹진군", "중구"],
   광주광역시: ["광산구", "남구", "동구", "북구", "서구"],
   대전광역시: ["대덕구", "동구", "서구", "유성구", "중구"],
   울산광역시: ["남구", "동구", "북구", "울주군", "중구"],
@@ -1886,7 +1863,9 @@ export const fullclaimList = reactive([
       webid: "qortjf325",
       address: "대구광역시 동구",
       price: 96000,
-      joindate: "2025-06-05",
+      joindate: "2021-12-05",
+      business: "일반",
+      reservation: "4",
     },
     primemember: true,
   },

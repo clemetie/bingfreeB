@@ -43,7 +43,7 @@ const links = [
     icon: "fas fa-user-tie",
   },
   {
-    name: "매출 내역",
+    name: "정산내역",
     imgUrl: "/prime/pay-icon.png",
     path: "/Admin/Sales",
     icon: "fas fa-user-tie",
@@ -101,7 +101,7 @@ function updateTime() {
   <!-- 페이지 헤더 -->
   <header class="adminHead">
     <div class="logo">
-      <router-link to="/Worker/ddashboard"
+      <router-link to="/Bingprime"
         ><img src="/prime/bingfree-logo.png" alt="빙프리로고"
       /></router-link>
     </div>
@@ -195,10 +195,7 @@ function updateTime() {
             <img src="/prime/setting-icon.png" alt="설정 아이콘" />
           </div>
           <div class="right-icon profile">
-            <img
-              src="/prime/profile-image-icon.png"
-              alt="프로필 아이콘"
-            />
+            <img src="/prime/profile-image-icon.png" alt="프로필 아이콘" />
           </div>
         </div>
         <router-link
