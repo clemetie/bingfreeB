@@ -1,47 +1,67 @@
-# @latest
 
-This template should help get you started developing with Vue 3 in Vite.
+🧊 BingFree | 제빙기 청소 예약 서비스
+위생이 중요한 업장에서 제빙기 청소를 간편하게 예약할 수 있는 웹 플랫폼입니다.
+사용자 맞춤 예약 시스템부터 정기 구독 요금제까지, 예약부터 사후 관리까지 직관적인 경험을 제공합니다.
 
-## Recommended IDE Setup
+🛠️ 주요 기능
+고객 예약 페이지
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+용량 선택 + 기사 성별 지정 + 구독/비구독 선택 가능
 
-## Customize configuration
+반복 예약을 위한 정보 저장 기능 포함
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+기사 페이지
 
-## Project Setup
+배정 내역 확인, 상태 변경, 작업 완료 보고서 등록
 
-```sh
-npm install
-```
+MOSCOW 기반 UI 구성으로 작업 동선 단순화
 
-### Compile and Hot-Reload for Development
+관리자 대시보드
 
-```sh
-npm run dev
-```
+전체 예약 현황, 작업 진행률, 평점 통계 한눈에 보기
 
-### Compile and Minify for Production
+예약 상세 내역 및 실시간 상태 변경 기능
 
-```sh
-npm run build
-```
-# Tailwind 기반 Vue 디자인 시스템
+마이페이지 (고객)
 
-## 🎯 개요
-- 일관된 UI/UX를 위한 디자인 시스템
-- Tailwind CSS 커스터마이징 + Vue 컴포넌트 기반
+예약 내역, 결제 수단, 리뷰, 문의 내역 한 곳에 정리
 
-## 📁 구성
-- `BaseButton`, `BaseInput`, `BaseCard` 등의 재사용 컴포넌트
-- `tailwind.config.js`에 정의된 디자인 토큰(color, spacing 등)
+각 항목별로 모달 분리 + 흐름 고려한 UX 설계
 
-## 🧩 주요 컴포넌트
-- 버튼: primary / secondary / danger
-- 입력창: 기본 입력창, 포커스 상태
-- 카드: 콘텐츠 박스 디자인
+🔍 기술 스택
+Frontend: React, SCSS
 
-## 📦 기술 스택
-- Vue 3 + `<script setup>`
-- Tailwind CSS
+State 관리: React Hooks (useState, useEffect, etc.)
+
+라이브러리:
+
+flatpickr (날짜 선택)
+
+js-cookie (예약 정보 저장)
+
+chart.js (통계 시각화)
+
+🎯 기획 배경
+“청소가 잘 됐는지 모르겠어요.”
+
+이 한마디에서 출발했습니다.
+눈에 보이지 않는 위생 문제를 가시화하고,
+상담 없이도 예약부터 완료까지 이어질 수 있는 구조를 만들고자 했습니다.
+예약 흐름, 반복 이용, 정보 관리까지 사용자 여정 전반을 설계하고,
+기획 → 디자인 → 개발 → 배포까지 직접 진행했습니다.
+
+📎 프로젝트 링크
+👉 서비스 바로가기
+
+👉 기획 노션 문서 보기
+
+🙋‍♀️ 담당 역할
+프로젝트 매니저 (팀장)
+
+예약 시스템 기획 및 흐름 설계
+
+UI 디자인 및 주요 페이지 프론트엔드 개발
+
+사용자 여정맵 · 정보 구조 · 구독 요금제 설계
+
+GA 적용, A/B 테스트 후 실제 서비스 배포
